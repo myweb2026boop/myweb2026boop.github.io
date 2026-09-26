@@ -3096,9 +3096,11 @@ window.addEventListener('DOMContentLoaded', function() {
             entryBtn.addEventListener('click', function() { panel.classList.add('open'); });
             backBtn.addEventListener('click', function() { panel.classList.remove('open'); });
         })();
-
-        /* 音乐App（网易云风格） */
-        (function() {
-            const entry = $id('musicEntry');
-            const panel = $id('musicPanel');
-            if (!entry || !
+} catch (err) {
+        console.error('初始化错误:', err);
+        alert('页面初始化出错：' + err.message);
+    }
+});
+</script>
+</body>
+</html>
