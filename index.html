@@ -17,7 +17,6 @@ button { touch-action: manipulation; }
 body.fs-mode { background:#fcfcfc; position:fixed; inset:0; overflow:hidden; display:block; min-height:0; }
 body.fs-mode .phone-container { position:absolute; top:0; left:0; right:0; bottom:0; width:auto; height:auto; border-radius:0; box-shadow:none; transform:none; margin:0; }
 body.fs-mode .beautify-panel, body.fs-mode .wechat-panel, body.fs-mode .contact-panel, body.fs-mode .settings-panel { border-radius:0; }
-
 .wallpaper-layer { position:absolute; inset:0; z-index:0; background-size:cover; background-position:center; background-repeat:no-repeat; pointer-events:none; }
 .blob { position:absolute; background:#f0f0f0; border-radius:50%; filter:blur(20px); z-index:0; opacity:0.6; pointer-events:none; }
 .blob-1{width:150px;height:150px;top:50px;left:-50px;} .blob-2{width:200px;height:200px;top:400px;right:-80px;} .blob-3{width:120px;height:120px;bottom:100px;left:20px;}
@@ -99,7 +98,6 @@ body.fs-mode .beautify-panel, body.fs-mode .wechat-panel, body.fs-mode .contact-
 .bottom-dock { position:absolute; bottom:calc(15px + env(safe-area-inset-bottom,0px)); left:0; width:100%; display:flex; justify-content:space-around; padding:0 15px; z-index:10; pointer-events:none; }
 .dock-item { pointer-events:auto; width:55px; height:55px; background:#fff; border-radius:14px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); border:1px solid #f5f5f5; overflow:hidden; cursor:pointer; }
 .dock-item img { width:100%; height:100%; object-fit:cover; }
-
 .beautify-panel { position:absolute; inset:0; z-index:200; background:#fcfcfc; display:flex; flex-direction:column; transform:translateX(100%); transition:transform 0.32s cubic-bezier(0.4,0,0.2,1); border-radius:30px; overflow:hidden; }
 .beautify-panel.open { transform:translateX(0); }
 .bp-header { flex-shrink:0; display:flex; align-items:center; justify-content:space-between; padding:18px 16px 12px; border-bottom:1px solid #f0f0f0; background:#fcfcfc; }
@@ -127,7 +125,6 @@ body.fs-mode .beautify-panel, body.fs-mode .wechat-panel, body.fs-mode .contact-
 .bp-fs-text { flex:1; min-width:0; }
 .bp-fs-label { font-size:13.5px; color:#222; font-weight:600; }
 .bp-fs-desc { font-size:11px; color:#aaa; margin-top:4px; line-height:1.45; }
-
 .wechat-panel { position:absolute; inset:0; z-index:210; background:#ededed; border-radius:30px; overflow:hidden; transform:translateX(100%); transition:transform 0.32s cubic-bezier(0.4,0,0.2,1); }
 .wechat-panel.open { transform:translateX(0); }
 .wx-view { position:absolute; inset:0; display:flex; flex-direction:column; background:#ededed; }
@@ -215,15 +212,12 @@ body.fs-mode .beautify-panel, body.fs-mode .wechat-panel, body.fs-mode .contact-
 .wx-me-arrow-right { display:flex; align-items:center; }
 .wx-me-arrow-right svg { width:16px; height:16px; stroke:#c0c0c0; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
 .wx-me-item.danger .wx-me-label { color:#fa5151; }
-
-/* ========== 底栏（图标贴底） ========== */
 .wx-tabbar { flex-shrink:0; height:calc(46px + env(safe-area-inset-bottom, 0px)); display:flex; align-items:stretch; background:#f7f7f7; border-top:1px solid #d9d9d9; padding-bottom:env(safe-area-inset-bottom, 0px); padding-top:0; }
 .wx-tab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:1px; font-size:10px; color:#999; cursor:pointer; user-select:none; position:relative; padding-bottom:0; }
 .wx-tab.active { color:#07c160; }
 .wx-tab-svg { width:24px; height:24px; display:block; flex-shrink:0; color:#7f7f7f; }
 .wx-tab.active .wx-tab-svg { color:#07c160; }
 .wx-tab-dot { position:absolute; top:4px; left:50%; margin-left:6px; width:8px; height:8px; background:#fa5151; border-radius:50%; pointer-events:none; }
-
 .wx-msg-list { flex:1; overflow-y:auto; padding:14px 12px 6px; background:#ededed; -webkit-overflow-scrolling:touch; background-size:cover; background-position:center; background-repeat:no-repeat; }
 .wx-msg-list::-webkit-scrollbar { display:none; }
 .wx-msg-time { text-align:center; font-size:11px; color:#999; margin:6px 0 12px 0; }
@@ -433,7 +427,34 @@ body.fs-mode .beautify-panel, body.fs-mode .wechat-panel, body.fs-mode .contact-
 .wx-family-empty { text-align:center; padding:80px 20px; color:#b8b8b8; font-size:13px; display:none; }
 .wx-family-empty.show { display:block; }
 .wx-family-empty svg { width:48px; height:48px; stroke:#c8c8c8; fill:none; stroke-width:1.4; margin-bottom:12px; }
-
+/* 朋友圈 */
+.wx-moments-view { transform:translateX(100%); z-index:7; transition:transform 0.28s cubic-bezier(0.4,0,0.2,1); background:#fff; }
+.wx-moments-view.active { transform:translateX(0); }
+.wx-moments-body { flex:1; overflow-y:auto; background:#fff; -webkit-overflow-scrolling:touch; }
+.wx-moments-body::-webkit-scrollbar { display:none; }
+.wx-moments-cover { position:relative; height:300px; background-color:#f0f0f0; background-image:linear-gradient(135deg,#f5f5f5 0%,#e8e8e8 100%); background-size:cover; background-position:center; background-repeat:no-repeat; cursor:pointer; }
+.wx-moments-cover::after { content:''; position:absolute; left:0; right:0; bottom:0; height:80px; background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,0.35)); pointer-events:none; }
+.wx-moments-back, .wx-moments-add { position:absolute; top:14px; width:34px; height:34px; border-radius:50%; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.12); display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; z-index:3; color:#1a1a1a; padding:0; }
+.wx-moments-back { left:14px; }
+.wx-moments-add { right:14px; }
+.wx-moments-back svg { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+.wx-moments-add svg { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; }
+.wx-moments-me { position:absolute; right:16px; bottom:-30px; display:flex; align-items:center; gap:12px; z-index:2; }
+.wx-moments-me-name { font-size:16px; font-weight:500; color:rgba(255,255,255,0.9); text-shadow:0 1px 4px rgba(0,0,0,0.35); letter-spacing:0.3px; }
+.wx-moments-me-avatar { width:64px; height:64px; border-radius:8px; background:#e5e5e5; border:3px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,0.15); overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:24px; color:#888; font-weight:600; }
+.wx-moments-me-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+.wx-moments-list { padding-top:46px; padding-bottom:50px; }
+.wx-moment-item { display:flex; gap:10px; padding:18px 16px; align-items:flex-start; position:relative; }
+.wx-moment-item + .wx-moment-item::before { content:''; position:absolute; top:0; left:82px; right:16px; height:1px; background:#f5f5f5; }
+.wx-moment-date { width:56px; flex-shrink:0; text-align:left; padding-top:2px; }
+.wx-moment-day { font-size:30px; font-weight:800; color:#1a1a1a; line-height:1; letter-spacing:-1.5px; }
+.wx-moment-month { font-size:12px; color:#1a1a1a; font-weight:700; margin-top:3px; letter-spacing:0.3px; }
+.wx-moment-content { flex:1; display:flex; gap:10px; align-items:flex-start; min-width:0; }
+.wx-moment-img { width:110px; height:110px; flex-shrink:0; background:#f0f0f0; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; color:#bbb; font-size:11px; }
+.wx-moment-img img { width:100%; height:100%; object-fit:cover; display:block; }
+.wx-moment-text { flex:1; font-size:15px; color:#1a1a1a; line-height:1.5; padding-top:6px; word-break:break-word; min-width:0; min-height:24px; }
+.wx-moment-text:empty::before { content:'双击编辑'; color:#ccc; font-size:13px; }
+.wx-moment-text[contenteditable="true"] { background:rgba(0,0,0,0.04); border-radius:4px; outline:none; }
 .contact-panel { position:absolute; inset:0; z-index:220; background:#f5f5f7; border-radius:30px; overflow:hidden; transform:translateX(100%); transition:transform 0.32s; display:flex; flex-direction:column; }
 .contact-panel.open { transform:translateX(0); }
 .ct-header { flex-shrink:0; height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 14px; background:#f5f5f7; border-bottom:1px solid #e5e5e7; position:relative; }
@@ -482,132 +503,6 @@ textarea.ct-field-input { min-height:90px; line-height:1.5; }
 .ct-confirm-delete { color:#fa5151; font-weight:600; }
 .ct-toast { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(0.96); background:rgba(0,0,0,0.78); color:#fff; padding:11px 20px; border-radius:8px; font-size:13px; opacity:0; pointer-events:none; transition:opacity 0.25s,transform 0.25s; z-index:700; max-width:82%; text-align:center; }
 .ct-toast.show { opacity:1; transform:translate(-50%,-50%) scale(1); }
-/* 朋友圈 */
-.wx-moments-view { transform:translateX(100%); z-index:7; transition:transform 0.28s cubic-bezier(0.4,0,0.2,1); background:#fff; }
-.wx-moments-view.active { transform:translateX(0); }
-.wx-moments-body { flex:1; overflow-y:auto; background:#fff; -webkit-overflow-scrolling:touch; }
-.wx-moments-body::-webkit-scrollbar { display:none; }
-.wx-moments-cover {
-    position: relative;
-    height: 300px;
-    background-color: #f0f0f0;
-    background-image: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    cursor: pointer;
-}
-.wx-moments-cover::after {
-    content: '';
-    position: absolute;
-    left: 0; right: 0; bottom: 0;
-    height: 80px;
-    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.35));
-    pointer-events: none;
-}
-.wx-moments-back, .wx-moments-add {
-    position: absolute;
-    top: 14px;
-    width: 34px; height: 34px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    cursor: pointer;
-    z-index: 3;
-    color: #1a1a1a;
-    padding: 0;
-}
-.wx-moments-back { left: 14px; }
-.wx-moments-add { right: 14px; }
-.wx-moments-back svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-.wx-moments-add svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; }
-.wx-moments-me {
-    position: absolute;
-    right: 16px border;
-    bottom: -30:px;
-    display: flex;
-    align -items: center;
-    gap:3 12px;
-    z-index: 2;
-}
-.wx-moments-me-name {
-    font-size: 16px;
-    font-weight: 500;
-    color: rgba(255,255,255,0.9);
-    text-shadow: 0 1px 4px rgba(0,0,0,0.35);
-    letter-spacing: 0.3px;
-}
-.wx-moments-me-avatar {
-    width: 64px;
-    height: 64px;
-    border-radius: 8px;
-    background: #e5e5e5;
-   px solid #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    color: #888;
-    font-weight: 600;
-}
-.wx-moments-me-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.wx-moments-list { padding-top: 46px; padding-bottom: 50px; }
-.wx-moment-item {
-    display: flex;
-    gap: 10px;
-    padding: 18px 16px;
-    align-items: flex-start;
-    position: relative;
-}
-.wx-moment-item + .wx-moment-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 82px;
-    right: 16px;
-    height: 1px;
-    background: #f5f5f5;
-}
-.wx-moment-date { width: 56px; flex-shrink: 0; text-align: left; padding-top: 2px; }
-.wx-moment-day { font-size: 30px; font-weight: 800; color: #1a1a1a; line-height: 1; letter-spacing: -1.5px; font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; }
-.wx-moment-month { font-size: 12px; color: #1a1a1a; font-weight: 700; margin-top: 3px; letter-spacing: 0.3px; }
-.wx-moment-content { flex: 1; display: flex; gap: 10px; align-items: flex-start; min-width: 0; }
-.wx-moment-img {
-    width: 110px;
-    height: 110px;
-    flex-shrink: 0;
-    background: #f0f0f0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    overflow: hidden;
-    color: #bbb;
-    font-size: 11px;
-}
-.wx-moment-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.wx-moment-text {
-    flex: 1;
-    font-size: 15px;
-    color: #1a1a1a;
-    line-height: 1.5;
-    padding-top: 6px;
-    word-break: break-word;
-    min-width: 0;
-    min-height: 24px;
-}
-.wx-moment-text:empty::before {
-    content: '双击编辑';
-    color: #ccc;
-    font-size: 13px;
-}
-.wx-moment-text[contenteditable="true"] { background: rgba(0,0,0,0.04); border-radius: 4px; outline: none; }
 .settings-panel { position:absolute; inset:0; z-index:230; background:#f5f5f7; border-radius:30px; overflow:hidden; transform:translateX(100%); transition:transform 0.32s; display:flex; flex-direction:column; }
 .settings-panel.open { transform:translateX(0); }
 .st-header { flex-shrink:0; height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 14px; background:#f5f5f7; border-bottom:1px solid #e5e5e7; position:relative; }
@@ -873,11 +768,7 @@ textarea.ct-field-input { min-height:90px; line-height:1.5; }
                     </div>
                     <div class="wx-discover-list">
                         <div class="wx-me-gap"></div>
-                        <div class="wx-discover-item" id="wxMomentsEntry">
-    <span class="wx-discover-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg></span>
-    <span class="wx-discover-name">朋友圈</span>
-    <span class="wx-discover-arrow">›</span>
-</div><span class="wx-discover-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg></span><span class="wx-discover-name">朋友圈</span><span class="wx-discover-arrow">›</span></div>
+                        <div class="wx-discover-item" id="wxMomentsEntry"><span class="wx-discover-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg></span><span class="wx-discover-name">朋友圈</span><span class="wx-discover-arrow">›</span></div>
                         <div class="wx-me-gap"></div>
                         <div class="wx-discover-item"><span class="wx-discover-icon"><svg viewBox="0 0 24 24"><path d="M3 8V5a2 2 0 0 1 2-2h3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3M3 12h18"/></svg></span><span class="wx-discover-name">扫一扫</span><span class="wx-discover-arrow">›</span></div>
                         <div class="wx-discover-item"><span class="wx-discover-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span><span class="wx-discover-name">搜一搜</span><span class="wx-discover-arrow">›</span></div>
@@ -1109,6 +1000,20 @@ textarea.ct-field-input { min-height:90px; line-height:1.5; }
             </div>
         </div>
 
+        <div class="wx-view wx-moments-view" id="wxMomentsView">
+            <div class="wx-moments-body">
+                <div class="wx-moments-cover" id="wxMomentsCover">
+                    <button class="wx-moments-back" id="wxMomentsBack"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+                    <button class="wx-moments-add" id="wxMomentsAddBtn"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+                    <div class="wx-moments-me">
+                        <div class="wx-moments-me-name" id="wxMomentsMeName">Koi Buono</div>
+                        <div class="wx-moments-me-avatar" id="wxMomentsMeAvatar"></div>
+                    </div>
+                </div>
+                <div class="wx-moments-list" id="wxMomentsList"></div>
+            </div>
+        </div>
+
         <div class="wx-recharge-mask" id="wxRechargeMask"></div>
         <div class="wx-recharge-sheet" id="wxRechargeSheet">
             <div class="wx-recharge-title">充值金额</div>
@@ -1218,19 +1123,7 @@ textarea.ct-field-input { min-height:90px; line-height:1.5; }
                 </div>
             </div>
         </div>
-<div class="wx-view wx-moments-view" id="wxMomentsView">
-    <div class="wx-moments-body">
-        <div class="wx-moments-cover" id="wxMomentsCover">
-            <button class="wx-moments-back" id="wxMomentsBack"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-            <button class="wx-moments-add" id="wxMomentsAddBtn"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
-            <div class="wx-moments-me">
-                <div class="wx-moments-me-name" id="wxMomentsMeName">Koi Buono</div>
-                <div class="wx-moments-me-avatar" id="wxMomentsMeAvatar"></div>
-            </div>
-        </div>
-        <div class="wx-moments-list" id="wxMomentsList"></div>
-    </div>
-</div>
+
         <div class="wx-toast" id="wxToast"></div>
     </div>
 
@@ -1368,7 +1261,6 @@ textarea.ct-field-input { min-height:90px; line-height:1.5; }
 <script>
 window.addEventListener('DOMContentLoaded', function() {
     try {
-
         function setFullscreenMode(on, persist) {
             document.body.classList.toggle('fs-mode', !!on);
             if (persist) { try { localStorage.setItem('fullscreen-mode', on ? '1' : '0'); } catch (e) {} }
@@ -1384,10 +1276,8 @@ window.addEventListener('DOMContentLoaded', function() {
                 document.body.style.height = '100%';
             }
         })();
-
         function $id(id) { return document.getElementById(id); }
         function $all(sel) { return document.querySelectorAll(sel); }
-
         function getAISettings() {
             return {
                 apiUrl: (localStorage.getItem('ai-api-url') || '').replace(/\/+$/, ''),
@@ -1404,7 +1294,6 @@ window.addEventListener('DOMContentLoaded', function() {
             prompt += '\n请始终保持角色一致性，用符合该角色的语气、性格和说话方式回复。';
             return prompt;
         }
-
         $all('[data-editable="true"]').forEach(function(el, index) {
             const key = 'editable-text-' + index;
             const saved = localStorage.getItem(key);
@@ -1422,7 +1311,6 @@ window.addEventListener('DOMContentLoaded', function() {
             });
             el.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); this.blur(); } });
         });
-
         const uploadTriggers = $all('[data-upload="true"]');
         const fileInput = $id('file-uploader');
         let currentTarget = null, currentUploadKey = null;
@@ -1454,8 +1342,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 r.readAsDataURL(file);
             });
         }
-
-        /* 美化App */
         (function() {
             const panel = $id('beautifyPanel');
             const entryBtn = $id('beautifyEntry');
@@ -1566,12 +1452,9 @@ window.addEventListener('DOMContentLoaded', function() {
                 r.readAsDataURL(file);
             });
             resetWp.addEventListener('click', function() { localStorage.removeItem('wallpaper'); setWallpaper(null); });
-
-            /* ===== 导出/导入美化 ===== */
             const exportBtn = $id('bpExportBtn');
             const importBtn = $id('bpImportBtn');
             const importFileInput = $id('bp-import-uploader');
-
             if (exportBtn) exportBtn.addEventListener('click', function() {
                 const data = {};
                 const exactKeys = ['wallpaper', 'fullscreen-mode'];
@@ -1579,20 +1462,11 @@ window.addEventListener('DOMContentLoaded', function() {
                 for (let i = 0; i < localStorage.length; i++) {
                     const k = localStorage.key(i);
                     if (!k) continue;
-                    if (exactKeys.indexOf(k) >= 0) {
-                        data[k] = localStorage.getItem(k);
-                    } else if (prefixes.some(function(p) { return k.indexOf(p) === 0; })) {
-                        data[k] = localStorage.getItem(k);
-                    }
+                    if (exactKeys.indexOf(k) >= 0) { data[k] = localStorage.getItem(k); }
+                    else if (prefixes.some(function(p) { return k.indexOf(p) === 0; })) { data[k] = localStorage.getItem(k); }
                 }
-                const payload = {
-                    app: 'koi-beautify',
-                    version: 1,
-                    exportedAt: new Date().toISOString(),
-                    data: data
-                };
-                const json = JSON.stringify(payload, null, 2);
-                const blob = new Blob([json], { type: 'application/json' });
+                const payload = { app: 'koi-beautify', version: 1, exportedAt: new Date().toISOString(), data: data };
+                const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
@@ -1603,14 +1477,9 @@ window.addEventListener('DOMContentLoaded', function() {
                 setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
                 alert('已导出 ' + Object.keys(data).length + ' 项配置。\niOS 用户请在"文件"App 的"下载"里查看。');
             });
-
-            if (importBtn) importBtn.addEventListener('click', function() {
-                importFileInput.click();
-            });
-
+            if (importBtn) importBtn.addEventListener('click', function() { importFileInput.click(); });
             if (importFileInput) importFileInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
+                const file = e.target.files[0]; if (!file) return;
                 const reader = new FileReader();
                 reader.onload = function(ev) {
                     try {
@@ -1623,19 +1492,14 @@ window.addEventListener('DOMContentLoaded', function() {
                         });
                         alert('成功导入 ' + count + ' 项美化配置。\n页面即将刷新以应用更改。');
                         setTimeout(function() { location.reload(); }, 600);
-                    } catch (err) {
-                        alert('导入失败：文件格式不正确');
-                    }
+                    } catch (err) { alert('导入失败：文件格式不正确'); }
                     importFileInput.value = '';
                 };
                 reader.readAsText(file);
             });
-
             entryBtn.addEventListener('click', function() { panel.classList.add('open'); });
             backBtn.addEventListener('click', function() { panel.classList.remove('open'); });
         })();
-
-        /* 微信App */
         (function() {
             const entry = $id('wechatEntry');
             const panel = $id('wechatPanel');
@@ -1736,11 +1600,9 @@ window.addEventListener('DOMContentLoaded', function() {
             const wxFamilyGivenSection = $id('wxFamilyGivenSection');
             const wxFamilyGivenList = $id('wxFamilyGivenList');
             const wxFamilyEmpty = $id('wxFamilyEmpty');
-
             let activeChar = null;
             let toastTimer = null;
             let pendingAcceptTarget = null;
-
             function showToast(msg, d) {
                 if (!toastEl) return;
                 toastEl.textContent = msg; toastEl.classList.add('show');
@@ -1766,7 +1628,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 activeChar = null;
             }
             $all('[data-wx-exit]').forEach(function(b) { b.addEventListener('click', exitToDesktop); });
-
             function getContactChars() { try { return JSON.parse(localStorage.getItem('contact-chars') || '[]'); } catch(e) { return []; } }
             function getWxAddedIds() { try { const v = JSON.parse(localStorage.getItem('wx-added-chars') || '[]'); return Array.isArray(v) ? v : []; } catch(e) { return []; } }
             function saveWxAddedIds(ids) { try { localStorage.setItem('wx-added-chars', JSON.stringify(ids)); } catch(e){} }
@@ -1805,13 +1666,11 @@ window.addEventListener('DOMContentLoaded', function() {
                 if (d.toDateString() === yesterday.toDateString()) return '昨天 ' + hh + ':' + mm;
                 return (d.getMonth()+1) + '月' + d.getDate() + '日';
             }
-
             function getReceivedCards() { try { return JSON.parse(localStorage.getItem('wx-family-received') || '[]'); } catch(e){ return []; } }
             function saveReceivedCards(list) { try { localStorage.setItem('wx-family-received', JSON.stringify(list)); } catch(e){} }
             function getGivenCards() { try { return JSON.parse(localStorage.getItem('wx-family-given') || '[]'); } catch(e){ return []; } }
             function saveGivenCards(list) { try { localStorage.setItem('wx-family-given', JSON.stringify(list)); } catch(e){} }
             function findReceivedCardFrom(charId) { return getReceivedCards().find(function(c) { return c.fromCharId === charId; }); }
-
             let bills = null;
             try { bills = JSON.parse(localStorage.getItem('wx-bills') || 'null'); } catch(e){ bills = null; }
             if (!Array.isArray(bills)) { bills = []; try { localStorage.setItem('wx-bills', JSON.stringify(bills)); } catch(e){} }
@@ -1845,7 +1704,6 @@ window.addEventListener('DOMContentLoaded', function() {
                     billList.appendChild(item);
                 });
             }
-
             let walletAmount = parseFloat(localStorage.getItem('wx-wallet-balance'));
             if (isNaN(walletAmount)) walletAmount = 0;
             let walletHidden = false;
@@ -1859,7 +1717,6 @@ window.addEventListener('DOMContentLoaded', function() {
             walletEye.addEventListener('click', function(e) { e.stopPropagation(); walletHidden = !walletHidden; renderWalletBalance(); });
             walletEntry.addEventListener('click', function() { renderWalletBalance(); walletView.classList.add('active'); });
             walletBack.addEventListener('click', function() { walletView.classList.remove('active'); });
-
             function renderFamilyCards() {
                 const received = getReceivedCards();
                 const given = getGivenCards();
@@ -1894,7 +1751,6 @@ window.addEventListener('DOMContentLoaded', function() {
             }
             wxFamilyBack.addEventListener('click', function() { wxFamilyView.classList.remove('active'); });
             familyCardEntry.addEventListener('click', function(e) { e.stopPropagation(); renderFamilyCards(); wxFamilyView.classList.add('active'); });
-
             function openRecharge() {
                 rechargeInput.value = '';
                 rechargeMask.classList.add('show'); rechargeSheet.classList.add('show');
@@ -1922,7 +1778,6 @@ window.addEventListener('DOMContentLoaded', function() {
             rechargeInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); rechargeConfirm.click(); } });
             billEntry.addEventListener('click', function(e) { e.stopPropagation(); renderBills(); billView.classList.add('active'); });
             billBack.addEventListener('click', function() { billView.classList.remove('active'); });
-
             function renderChatList() {
                 if (!chatListEl) return;
                 chatListEl.innerHTML = '';
@@ -1978,7 +1833,6 @@ window.addEventListener('DOMContentLoaded', function() {
                     chatListEl.appendChild(item);
                 });
             }
-
             const topContactEntries = [
                 { svg:'<svg viewBox="0 0 24 24"><circle cx="10" cy="8" r="3.5"/><path d="M3 20c0-3.3 3.1-5.5 7-5.5s7 2.2 7 5.5"/><path d="M17 10h6M20 7v6"/></svg>', bg:'#f0a93b', name:'新的朋友' },
                 { svg:'<svg viewBox="0 0 24 24"><path d="M20 12V7a2 2 0 0 0-2-2l-3.5-2L12 5 9.5 3 6 5a2 2 0 0 0-2 2v5a8 8 0 0 0 8 8 8 8 0 0 0 8-8z"/><path d="M9 11h6M12 8v6"/></svg>', bg:'#5eb95e', name:'标签和权限' },
@@ -1986,7 +1840,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 { svg:'<svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>', bg:'#4a90d9', name:'企业微信联系人' },
                 { svg:'<svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>', bg:'#4a90d9', name:'公众号、服务号和企业号' }
             ];
-
             function renderContacts() {
                 if (!contactsListEl) return;
                 contactsListEl.innerHTML = '';
@@ -2033,7 +1886,6 @@ window.addEventListener('DOMContentLoaded', function() {
                     contactsListEl.appendChild(item);
                 });
             }
-
             function openChat(char) {
                 activeChar = char;
                 chatNameEl.textContent = getDisplayName(char);
@@ -2045,7 +1897,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 inputEl.value = '';
                 setTimeout(function() { inputEl.focus(); }, 200);
             }
-
             function createMsgAvatar(m, char) {
                 const av = document.createElement('div'); av.className = 'wx-msg-avatar';
                 if (m.role === 'user') {
@@ -2059,7 +1910,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 }
                 return av;
             }
-
             function renderMessages() {
                 if (!activeChar) return;
                 const history = getChatHistory(activeChar.id);
@@ -2097,7 +1947,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 });
                 setTimeout(function() { msgListEl.scrollTop = msgListEl.scrollHeight; }, 30);
             }
-
             function buildTransferCard(m, idx) {
                 const card = document.createElement('div');
                 card.className = 'wx-transfer-card';
@@ -2139,7 +1988,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 });
                 return card;
             }
-
             function buildFamilyCard(m, idx) {
                 const card = document.createElement('div');
                 card.className = 'wx-family-card';
@@ -2169,7 +2017,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 });
                 return card;
             }
-
             function sendUserMessageOnly() {
                 const text = inputEl.value.trim();
                 if (!text || !activeChar) return false;
@@ -2181,7 +2028,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 renderChatList();
                 return true;
             }
-
             async function triggerAIReply() {
                 if (!activeChar) return;
                 const history = getChatHistory(activeChar.id);
@@ -2235,7 +2081,6 @@ window.addEventListener('DOMContentLoaded', function() {
                     renderChatList();
                 }
             }
-
             function checkUserIntentAndGift(charId) {
                 const h = getChatHistory(charId);
                 let lastUserMsg = null;
@@ -2268,7 +2113,6 @@ window.addEventListener('DOMContentLoaded', function() {
                     }, 1000);
                 }
             }
-
             if (inputEl) inputEl.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); sendUserMessageOnly(); } });
             if (voiceBtn) voiceBtn.addEventListener('click', function() { sendUserMessageOnly(); triggerAIReply(); });
             if (faceBtn) faceBtn.addEventListener('click', function() {
@@ -2288,7 +2132,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 else { plusDot1.classList.add('active'); plusDot0.classList.remove('active'); }
             });
             if (inputEl) inputEl.addEventListener('focus', closeAllPanels);
-
             $all('.wx-plus-item').forEach(function(it) {
                 if (it.id === 'wxPlusTransfer' || it.id === 'wxPlusFamilyCard') return;
                 it.addEventListener('click', function() {
@@ -2296,7 +2139,6 @@ window.addEventListener('DOMContentLoaded', function() {
                     showToast(label + '（占位，暂未实现）');
                 });
             });
-
             function refreshTransferFamilyRow() {
                 if (!activeChar) { wxTransferFamilyRow.classList.remove('show'); return; }
                 const card = findReceivedCardFrom(activeChar.id);
@@ -2393,7 +2235,6 @@ window.addEventListener('DOMContentLoaded', function() {
                     renderWalletBalance();
                 }, 2200);
             });
-
             function openFamilyCardSheet() {
                 if (!activeChar) return;
                 closeAllPanels();
@@ -2449,7 +2290,6 @@ window.addEventListener('DOMContentLoaded', function() {
                     renderChatList();
                 }, 2200);
             });
-
             if (wxAcceptReject) wxAcceptReject.addEventListener('click', function() {
                 if (!pendingAcceptTarget) return;
                 const charId = pendingAcceptTarget.charId;
@@ -2488,7 +2328,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 renderChatList();
                 showToast('已接受');
             });
-
             if (backBtn) backBtn.addEventListener('click', function() {
                 chatViewEl.classList.remove('active');
                 chatSettingsView.classList.remove('active');
@@ -2496,7 +2335,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 activeChar = null;
                 renderChatList(); renderContacts();
             });
-
             function renderCharPicker() {
                 charPickerList.innerHTML = '';
                 const allChars = getContactChars();
@@ -2535,7 +2373,6 @@ window.addEventListener('DOMContentLoaded', function() {
             if (addBtn) addBtn.addEventListener('click', function() { renderCharPicker(); charPicker.classList.add('show'); });
             if (charPickerClose) charPickerClose.addEventListener('click', function() { charPicker.classList.remove('show'); });
             if (charPicker) charPicker.addEventListener('click', function(e) { if (e.target === charPicker) charPicker.classList.remove('show'); });
-
             if (chatMoreBtn) chatMoreBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 if (!activeChar) return;
@@ -2687,7 +2524,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 renderChatList(); renderContacts();
                 showToast('已删除');
             });
-
             const tabEls = $all('.wx-tab');
             const pageMap = { chat: $id('wxPageChat'), contacts: $id('wxPageContacts'), discover: $id('wxPageDiscover'), me: $id('wxPageMe') };
             tabEls.forEach(function(tab) {
@@ -2710,7 +2546,6 @@ window.addEventListener('DOMContentLoaded', function() {
                     if (key === 'contacts') renderContacts();
                 });
             });
-
             entry.addEventListener('click', function() {
                 renderChatList(); renderContacts();
                 panel.classList.add('open');
@@ -2730,7 +2565,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 charPicker.classList.remove('show');
                 closeAllPanels();
             });
-
             const meAvatar = $id('wxMeAvatar');
             const avatarUploader = $id('wx-avatar-uploader');
             const sa = localStorage.getItem('wx-me-avatar');
@@ -2747,7 +2581,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 };
                 r.readAsDataURL(file);
             });
-
             const meId = $id('wxMeId');
             const meName = $id('wxMeName');
             const sid = localStorage.getItem('wx-me-id'); if (sid && meId) meId.textContent = sid;
@@ -2768,25 +2601,126 @@ window.addEventListener('DOMContentLoaded', function() {
                 el.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); this.blur(); } });
             }
             bindDblEdit(meId, 'wx-me-id');
-                          
+            bindDblEdit(meName, 'wx-me-name');
+            renderChatList();
+            renderContacts();
+
+            const momentsView = $id('wxMomentsView');
+            const momentsCover = $id('wxMomentsCover');
+            const momentsList = $id('wxMomentsList');
+            const momentsMeName = $id('wxMomentsMeName');
+            const momentsMeAvatar = $id('wxMomentsMeAvatar');
+            const momentsBack = $id('wxMomentsBack');
+            const momentsAddBtn = $id('wxMomentsAddBtn');
+            const momentsEntry = $id('wxMomentsEntry');
+            const momentsCoverUploader = $id('wx-moments-cover-uploader');
+            const momentsImgUploader = $id('wx-moments-img-uploader');
+            let currentMomentIdx = -1;
+
+            function syncMomentsMe() {
+                if (!momentsMeName || !momentsMeAvatar) return;
+                const nm = localStorage.getItem('wx-me-name') || 'Koi Buono';
+                const av = localStorage.getItem('wx-me-avatar') || '';
+                momentsMeName.textContent = nm;
+                momentsMeAvatar.innerHTML = '';
+                if (av) {
+                    const img = document.createElement('img');
+                    img.src = av;
+                    momentsMeAvatar.appendChild(img);
+                } else {
+                    momentsMeAvatar.textContent = nm.charAt(0);
+                }
+            }
+            function getMoments() {
+                try {
+                    const raw = localStorage.getItem('wx-moments');
+                    if (raw) { const v = JSON.parse(raw); if (Array.isArray(v)) return v; }
+                } catch(e){}
+                return [
+                    { id: 'm1', day: '23', month: 'Sep', text: 'relationship (kittyflower)', image: '' },
+                    { id: 'm2', day: '22', month: 'Sep', text: '别再自卑了', image: '' },
+                    { id: 'm3', day: '21', month: 'Sep', text: '(> <)', image: '' },
+                    { id: 'm4', day: '12', month: 'Sep', text: '', image: '' }
+                ];
+            }
+            function saveMoments(list) { try { localStorage.setItem('wx-moments', JSON.stringify(list)); } catch(e){} }
+            function applyMomentsCover() {
+                if (!momentsCover) return;
+                const bg = localStorage.getItem('wx-moments-cover');
+                if (bg) { momentsCover.style.backgroundImage = 'url("' + bg + '")'; }
+                else { momentsCover.style.backgroundImage = ''; }
+            }
+            function renderMoments() {
+                if (!momentsList) return;
+                momentsList.innerHTML = '';
+                const list = getMoments();
+                list.forEach(function(m, idx) {
+                    const item = document.createElement('div');
+                    item.className = 'wx-moment-item';
+                    const date = document.createElement('div');
+                    date.className = 'wx-moment-date';
+                    const day = document.createElement('div');
+                    day.className = 'wx-moment-day';
+                    day.textContent = m.day || '1';
+                    const mon = document.createElement('div');
+                    mon.className = 'wx-moment-month';
+                    mon.textContent = m.month || 'Jan';
+                    date.appendChild(day); date.appendChild(mon);
+                    const content = document.createElement('div');
+                    content.className = 'wx-moment-content';
+                    const imgBox = document.createElement('div');
+                    imgBox.className = 'wx-moment-img';
+                    if (m.image) {
+                        const im = document.createElement('img');
+                        im.src = m.image;
+                        imgBox.appendChild(im);
+                    } else {
+                        imgBox.textContent = '点击上传';
+                    }
+                    imgBox.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        currentMomentIdx = idx;
+                        momentsImgUploader.click();
+                    });
+                    const text = document.createElement('div');
+                    text.className = 'wx-moment-text';
+                    text.textContent = m.text || '';
+                    text.addEventListener('dblclick', function(e) {
+                        e.stopPropagation();
+                        this.contentEditable = 'true';
+                        this.focus();
+                        const r = document.createRange(); const s = window.getSelection();
+                        r.selectNodeContents(this); r.collapse(false);
+                        s.removeAllRanges(); s.addRange(r);
+                    });
+                    text.addEventListener('blur', function() {
+                        this.contentEditable = 'false';
+                        const arr = getMoments();
+                        if (arr[idx]) { arr[idx].text = this.textContent; saveMoments(arr); }
+                    });
+                    text.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter') { e.preventDefault(); this.blur(); }
+                    });
+                    content.appendChild(imgBox); content.appendChild(text);
+                    item.appendChild(date); item.appendChild(content);
+                    momentsList.appendChild(item);
+                });
+            }
             function openMoments() {
                 syncMomentsMe();
                 applyMomentsCover();
                 renderMoments();
                 if (momentsView) momentsView.classList.add('active');
             }
-
             if (momentsEntry) momentsEntry.addEventListener('click', openMoments);
             if (momentsBack) momentsBack.addEventListener('click', function(e) {
                 e.stopPropagation();
                 if (momentsView) momentsView.classList.remove('active');
             });
-
             if (momentsCover) momentsCover.addEventListener('click', function(e) {
                 if (e.target.closest('.wx-moments-back') || e.target.closest('.wx-moments-add') || e.target.closest('.wx-moments-me-avatar')) return;
                 momentsCoverUploader.click();
             });
-
             if (momentsCoverUploader) momentsCoverUploader.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -2798,8 +2732,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 };
                 r.readAsDataURL(file);
             });
-
-    if (momentsImgUploader) momentsImgUploader.addEventListener('change', function(e) {
+            if (momentsImgUploader) momentsImgUploader.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (!file || currentMomentIdx < 0) return;
                 const idx = currentMomentIdx;
@@ -2816,7 +2749,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 };
                 r.readAsDataURL(file);
             });
-
             if (momentsAddBtn) momentsAddBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 const now = new Date();
@@ -2834,8 +2766,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 renderMoments();
             });
         })();
-
-        /* 联系人App */
         (function() {
             const entryBtn = $id('contactEntry');
             const panel = $id('contactPanel');
@@ -2864,14 +2794,12 @@ window.addEventListener('DOMContentLoaded', function() {
             let chars = [];
             let editingId = null;
             let editingAvatar = '';
-
             function loadChars() {
                 try { const raw = localStorage.getItem(STORAGE_KEY); chars = raw ? JSON.parse(raw) : []; if (!Array.isArray(chars)) chars = []; }
                 catch(e) { chars = []; }
             }
             function saveChars() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(chars)); } catch(e){} }
             function uid() { return 'c_' + Date.now() + '_' + Math.floor(Math.random()*9999); }
-
             let toastTimer = null;
             function showToast(msg, d) {
                 if (!toastEl) return;
@@ -2879,7 +2807,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 if (toastTimer) clearTimeout(toastTimer);
                 toastTimer = setTimeout(function() { toastEl.classList.remove('show'); }, d || 1500);
             }
-
             function renderList() {
                 if (!listEl) return;
                 listEl.innerHTML = '';
@@ -2893,9 +2820,9 @@ window.addEventListener('DOMContentLoaded', function() {
                     const info = document.createElement('div'); info.className = 'ct-list-info';
                     const nm = document.createElement('div'); nm.className = 'ct-list-name'; nm.textContent = c.name || '未命名';
                     const rel = document.createElement('div'); rel.className = 'ct-list-relation';
-                    rel.textContent = c.relation || (c.setting ? c.setting.slice(0,20) : '未设置关系');
-                    info.appendChild(nm); info.appendChild(rel);
-                    const arrow = document.createElement('div'); arrow.className = 'ct-list-arrow';
+                    rel.textContent = c.relation || (c.setting ? c.setting.slice( view0,20) : '未设置关系Box');
+                    info.appendChild(nm="); info.appendChild(rel);
+                    const arrow =0 document.createElement('div');  arrow.className = 'ct-list-0arrow';
                     arrow.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>';
                     item.appendChild(av); item.appendChild(info); item.appendChild(arrow);
                     item.addEventListener('click', function() { openEdit(c.id); });
@@ -2916,7 +2843,7 @@ window.addEventListener('DOMContentLoaded', function() {
             function setAvatarPreview(url) {
                 avatarUploader.innerHTML = '';
                 if (url) { const img = document.createElement('img'); img.src = url; avatarUploader.appendChild(img); }
-                else { avatarUploader.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>'; }
+                else { avatarUploader.innerHTML = '<svg 24 24"><path d="M12 5v14M5 12h14"/></svg>'; }
             }
             function openCreate() {
                 editingId = null; editingAvatar = '';
@@ -2989,8 +2916,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 panel.classList.add('open');
             });
         })();
-
-        /* API App */
         (function() {
             const entryBtn = $id('settingsEntry');
             const panel = $id('settingsPanel');
@@ -3007,14 +2932,12 @@ window.addEventListener('DOMContentLoaded', function() {
             const presetNameInput = $id('stPresetName');
             const savePresetBtn = $id('stSavePresetBtn');
             const presetListEl = $id('stPresetList');
-
             apiUrlInput.value = localStorage.getItem('ai-api-url') || '';
             apiKeyInput.value = localStorage.getItem('ai-api-key') || '';
             const savedModel = localStorage.getItem('ai-model') || '';
             const savedTemp = parseFloat(localStorage.getItem('ai-temperature') || '1');
             tempSlider.value = savedTemp;
             tempValue.textContent = savedTemp.toFixed(1);
-
             try {
                 const models = JSON.parse(localStorage.getItem('ai-models') || '[]');
                 if (models.length > 0) {
@@ -3026,7 +2949,6 @@ window.addEventListener('DOMContentLoaded', function() {
                     });
                 }
             } catch(e){}
-
             tempSlider.addEventListener('input', function() { tempValue.textContent = parseFloat(tempSlider.value).toFixed(1); });
             fetchModelsBtn.addEventListener('click', async function() {
                 const url = apiUrlInput.value.trim().replace(/\/+$/, '');
@@ -3083,7 +3005,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 localStorage.setItem('ai-temperature', parseFloat(tempSlider.value).toString());
                 alert('已保存设置');
             });
-
             function getPresets() {
                 try { const v = JSON.parse(localStorage.getItem('ai-presets') || '[]'); return Array.isArray(v) ? v : []; } catch(e) { return []; }
             }
@@ -3133,11 +3054,9 @@ window.addEventListener('DOMContentLoaded', function() {
                 alert('已保存预设：' + name);
             });
             renderPresetList();
-
             entryBtn.addEventListener('click', function() { panel.classList.add('open'); });
             backBtn.addEventListener('click', function() { panel.classList.remove('open'); });
         })();
-
     } catch (err) {
         console.error('初始化错误:', err);
         alert('页面初始化出错：' + err.message);
