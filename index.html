@@ -707,6 +707,14 @@ textarea.ct-field-input { min-height:90px; line-height:1.5; }
             </div>
             <div class="bp-section-title">App 列表</div>
             <div class="bp-app-list" id="bpAppList"></div>
+```html
+            <div class="bp-section-title">备份与恢复</div>
+            <div class="bp-btn-row">
+                <button class="bp-btn" id="bpExportBtn">导出美化</button>
+                <button class="bp-btn bp-btn-ghost" id="bpImportBtn">导入美化</button>
+            </div>
+            <div class="bp-tip">导出会打包壁纸、图标、名称、文本等所有美化内容。<br>导入后页面会自动刷新。</div>
+```
             <div class="bp-tip">点击图标从相册选图，输入框可直接改名。<br>所有修改实时同步到桌面并自动保存。</div>
         </div>
     </div>
@@ -1207,7 +1215,11 @@ textarea.ct-field-input { min-height:90px; line-height:1.5; }
 
 <input type="file" id="file-uploader" accept="image/*" style="display:none;">
 <input type="file" id="bp-icon-uploader" accept="image/*" style="display:none;">
-<input type="file" id="bp-wallpaper-uploader" accept="image/*" style="display:none;">
+<input type="file" id="bp-wallpaper-uploader"
+```html
+<input type="file" id="bp-import-uploader" accept=".json,application/json" style="display:none;">
+```
+ accept="image/*" style="display:none;">
 <input type="file" id="wx-avatar-uploader" accept="image/*" style="display:none;">
 <input type="file" id="wx-chat-avatar-uploader" accept="image/*" style="display:none;">
 <input type="file" id="wx-chat-my-avatar-uploader" accept="image/*" style="display:none;">
@@ -1416,6 +1428,69 @@ window.addEventListener('DOMContentLoaded', function() {
                 r.readAsDataURL(file);
             });
             resetWp.addEventListener('click', function() { localStorage.removeItem('wallpaper'); setWallpaper(null); });
+/* ===== 导出/导入美化 ===== */
+            const exportBtn = $id('bpExportBtn');
+            const importBtn = $id('bpImportBtn');
+            const importFileInput = $id('bp-import-uploader');
+
+            if (exportBtn) exportBtn.addEventListener('click', function() {
+                const data = {};
+                const exactKeys = ['wallpaper', 'fullscreen-mode'];
+                const prefixes = ['app-icon-', 'app-name-', 'editable-text-', 'uploaded-img-'];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i);
+                    if (!k) continue;
+                    if (exactKeys.indexOf(k) >= 0) {
+                        data[k] = localStorage.getItem(k);
+                    } else if (prefixes.some(function(p) { return k.indexOf(p) === 0; })) {
+                        data[k] = localStorage.getItem(k);
+                    }
+                }
+                const payload = {
+                    app: 'koi-beautify',
+                    version: 1,
+                    exportedAt: new Date().toISOString(),
+                    data: data
+                };
+                const json = JSON.stringify(payload, null, 2);
+                const blob = new Blob([json], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'koi-beautify-' + new Date().toISOString().slice(0, 10) + '.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+                alert('已导出 ' + Object.keys(data).length + ' 项配置。\niOS 用户请在"文件"App 的"下载"里查看。');
+            });
+
+            if (importBtn) importBtn.addEventListener('click', function() {
+                importFileInput.click();
+            });
+
+            if (importFileInput) importFileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    try {
+                        const parsed = JSON.parse(ev.target.result);
+                        const data = parsed && parsed.data ? parsed.data : parsed;
+                        if (!data || typeof data !== 'object') throw new Error('格式错误');
+                        let count = 0;
+                        Object.keys(data).forEach(function(k) {
+                            try { localStorage.setItem(k, data[k]); count++; } catch(err) {}
+                        });
+                        alert('成功导入 ' + count + ' 项美化配置。\n页面即将刷新以应用更改。');
+                        setTimeout(function() { location.reload(); }, 600);
+                    } catch (err) {
+                        alert('导入失败：文件格式不正确');
+                    }
+                    importFileInput.value = '';
+                };
+                reader.readAsText(file);
+            });
             entryBtn.addEventListener('click', function() { panel.classList.add('open'); });
             backBtn.addEventListener('click', function() { panel.classList.remove('open'); });
         })();
