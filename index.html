@@ -3733,5 +3733,209 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
 else{setTimeout(init,300);}
 })();
 </script>
+
+<script>
+(function(){
+function init(){
+var phone=document.querySelector('.phone-container');
+if(!phone)return;
+if(document.getElementById('qqMusicPanel'))return;
+
+var style=document.createElement('style');
+style.textContent=
+'.qqmusic-panel{position:absolute;inset:0;z-index:240;background:linear-gradient(180deg,#3a3a3a 0%,#1a1a1a 100%);color:#fff;transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;border-radius:30px;overflow:hidden}'+
+'body.fs-mode .qqmusic-panel{border-radius:0}'+
+'.qqmusic-panel.open{transform:translateX(0)}'+
+'.qm-nav{flex-shrink:0;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 14px}'+
+'.qm-nav button{background:transparent;border:none;color:#fff;font-size:15px;cursor:pointer;padding:6px 4px;display:flex;align-items:center;gap:3px;font-family:inherit}'+
+'.qm-nav button svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}'+
+'.qm-nav .title{font-size:16px;font-weight:600}'+
+'.qm-body{flex:1;display:flex;flex-direction:column;padding:0 22px 20px;overflow-y:auto;-webkit-overflow-scrolling:touch}'+
+'.qm-body::-webkit-scrollbar{display:none}'+
+'.qm-disc{width:200px;height:200px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#4a4a4a,#0f0f0f);margin:14px auto 22px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 30px rgba(0,0,0,.5);flex-shrink:0;position:relative;overflow:hidden}'+
+'.qm-disc::before{content:"";position:absolute;width:54px;height:54px;border-radius:50%;background:#0a0a0a;box-shadow:inset 0 0 8px rgba(0,0,0,.8)}'+
+'.qm-disc.playing{animation:qmSpin 8s linear infinite}'+
+'@keyframes qmSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}'+
+'.qm-disc svg{width:54px;height:54px;stroke:#3a3a3a;fill:none;stroke-width:1.5;position:relative;z-index:1}'+
+'.qm-title{text-align:center;font-size:16px;font-weight:600;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 10px}'+
+'.qm-subtitle{text-align:center;font-size:11px;color:#888;margin-bottom:20px}'+
+'.qm-progress{display:flex;align-items:center;gap:10px;font-size:10px;color:#888;margin-bottom:18px}'+
+'.qm-progress input{flex:1;-webkit-appearance:none;height:3px;background:#444;border-radius:2px;outline:none;cursor:pointer}'+
+'.qm-progress input::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:#fff;cursor:pointer}'+
+'.qm-controls{display:flex;justify-content:center;align-items:center;gap:28px;margin-bottom:22px}'+
+'.qm-controls button{background:transparent;border:none;color:#fff;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}'+
+'.qm-controls button svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}'+
+'.qm-controls .qm-play{width:60px;height:60px;border-radius:50%;background:#fff;color:#1a1a1a}'+
+'.qm-controls .qm-play svg{width:26px;height:26px}'+
+'.qm-controls button:disabled{opacity:.3;cursor:not-allowed}'+
+'.qm-upload-row{display:flex;gap:10px;margin-bottom:16px}'+
+'.qm-upload-btn{flex:1;padding:11px 0;border:none;border-radius:10px;background:rgba(255,255,255,.14);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit}'+
+'.qm-upload-btn:active{background:rgba(255,255,255,.22)}'+
+'.qm-list-title{font-size:11px;color:#888;margin-bottom:8px;letter-spacing:.5px}'+
+'.qm-list{display:flex;flex-direction:column;gap:2px;padding-bottom:8px}'+
+'.qm-list-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:#ddd}'+
+'.qm-list-item:active{background:rgba(255,255,255,.06)}'+
+'.qm-list-item.active{background:rgba(49,194,124,.18);color:#31c27c}'+
+'.qm-list-item svg{width:14px;height:14px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2}'+
+'.qm-list-item .qm-item-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
+'.qm-list-item .qm-item-del{padding:4px 8px;color:#888;font-size:12px;border:none;background:transparent;cursor:pointer;font-family:inherit}'+
+'.qm-list-empty{text-align:center;color:#666;font-size:12px;padding:20px}';
+document.head.appendChild(style);
+
+var panel=document.createElement('div');
+panel.className='qqmusic-panel';
+panel.id='qqMusicPanel';
+panel.innerHTML='<div class="qm-nav"><button id="qmBack"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>返回</button><span class="title">QQ音乐</span><span style="width:52px"></span></div><div class="qm-body"><div class="qm-disc" id="qmDisc"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></div><div class="qm-title" id="qmTitle">未选择音乐</div><div class="qm-subtitle" id="qmSubtitle">点击下方上传 mp3 文件</div><div class="qm-progress"><span id="qmCur">0:00</span><input type="range" id="qmSlider" min="0" max="1000" value="0"><span id="qmDur">0:00</span></div><div class="qm-controls"><button id="qmPrev"><svg viewBox="0 0 24 24"><polygon points="19,20 9,12 19,4" fill="currentColor" stroke="none"/><line x1="5" y1="19" x2="5" y2="5"/></svg></button><button class="qm-play" id="qmPlay"><svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20" fill="currentColor" stroke="none"/></svg></button><button id="qmNext"><svg viewBox="0 0 24 24"><polygon points="5,4 15,12 5,20" fill="currentColor" stroke="none"/><line x1="19" y1="5" x2="19" y2="19"/></svg></button></div><div class="qm-upload-row"><button class="qm-upload-btn" id="qmUploadBtn">＋ 上传 mp3</button></div><div class="qm-list-title">播放列表</div><div class="qm-list" id="qmList"></div></div>';
+phone.appendChild(panel);
+
+var audio=document.createElement('audio');
+audio.id='koiGlobalAudio';
+audio.style.display='none';
+audio.preload='metadata';
+document.body.appendChild(audio);
+
+var backBtn=panel.querySelector('#qmBack');
+var disc=panel.querySelector('#qmDisc');
+var titleEl=panel.querySelector('#qmTitle');
+var subtitleEl=panel.querySelector('#qmSubtitle');
+var curEl=panel.querySelector('#qmCur');
+var durEl=panel.querySelector('#qmDur');
+var slider=panel.querySelector('#qmSlider');
+var playBtn=panel.querySelector('#qmPlay');
+var prevBtn=panel.querySelector('#qmPrev');
+var nextBtn=panel.querySelector('#qmNext');
+var uploadBtn=panel.querySelector('#qmUploadBtn');
+var listEl=panel.querySelector('#qmList');
+
+var playlist=[];
+var currentIndex=-1;
+
+var input=document.createElement('input');
+input.type='file';
+input.accept='audio/*';
+input.multiple=true;
+input.style.display='none';
+document.body.appendChild(input);
+
+function fmt(t){if(!isFinite(t)||t<0)t=0;var m=Math.floor(t/60),s=Math.floor(t%60);return m+':'+String(s).padStart(2,'0');}
+
+function renderList(){
+listEl.innerHTML='';
+if(playlist.length===0){listEl.innerHTML='<div class="qm-list-empty">暂无音乐，点击上方上传</div>';return;}
+playlist.forEach(function(t,i){
+var item=document.createElement('div');
+item.className='qm-list-item'+(i===currentIndex?' active':'');
+item.innerHTML='<svg viewBox="0 0 24 24"><circle cx="7" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M10 18V6l11-2v12"/></svg><span class="qm-item-name"></span><button class="qm-item-del">删除</button>';
+item.querySelector('.qm-item-name').textContent=t.name;
+item.querySelector('.qm-item-del').addEventListener('click',function(e){
+e.stopPropagation();
+var idx=i;
+if(idx===currentIndex){audio.pause();audio.removeAttribute('src');audio.load();currentIndex=-1;updateNowPlaying();}
+else if(idx<currentIndex){currentIndex--;}
+playlist.splice(idx,1);
+renderList();
+});
+item.addEventListener('click',function(){playIndex(i);});
+listEl.appendChild(item);
+});
+}
+
+function updateNowPlaying(){
+if(currentIndex<0||!playlist[currentIndex]){
+titleEl.textContent='未选择音乐';
+subtitleEl.textContent='点击下方上传 mp3 文件';
+playBtn.innerHTML='<svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20" fill="currentColor" stroke="none"/></svg>';
+disc.classList.remove('playing');
+slider.value=0;curEl.textContent='0:00';durEl.textContent='0:00';
+prevBtn.disabled=playlist.length<2;
+nextBtn.disabled=playlist.length<2;
+return;
+}
+var t=playlist[currentIndex];
+titleEl.textContent=t.name;
+subtitleEl.textContent=(currentIndex+1)+' / '+playlist.length;
+prevBtn.disabled=playlist.length<2;
+nextBtn.disabled=playlist.length<2;
+if(!audio.paused){
+playBtn.innerHTML='<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="currentColor" stroke="none"/><rect x="14" y="4" width="4" height="16" fill="currentColor" stroke="none"/></svg>';
+disc.classList.add('playing');
+}else{
+playBtn.innerHTML='<svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20" fill="currentColor" stroke="none"/></svg>';
+disc.classList.remove('playing');
+}
+}
+
+function playIndex(i){
+if(i<0||i>=playlist.length)return;
+currentIndex=i;
+audio.src=playlist[i].url;
+audio.play().catch(function(){});
+updateNowPlaying();
+renderList();
+}
+
+playBtn.addEventListener('click',function(){
+if(currentIndex<0){if(playlist.length>0)playIndex(0);return;}
+if(audio.paused)audio.play().catch(function(){});
+else audio.pause();
+updateNowPlaying();
+});
+prevBtn.addEventListener('click',function(){if(playlist.length===0)return;playIndex((currentIndex-1+playlist.length)%playlist.length);});
+nextBtn.addEventListener('click',function(){if(playlist.length===0)return;playIndex((currentIndex+1)%playlist.length);});
+
+audio.addEventListener('timeupdate',function(){
+if(audio.duration&&isFinite(audio.duration)){
+slider.value=Math.round((audio.currentTime/audio.duration)*1000);
+curEl.textContent=fmt(audio.currentTime);
+}
+});
+audio.addEventListener('loadedmetadata',function(){durEl.textContent=fmt(audio.duration);});
+audio.addEventListener('ended',function(){
+if(playlist.length>1)playIndex((currentIndex+1)%playlist.length);
+else updateNowPlaying();
+});
+audio.addEventListener('play',updateNowPlaying);
+audio.addEventListener('pause',updateNowPlaying);
+
+slider.addEventListener('input',function(){
+if(audio.duration&&isFinite(audio.duration))audio.currentTime=(slider.value/1000)*audio.duration;
+});
+
+uploadBtn.addEventListener('click',function(){input.click();});
+input.addEventListener('change',function(e){
+var files=Array.prototype.slice.call(e.target.files||[]);
+if(files.length===0)return;
+files.forEach(function(f){
+var url=URL.createObjectURL(f);
+playlist.push({name:f.name.replace(/\.[^.]+$/,''),url:url});
+});
+input.value='';
+renderList();
+if(currentIndex<0&&playlist.length>0)playIndex(0);
+});
+
+backBtn.addEventListener('click',function(){panel.classList.remove('open');});
+
+var qqIcon=document.querySelector('#page-2 .p2-app-grid .p2-app-item');
+if(qqIcon){
+var nb=qqIcon.cloneNode(true);
+qqIcon.parentNode.replaceChild(nb,qqIcon);
+nb.addEventListener('click',function(e){
+e.stopPropagation();
+panel.classList.add('open');
+renderList();
+updateNowShowing();
+});
+}
+
+function updateNowShowing(){updateNowPlaying();}
+
+renderList();
+updateNowPlaying();
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}
+else{setTimeout(init,400);}
+})();
+</script>
 </body>
 </html>
