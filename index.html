@@ -419,7 +419,7 @@ body.fs-mode .beautify-panel,body.fs-mode .wechat-panel,body.fs-mode .contact-pa
 .wx-moments-back{left:14px}
 .wx-moments-add{right:14px}
 .wx-moments-back svg,.wx-moments-add svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.wx-moments-me{position:absolute;right:16px;bottom:-30px;display:flex;align-items:center;gap:12px;z-index:2}
+.wx-moments-me{position:absolute;right:16px;bottom:-20px;display:flex;align-items:center;gap:12px;z-index:2}
 .wx-moments-me-name{font-size:16px;font-weight:500;color:rgba(255,255,255,.9);text-shadow:0 1px 4px rgba(0,0,0,.35)}
 .wx-moments-me-avatar{width:64px;height:64px;border-radius:8px;background:#e5e5e5;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.15);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:24px;color:#888;font-weight:600}
 .wx-moments-me-avatar img{width:100%;height:100%;object-fit:cover;display:block}
@@ -434,6 +434,16 @@ body.fs-mode .beautify-panel,body.fs-mode .wechat-panel,body.fs-mode .contact-pa
 .wx-moment-img img{width:100%;height:100%;object-fit:cover;display:block}
 .wx-moment-text{flex:1;font-size:15px;color:#1a1a1a;line-height:1.5;padding-top:6px;word-break:break-word;min-width:0;min-height:24px}
 .wx-moment-text:empty::before{content:'双击编辑';color:#ccc;font-size:13px}
+
+.wx-moments-publish-mask{position:absolute;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:540}
+.wx-moments-publish-mask.show{opacity:1;pointer-events:auto}
+.wx-moments-publish-sheet{position:absolute;left:0;right:0;bottom:0;background:#f7f7f7;border-radius:18px 18px 0 0;padding:8px 12px 18px;transform:translateY(110%);transition:transform .3s;z-index:541}
+.wx-moments-publish-sheet.show{transform:translateY(0)}
+.wx-moments-publish-btn{width:100%;padding:15px 0;border:none;background:#fff;border-radius:12px;font-size:16px;color:#1a1a1a;font-weight:500;cursor:pointer;margin-bottom:8px;font-family:inherit}
+.wx-moments-publish-btn:active{background:#f0f0f0}
+.wx-moments-publish-cancel{width:100%;padding:15px 0;border:none;background:#fff;border-radius:12px;font-size:16px;color:#666;cursor:pointer;font-family:inherit}
+.wx-moments-publish-cancel:active{background:#f0f0f0}
+
 .contact-panel{position:absolute;inset:0;z-index:220;background:#f5f5f7;border-radius:30px;overflow:hidden;transform:translateX(100%);transition:transform .32s;display:flex;flex-direction:column}
 .contact-panel.open{transform:translateX(0)}
 .ct-header{flex-shrink:0;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#f5f5f7;border-bottom:1px solid #e5e5e7;position:relative}
@@ -807,6 +817,14 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 <div class="wx-moments-me"><div class="wx-moments-me-name" id="wxMomentsMeName">Koi Buono</div><div class="wx-moments-me-avatar" id="wxMomentsMeAvatar"></div></div>
 </div>
 <div class="wx-moments-list" id="wxMomentsList"></div>
+
+<div class="wx-moments-publish-mask" id="wxMomentsPublishMask"></div>
+<div class="wx-moments-publish-sheet" id="wxMomentsPublishSheet">
+<button class="wx-moments-publish-btn" id="wxMomentTextBtn">发纯文字</button>
+<button class="wx-moments-publish-btn" id="wxMomentImageBtn">发图片</button>
+<button class="wx-moments-publish-cancel" id="wxMomentPublishCancel">取消</button>
+</div>
+
 </div>
 </div>
 
@@ -909,6 +927,7 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 <input type="file" id="bp-import-uploader" accept=".json,application/json" style="display:none">
 <input type="file" id="wx-moments-cover-uploader" accept="image/*" multiple style="display:none">
 <input type="file" id="wx-moments-img-uploader" accept="image/*" multiple style="display:none">
+<input type="file" id="wx-moments-new-uploader" accept="image/*" multiple style="display:none">
 <input type="file" id="wx-avatar-uploader" accept="image/*" style="display:none">
 <input type="file" id="wx-chat-avatar-uploader" accept="image/*" style="display:none">
 <input type="file" id="wx-chat-my-avatar-uploader" accept="image/*" style="display:none">
@@ -2441,21 +2460,44 @@ currentMomentIdx = -1;
 };
 r.readAsDataURL(file);
 });
-if (momentsAddBtn) momentsAddBtn.addEventListener('click', function(e) {
-e.stopPropagation();
+
+const momentsPublishMask = $id('wxMomentsPublishMask');
+const momentsPublishSheet = $id('wxMomentsPublishSheet');
+const momentTextBtn = $id('wxMomentTextBtn');
+const momentImageBtn = $id('wxMomentImageBtn');
+const momentPublishCancel = $id('wxMomentPublishCancel');
+const momentsNewUploader = $id('wx-moments-new-uploader');
+function publishMoment(image) {
 const now = new Date();
 const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const newM = {
-id: 'm_' + Date.now(),
-day: String(now.getDate()),
-month: months[now.getMonth()],
-text: '',
-image: ''
-};
+const newM = { id: 'm_' + Date.now(), day: String(now.getDate()), month: months[now.getMonth()], text: '', image: image || '' };
 const arr = getMoments();
 arr.unshift(newM);
 saveMoments(arr);
 renderMoments();
+}
+function openPublishSheet() {
+if (momentsPublishMask) momentsPublishMask.classList.add('show');
+if (momentsPublishSheet) momentsPublishSheet.classList.add('show');
+}
+function closePublishSheet() {
+if (momentsPublishMask) momentsPublishMask.classList.remove('show');
+if (momentsPublishSheet) momentsPublishSheet.classList.remove('show');
+}
+if (momentsAddBtn) momentsAddBtn.addEventListener('click', function(e) { e.stopPropagation(); openPublishSheet(); });
+if (momentsPublishMask) momentsPublishMask.addEventListener('click', closePublishSheet);
+if (momentPublishCancel) momentPublishCancel.addEventListener('click', closePublishSheet);
+if (momentTextBtn) momentTextBtn.addEventListener('click', function() { closePublishSheet(); publishMoment(''); });
+if (momentImageBtn) momentImageBtn.addEventListener('click', function() {
+closePublishSheet();
+setTimeout(function() { if (momentsNewUploader) momentsNewUploader.click(); }, 200);
+});
+if (momentsNewUploader) momentsNewUploader.addEventListener('change', function(e) {
+const file = e.target.files[0];
+if (!file) return;
+const r = new FileReader();
+r.onload = function(ev) { publishMoment(ev.target.result); momentsNewUploader.value = ''; };
+r.readAsDataURL(file);
 });
 })();
 
