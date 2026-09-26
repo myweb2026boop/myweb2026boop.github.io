@@ -482,7 +482,132 @@ textarea.ct-field-input { min-height:90px; line-height:1.5; }
 .ct-confirm-delete { color:#fa5151; font-weight:600; }
 .ct-toast { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(0.96); background:rgba(0,0,0,0.78); color:#fff; padding:11px 20px; border-radius:8px; font-size:13px; opacity:0; pointer-events:none; transition:opacity 0.25s,transform 0.25s; z-index:700; max-width:82%; text-align:center; }
 .ct-toast.show { opacity:1; transform:translate(-50%,-50%) scale(1); }
-
+/* 朋友圈 */
+.wx-moments-view { transform:translateX(100%); z-index:7; transition:transform 0.28s cubic-bezier(0.4,0,0.2,1); background:#fff; }
+.wx-moments-view.active { transform:translateX(0); }
+.wx-moments-body { flex:1; overflow-y:auto; background:#fff; -webkit-overflow-scrolling:touch; }
+.wx-moments-body::-webkit-scrollbar { display:none; }
+.wx-moments-cover {
+    position: relative;
+    height: 300px;
+    background-color: #f0f0f0;
+    background-image: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+.wx-moments-cover::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 80px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.35));
+    pointer-events: none;
+}
+.wx-moments-back, .wx-moments-add {
+    position: absolute;
+    top: 14px;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    z-index: 3;
+    color: #1a1a1a;
+    padding: 0;
+}
+.wx-moments-back { left: 14px; }
+.wx-moments-add { right: 14px; }
+.wx-moments-back svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.wx-moments-add svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; }
+.wx-moments-me {
+    position: absolute;
+    right: 16px border;
+    bottom: -30:px;
+    display: flex;
+    align -items: center;
+    gap:3 12px;
+    z-index: 2;
+}
+.wx-moments-me-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.9);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.35);
+    letter-spacing: 0.3px;
+}
+.wx-moments-me-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    background: #e5e5e5;
+   px solid #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #888;
+    font-weight: 600;
+}
+.wx-moments-me-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.wx-moments-list { padding-top: 46px; padding-bottom: 50px; }
+.wx-moment-item {
+    display: flex;
+    gap: 10px;
+    padding: 18px 16px;
+    align-items: flex-start;
+    position: relative;
+}
+.wx-moment-item + .wx-moment-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 82px;
+    right: 16px;
+    height: 1px;
+    background: #f5f5f5;
+}
+.wx-moment-date { width: 56px; flex-shrink: 0; text-align: left; padding-top: 2px; }
+.wx-moment-day { font-size: 30px; font-weight: 800; color: #1a1a1a; line-height: 1; letter-spacing: -1.5px; font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; }
+.wx-moment-month { font-size: 12px; color: #1a1a1a; font-weight: 700; margin-top: 3px; letter-spacing: 0.3px; }
+.wx-moment-content { flex: 1; display: flex; gap: 10px; align-items: flex-start; min-width: 0; }
+.wx-moment-img {
+    width: 110px;
+    height: 110px;
+    flex-shrink: 0;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    color: #bbb;
+    font-size: 11px;
+}
+.wx-moment-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.wx-moment-text {
+    flex: 1;
+    font-size: 15px;
+    color: #1a1a1a;
+    line-height: 1.5;
+    padding-top: 6px;
+    word-break: break-word;
+    min-width: 0;
+    min-height: 24px;
+}
+.wx-moment-text:empty::before {
+    content: '双击编辑';
+    color: #ccc;
+    font-size: 13px;
+}
+.wx-moment-text[contenteditable="true"] { background: rgba(0,0,0,0.04); border-radius: 4px; outline: none; }
 .settings-panel { position:absolute; inset:0; z-index:230; background:#f5f5f7; border-radius:30px; overflow:hidden; transform:translateX(100%); transition:transform 0.32s; display:flex; flex-direction:column; }
 .settings-panel.open { transform:translateX(0); }
 .st-header { flex-shrink:0; height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 14px; background:#f5f5f7; border-bottom:1px solid #e5e5e7; position:relative; }
@@ -748,7 +873,11 @@ textarea.ct-field-input { min-height:90px; line-height:1.5; }
                     </div>
                     <div class="wx-discover-list">
                         <div class="wx-me-gap"></div>
-                        <div class="wx-discover-item"><span class="wx-discover-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg></span><span class="wx-discover-name">朋友圈</span><span class="wx-discover-arrow">›</span></div>
+                        <div class="wx-discover-item" id="wxMomentsEntry">
+    <span class="wx-discover-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg></span>
+    <span class="wx-discover-name">朋友圈</span>
+    <span class="wx-discover-arrow">›</span>
+</div><span class="wx-discover-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg></span><span class="wx-discover-name">朋友圈</span><span class="wx-discover-arrow">›</span></div>
                         <div class="wx-me-gap"></div>
                         <div class="wx-discover-item"><span class="wx-discover-icon"><svg viewBox="0 0 24 24"><path d="M3 8V5a2 2 0 0 1 2-2h3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3M3 12h18"/></svg></span><span class="wx-discover-name">扫一扫</span><span class="wx-discover-arrow">›</span></div>
                         <div class="wx-discover-item"><span class="wx-discover-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span><span class="wx-discover-name">搜一搜</span><span class="wx-discover-arrow">›</span></div>
@@ -1089,7 +1218,19 @@ textarea.ct-field-input { min-height:90px; line-height:1.5; }
                 </div>
             </div>
         </div>
-
+<div class="wx-view wx-moments-view" id="wxMomentsView">
+    <div class="wx-moments-body">
+        <div class="wx-moments-cover" id="wxMomentsCover">
+            <button class="wx-moments-back" id="wxMomentsBack"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <button class="wx-moments-add" id="wxMomentsAddBtn"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+            <div class="wx-moments-me">
+                <div class="wx-moments-me-name" id="wxMomentsMeName">Koi Buono</div>
+                <div class="wx-moments-me-avatar" id="wxMomentsMeAvatar"></div>
+            </div>
+        </div>
+        <div class="wx-moments-list" id="wxMomentsList"></div>
+    </div>
+</div>
         <div class="wx-toast" id="wxToast"></div>
     </div>
 
@@ -1214,7 +1355,9 @@ textarea.ct-field-input { min-height:90px; line-height:1.5; }
 <input type="file" id="file-uploader" accept="image/*" style="display:none;">
 <input type="file" id="bp-icon-uploader" accept="image/*" style="display:none;">
 <input type="file" id="bp-wallpaper-uploader" accept="image/*" multiple style="display:none;">
-<input type="file" id="bp-import-uploader" accept=".json,application/json" style="display:none;">
+<input type="file" id="bp-import-uploader"
+<input type="file" id="wx-moments-cover-uploader" accept="image/*" multiple style="display:none;">
+<input type="file" id="wx-moments-img-uploader" accept="image/*" multiple style="display:none;"> accept=".json,application/json" style="display:none;">
 <input type="file" id="wx-avatar-uploader" accept="image/*" style="display:none;">
 <input type="file" id="wx-chat-avatar-uploader" accept="image/*" style="display:none;">
 <input type="file" id="wx-chat-my-avatar-uploader" accept="image/*" style="display:none;">
@@ -2629,6 +2772,180 @@ window.addEventListener('DOMContentLoaded', function() {
 
             renderChatList();
             renderContacts();
+
+/* ===== 朋友圈 ===== */
+            const momentsView = $id('wxMomentsView');
+            const momentsCover = $id('wxMomentsCover');
+            const momentsList = $id('wxMomentsList');
+            const momentsMeName = $id('wxMomentsMeName');
+            const momentsMeAvatar = $id('wxMomentsMeAvatar');
+            const momentsBack = $id('wxMomentsBack');
+            const momentsAddBtn = $id('wxMomentsAddBtn');
+            const momentsEntry = $id('wxMomentsEntry');
+            const momentsCoverUploader = $id('wx-moments-cover-uploader');
+            const momentsImgUploader = $id('wx-moments-img-uploader');
+            let currentMomentIdx = -1;
+
+            function syncMomentsMe() {
+                if (!momentsMeName || !momentsMeAvatar) return;
+                const nm = localStorage.getItem('wx-me-name') || 'Koi Buono';
+                const av = localStorage.getItem('wx-me-avatar') || '';
+                momentsMeName.textContent = nm;
+                momentsMeAvatar.innerHTML = '';
+                if (av) {
+                    const img = document.createElement('img');
+                    img.src = av;
+                    momentsMeAvatar.appendChild(img);
+                } else {
+                    momentsMeAvatar.textContent = nm.charAt(0);
+                }
+            }
+
+            function getMoments() {
+                try {
+                    const raw = localStorage.getItem('wx-moments');
+                    if (raw) { const v = JSON.parse(raw); if (Array.isArray(v)) return v; }
+                } catch(e){}
+                return [
+                    { id: 'm1', day: '23', month: 'Sep', text: 'relationship (kittyflower)', image: '' },
+                    { id: 'm2', day: '22', month: 'Sep', text: '别再自卑了', image: '' },
+                    { id: 'm3', day: '21', month: 'Sep', text: '(> <)', image: '' },
+                    { id: 'm4', day: '12', month: 'Sep', text: '', image: '' }
+                ];
+            }
+            function saveMoments(list) { try { localStorage.setItem('wx-moments', JSON.stringify(list)); } catch(e){} }
+
+            function applyMomentsCover() {
+                if (!momentsCover) return;
+                const bg = localStorage.getItem('wx-moments-cover');
+                if (bg) {
+                    momentsCover.style.backgroundImage = 'url("' + bg + '")';
+                } else {
+                    momentsCover.style.backgroundImage = '';
+                }
+            }
+
+            function renderMoments() {
+                if (!momentsList) return;
+                momentsList.innerHTML = '';
+                const list = getMoments();
+                list.forEach(function(m, idx) {
+                    const item = document.createElement('div');
+                    item.className = 'wx-moment-item';
+                    const date = document.createElement('div');
+                    date.className = 'wx-moment-date';
+                    const day = document.createElement('div');
+                    day.className = 'wx-moment-day';
+                    day.textContent = m.day || '1';
+                    const mon = document.createElement('div');
+                    mon.className = 'wx-moment-month';
+                    mon.textContent = m.month || 'Jan';
+                    date.appendChild(day); date.appendChild(mon);
+                    const content = document.createElement('div');
+                    content.className = 'wx-moment-content';
+                    const imgBox = document.createElement('div');
+                    imgBox.className = 'wx-moment-img';
+                    if (m.image) {
+                        const im = document.createElement('img');
+                        im.src = m.image;
+                        imgBox.appendChild(im);
+                    } else {
+                        imgBox.textContent = '点击上传';
+                    }
+                    imgBox.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        currentMomentIdx = idx;
+                        momentsImgUploader.click();
+                    });
+                    const text = document.createElement('div');
+                    text.className = 'wx-moment-text';
+                    text.textContent = m.text || '';
+                    text.addEventListener('dblclick', function(e) {
+                        e.stopPropagation();
+                        this.contentEditable = 'true';
+                        this.focus();
+                        const r = document.createRange(); const s = window.getSelection();
+                        r.selectNodeContents(this); r.collapse(false);
+                        s.removeAllRanges(); s.addRange(r);
+                    });
+                    text.addEventListener('blur',er function() {
+                        this.contentEditable = 'false';
+                       .addEventListener const arr = getMoments();
+                        if (arr('[idx]) { arr[idx].text = thischange.textContent; saveMoments(arr); }
+', function                    });
+                    text.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter') { e.preventDefault(); this.blur(); }
+                    });
+                    content.appendChild(imgBox); content.appendChild(text);
+                    item.appendChild(date); item.appendChild(content);
+                    momentsList.appendChild(item);
+                });
+            }
+
+            function openMoments() {
+                syncMomentsMe();
+                applyMomentsCover();
+                renderMoments();
+                if (momentsView) momentsView.classList.add('active');
+            }
+
+            if (momentsEntry) momentsEntry.addEventListener('click', openMoments);
+            if (momentsBack) momentsBack.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (momentsView) momentsView.classList.remove('active');
+            });
+
+            if (momentsCover) momentsCover.addEventListener('click', function(e) {
+                if (e.target.closest('.wx-moments-back') || e.target.closest('.wx-moments-add') || e.target.closest('.wx-moments-me-avatar')) return;
+                momentsCoverUploader.click();
+            });
+
+            if (momentsCoverUploader) momentsCoverUploader.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const r = new FileReader();
+                r.onload = function(ev) {
+                    try { localStorage.setItem('wx-moments-cover', ev.target.result); } catch(err){}
+                    applyMomentsCover();
+                    momentsCoverUploader.value = '';
+                };
+                r.readAsDataURL(file);
+            });
+
+            if (momentsImgUploader) momentsImgUpload(e) {
+                const file = e.target.files[0];
+                if (!file || currentMomentIdx < 0) return;
+                const idx = currentMomentIdx;
+                const r = new FileReader();
+                r.onload = function(ev) {
+                    const arr = getMoments();
+                    if (arr[idx]) {
+                        arr[idx].image = ev.target.result;
+                        saveMoments(arr);
+                        renderMoments();
+                    }
+                    momentsImgUploader.value = '';
+                    currentMomentIdx = -1;
+                };
+                r.readAsDataURL(file);
+            });
+
+            if (momentsAddBtn) momentsAddBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const now = new Date();
+                const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                const newM = {
+                    id: 'm_' + Date.now(),
+                    day: String(now.getDate()),
+                    month: months[now.getMonth()],
+                    text: '',
+                    image: ''
+                };
+                const arr = getMoments();
+                arr.unshift(newM);
+                saveMoments(arr);
+                renderMoments();
+            });
         })();
 
         /* 联系人App */
