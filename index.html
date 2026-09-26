@@ -16,8 +16,7 @@ button { touch-action: manipulation; }
 .phone-container { width:375px; height:812px; background:#fcfcfc; position:relative; overflow:hidden; border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.5); display:flex; flex-direction:column; background-image:radial-gradient(#e0e0e0 1.2px,transparent 1.2px); background-size:14px 14px; padding-bottom:env(safe-area-inset-bottom,0px); }
 body.fs-mode { background:#fcfcfc; position:fixed; inset:0; overflow:hidden; display:block; min-height:0; }
 body.fs-mode .phone-container { position:absolute; top:0; left:0; right:0; bottom:0; width:auto; height:auto; border-radius:0; box-shadow:none; transform:none; margin:0; }
-body.fs-mode .beautify-panel, body.fs-mode .wechat-panel, body.fs-mode .contact-panel, body.fs-mode .settings-panel { border-radius:0; }
-
+body.fs-mode .beautify-panel, body.fs-mode .wechat-panel, body.fs-mode .contact-panel, body.fs-mode .settings-panel, body.fs-mode .music-panel { border-radius:0; }
 .wallpaper-layer { position:absolute; inset:0; z-index:0; background-size:cover; background-position:center; background-repeat:no-repeat; pointer-events:none; }
 .blob { position:absolute; background:#f0f0f0; border-radius:50%; filter:blur(20px); z-index:0; opacity:0.6; pointer-events:none; }
 .blob-1{width:150px;height:150px;top:50px;left:-50px;} .blob-2{width:200px;height:200px;top:400px;right:-80px;} .blob-3{width:120px;height:120px;bottom:100px;left:20px;}
@@ -99,7 +98,6 @@ body.fs-mode .beautify-panel, body.fs-mode .wechat-panel, body.fs-mode .contact-
 .bottom-dock { position:absolute; bottom:calc(15px + env(safe-area-inset-bottom,0px)); left:0; width:100%; display:flex; justify-content:space-around; padding:0 15px; z-index:10; pointer-events:none; }
 .dock-item { pointer-events:auto; width:55px; height:55px; background:#fff; border-radius:14px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); border:1px solid #f5f5f5; overflow:hidden; cursor:pointer; }
 .dock-item img { width:100%; height:100%; object-fit:cover; }
-
 .beautify-panel { position:absolute; inset:0; z-index:200; background:#fcfcfc; display:flex; flex-direction:column; transform:translateX(100%); transition:transform 0.32s cubic-bezier(0.4,0,0.2,1); border-radius:30px; overflow:hidden; }
 .beautify-panel.open { transform:translateX(0); }
 .bp-header { flex-shrink:0; display:flex; align-items:center; justify-content:space-between; padding:18px 16px 12px; border-bottom:1px solid #f0f0f0; background:#fcfcfc; }
@@ -127,7 +125,6 @@ body.fs-mode .beautify-panel, body.fs-mode .wechat-panel, body.fs-mode .contact-
 .bp-fs-text { flex:1; min-width:0; }
 .bp-fs-label { font-size:13.5px; color:#222; font-weight:600; }
 .bp-fs-desc { font-size:11px; color:#aaa; margin-top:4px; line-height:1.45; }
-
 .wechat-panel { position:absolute; inset:0; z-index:210; background:#ededed; border-radius:30px; overflow:hidden; transform:translateX(100%); transition:transform 0.32s cubic-bezier(0.4,0,0.2,1); }
 .wechat-panel.open { transform:translateX(0); }
 .wx-view { position:absolute; inset:0; display:flex; flex-direction:column; background:#ededed; }
@@ -215,15 +212,12 @@ body.fs-mode .beautify-panel, body.fs-mode .wechat-panel, body.fs-mode .contact-
 .wx-me-arrow-right { display:flex; align-items:center; }
 .wx-me-arrow-right svg { width:16px; height:16px; stroke:#c0c0c0; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
 .wx-me-item.danger .wx-me-label { color:#fa5151; }
-
-/* ========== 底栏（已调矮，图标下移） ========== */
 .wx-tabbar { flex-shrink:0; height:calc(46px + env(safe-area-inset-bottom, 0px)); display:flex; align-items:stretch; background:#f7f7f7; border-top:1px solid #d9d9d9; padding-bottom:env(safe-area-inset-bottom, 0px); padding-top:0; }
 .wx-tab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:1px; font-size:10px; color:#999; cursor:pointer; user-select:none; position:relative; padding-bottom:0px; }
 .wx-tab.active { color:#07c160; }
 .wx-tab-svg { width:24px; height:24px; display:block; flex-shrink:0; color:#7f7f7f; }
 .wx-tab.active .wx-tab-svg { color:#07c160; }
 .wx-tab-dot { position:absolute; top:4px; left:50%; margin-left:6px; width:8px; height:8px; background:#fa5151; border-radius:50%; pointer-events:none; }
-
 .wx-msg-list { flex:1; overflow-y:auto; padding:14px 12px 6px; background:#ededed; -webkit-overflow-scrolling:touch; background-size:cover; background-position:center; background-repeat:no-repeat; }
 .wx-msg-list::-webkit-scrollbar { display:none; }
 .wx-msg-time { text-align:center; font-size:11px; color:#999; margin:6px 0 12px 0; }
@@ -433,7 +427,6 @@ body.fs-mode .beautify-panel, body.fs-mode .wechat-panel, body.fs-mode .contact-
 .wx-family-empty { text-align:center; padding:80px 20px; color:#b8b8b8; font-size:13px; display:none; }
 .wx-family-empty.show { display:block; }
 .wx-family-empty svg { width:48px; height:48px; stroke:#c8c8c8; fill:none; stroke-width:1.4; margin-bottom:12px; }
-
 .contact-panel { position:absolute; inset:0; z-index:220; background:#f5f5f7; border-radius:30px; overflow:hidden; transform:translateX(100%); transition:transform 0.32s; display:flex; flex-direction:column; }
 .contact-panel.open { transform:translateX(0); }
 .ct-header { flex-shrink:0; height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 14px; background:#f5f5f7; border-bottom:1px solid #e5e5e7; position:relative; }
@@ -482,7 +475,6 @@ textarea.ct-field-input { min-height:90px; line-height:1.5; }
 .ct-confirm-delete { color:#fa5151; font-weight:600; }
 .ct-toast { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(0.96); background:rgba(0,0,0,0.78); color:#fff; padding:11px 20px; border-radius:8px; font-size:13px; opacity:0; pointer-events:none; transition:opacity 0.25s,transform 0.25s; z-index:700; max-width:82%; text-align:center; }
 .ct-toast.show { opacity:1; transform:translate(-50%,-50%) scale(1); }
-
 .settings-panel { position:absolute; inset:0; z-index:230; background:#f5f5f7; border-radius:30px; overflow:hidden; transform:translateX(100%); transition:transform 0.32s; display:flex; flex-direction:column; }
 .settings-panel.open { transform:translateX(0); }
 .st-header { flex-shrink:0; height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 14px; background:#f5f5f7; border-bottom:1px solid #e5e5e7; position:relative; }
@@ -518,9 +510,7 @@ textarea.ct-field-input { min-height:90px; line-height:1.5; }
 .st-preset-load { background:#07c160; color:#fff; }
 .st-preset-del { background:#f0f0f0; color:#fa5151; }
 .st-preset-empty { text-align:center; color:#bbb; font-size:12px; padding:12px; }
-/* ========== 网易云音乐 ========== */
 .music-panel { position:absolute; inset:0; z-index:240; background:#f7f7f9; border-radius:30px; overflow:hidden; transform:translateX(100%); transition:transform 0.32s cubic-bezier(0.4,0,0.2,1); display:flex; flex-direction:column; }
-body.fs-mode .music-panel { border-radius:0; }
 .music-panel.open { transform:translateX(0); }
 .mu-nav { flex-shrink:0; height:56px; display:flex; align-items:center; gap:10px; padding:0 12px; background:#f7f7f9; }
 .mu-back { width:32px; height:32px; border:none; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#1a1a1a; padding:0; flex-shrink:0; }
@@ -709,7 +699,12 @@ body.fs-mode .music-panel { border-radius:0; }
         <div class="page" id="page-2">
             <div class="p2-top-section">
                 <div class="p2-app-grid">
-                    <div class="p2-app-item"><div class="p2-app-icon"><span class="placeholder-img" style="font-size:8px;">App</span></div><span>QQ音乐</span></div>
+                    <div class="p2-app-item" id="musicEntry">
+                        <div class="p2-app-icon" style="background:#C20C0C;border-color:#C20C0C;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg>
+                        </div>
+                        <span>网易云音乐</span>
+                    </div>
                     <div class="p2-app-item"><div class="p2-app-icon"><span class="placeholder-img" style="font-size:8px;">App</span></div><span>淘宝</span></div>
                     <div class="p2-app-item"><div class="p2-app-icon"><span class="placeholder-img" style="font-size:8px;">App</span></div><span>高德地图</span></div>
                     <div class="p2-app-item"><div class="p2-app-icon"><span class="placeholder-img" style="font-size:8px;">App</span></div><span>王者荣耀</span></div>
@@ -1236,205 +1231,108 @@ body.fs-mode .music-panel { border-radius:0; }
         </div>
         <div class="ct-toast" id="ctToast"></div>
     </div>
-<div class="music-panel" id="musicPanel">
-    <div class="mu-nav">
-        <button class="mu-back" id="muBack"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-        <div class="mu-search-box">
-            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-            <input id="muSearchInput" type="text" placeholder="搜索歌曲、歌手">
-        </div>
-        <button class="mu-cancel" id="muSearchBtn">搜索</button>
-    </div>
-    <div class="mu-body" id="muBody">
-        <div class="mu-banner">
-            <div class="mu-banner-title">每日推荐</div>
-            <div class="mu-banner-sub">根据你的音乐口味生成</div>
-            <div class="mu-banner-date" id="muToday"></div>
-        </div>
-        <div class="mu-section-title">推荐歌单</div>
-        <div class="mu-playlist-grid">
-            <div class="mu-playlist-item" data-q="流行">
-                <div class="mu-playlist-cover mu-c1"><svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></div>
-                <div class="mu-playlist-name">华语流行精选</div>
-            </div>
-            <div class="mu-playlist-item" data-q="欧美">
-                <div class="mu-playlist-cover mu-c2"><svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></div>
-                <div class="mu-playlist-name">欧美热歌榜</div>
-            </div>
-            <div class="mu-playlist-item" data-q="治愈">
-                <div class="mu-playlist-cover mu-c3"><svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></div>
-                <div class="mu-playlist-name">治愈系轻音乐</div>
-            </div>
-            <div class="mu-playlist-item" data-q="摇滚">
-                <div class="mu-playlist-cover mu-c4"><svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></div>
-                <div class="mu-playlist-name">摇滚现场</div>
-            </div>
-        </div>
-        <div class="mu-section-title">热门推荐</div>
-        <div class="mu-song-list" id="muHomeList">
-            <div class="mu-empty">加载中...</div>
-        </div>
-        <div class="mu-bottom-space"></div>
-    </div>
 
-    <div class="mu-search-panel" id="muSearchPanel">
-        <div class="mu-search-header">
-            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-            <input id="muResultInput" type="text" placeholder="搜索歌曲、歌手">
-            <button id="muSearchClose">取消</button>
+    <div class="music-panel" id="musicPanel">
+        <div class="mu-nav">
+            <button class="mu-back" id="muBack"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <div class="mu-search-box">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+                <input id="muSearchInput" type="text" placeholder="搜索歌曲、歌手">
+            </div>
+            <button class="mu-cancel" id="muSearchBtn">搜索</button>
         </div>
-        <div class="mu-result-list" id="muResultList">
-            <div class="mu-empty">输入关键词开始搜索</div>
-        </div>
-    </div>
-
-    <div class="mu-player" id="muPlayer">
-        <div class="mu-mini" id="muMini">
-            <div class="mu-mini-cover" id="muMiniCover">
-                <svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg>
-                <div class="mu-mini-cover-mask"></div>
+        <div class="mu-body" id="muBody">
+            <div class="mu-banner">
+                <div class="mu-banner-title">每日推荐</div>
+                <div class="mu-banner-sub">根据你的音乐口味生成</div>
+                <div class="mu-banner-date" id="muToday"></div>
             </div>
-            <div class="mu-mini-info">
-                <div class="mu-mini-title" id="muMiniTitle">未播放</div>
-                <div class="mu-mini-artist" id="muMiniArtist">选择一首歌</div>
-            </div>
-            <button class="mu-mini-play" id="muMiniPlay">
-                <svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20" fill="currentColor"/></svg>
-            </button>
-        </div>
-        <div class="mu-expand" id="muExpand">
-            <div class="mu-expand-top" id="muExpandTop">
-                <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="mu-big-cover" id="muBigCover">
-                <svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg>
-                <div class="mu-cover-mask"></div>
-            </div>
-            <div class="mu-song-info">
-                <div class="mu-song-title" id="muSongTitle">未播放</div>
-                <div class="mu-song-artist" id="muSongArtist">选择一首歌</div>
-            </div>
-            <div class="mu-progress-wrap">
-                <div class="mu-progress" id="muProgress">
-                    <div class="mu-progress-fill" id="muProgressFill"></div>
-                    <div class="mu-progress-dot" id="muProgressDot"></div>
+            <div class="mu-section-title">推荐歌单</div>
+            <div class="mu-playlist-grid">
+                <div class="mu-playlist-item" data-q="流行">
+                    <div class="mu-playlist-cover mu-c1"><svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></div>
+                    <div class="mu-playlist-name">华语流行精选</div>
                 </div>
-                <div class="mu-time">
-                    <span id="muTimeCur">00:00</span>
-                    <span id="muTimeTotal">00:00</span>
+                <div class="mu-playlist-item" data-q="欧美">
+                    <div class="mu-playlist-cover mu-c2"><svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></div>
+                    <div class="mu-playlist-name">欧美热歌榜</div>
+                </div>
+                <div class="mu-playlist-item" data-q="治愈">
+                    <div class="mu-playlist-cover mu-c3"><svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></div>
+                    <div class="mu-playlist-name">治愈系轻音乐</div>
+                </div>
+                <div class="mu-playlist-item" data-q="摇滚">
+                    <div class="mu-playlist-cover mu-c4"><svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></div>
+                    <div class="mu-playlist-name">摇滚现场</div>
                 </div>
             </div>
-            <div class="mu-controls">
-                <button class="mu-ctrl" id="muPrev"><svg viewBox="0 0 24 24"><polygon points="19,20 9,12 19,4" fill="currentColor"/><line x1="5" y1="19" x2="5" y2="5"/></svg></button>
-                <button class="mu-ctrl mu-ctrl-main" id="muPlayMain"><svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20" fill="currentColor"/></svg></button>
-                <button class="mu-ctrl" id="muNext"><svg viewBox="0 0 24 24"><polygon points="5,4 15,12 5,20" fill="currentColor"/><line x1="19" y1="5" x2="19" y2="19"/></svg></button>
+            <div class="mu-section-title">热门推荐</div>
+            <div class="mu-song-list" id="muHomeList">
+                <div class="mu-empty">加载中...</div>
+            </div>
+            <div class="mu-bottom-space"></div>
+        </div>
+        <div class="mu-search-panel" id="muSearchPanel">
+            <div class="mu-search-header">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+                <input id="muResultInput" type="text" placeholder="搜索歌曲、歌手">
+                <button id="muSearchClose">取消</button>
+            </div>
+            <div class="mu-result-list" id="muResultList">
+                <div class="mu-empty">输入关键词开始搜索</div>
             </div>
         </div>
-    </div>
-    <audio id="muAudio"></audio>
-    <div class="mu-toast" id="muToast"></div>
-</div><div class="music-panel" id="musicPanel">
-    <div class="mu-nav">
-        <button class="mu-back" id="muBack"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-        <div class="mu-search-box">
-            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-            <input id="muSearchInput" type="text" placeholder="搜索歌曲、歌手">
-        </div>
-        <button class="mu-cancel" id="muSearchBtn">搜索</button>
-    </div>
-    <div class="mu-body" id="muBody">
-        <div class="mu-banner">
-            <div class="mu-banner-title">每日推荐</div>
-            <div class="mu-banner-sub">根据你的音乐口味生成</div>
-            <div class="mu-banner-date" id="muToday"></div>
-        </div>
-        <div class="mu-section-title">推荐歌单</div>
-        <div class="mu-playlist-grid">
-            <div class="mu-playlist-item" data-q="流行">
-                <div class="mu-playlist-cover mu-c1"><svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></div>
-                <div class="mu-playlist-name">华语流行精选</div>
-            </div>
-            <div class="mu-playlist-item" data-q="欧美">
-                <div class="mu-playlist-cover mu-c2"><svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></div>
-                <div class="mu-playlist-name">欧美热歌榜</div>
-            </div>
-            <div class="mu-playlist-item" data-q="治愈">
-                <div class="mu-playlist-cover mu-c3"><svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></div>
-                <div class="mu-playlist-name">治愈系轻音乐</div>
-            </div>
-            <div class="mu-playlist-item" data-q="摇滚">
-                <div class="mu-playlist-cover mu-c4"><svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></div>
-                <div class="mu-playlist-name">摇滚现场</div>
-            </div>
-        </div>
-        <div class="mu-section-title">热门推荐</div>
-        <div class="mu-song-list" id="muHomeList">
-            <div class="mu-empty">加载中...</div>
-        </div>
-        <div class="mu-bottom-space"></div>
-    </div>
-
-    <div class="mu-search-panel" id="muSearchPanel">
-        <div class="mu-search-header">
-            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-            <input id="muResultInput" type="text" placeholder="搜索歌曲、歌手">
-            <button id="muSearchClose">取消</button>
-        </div>
-        <div class="mu-result-list" id="muResultList">
-            <div class="mu-empty">输入关键词开始搜索</div>
-        </div>
-    </div>
-
-    <div class="mu-player" id="muPlayer">
-        <div class="mu-mini" id="muMini">
-            <div class="mu-mini-cover" id="muMiniCover">
-                <svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg>
-                <div class="mu-mini-cover-mask"></div>
-            </div>
-            <div class="mu-mini-info">
-                <div class="mu-mini-title" id="muMiniTitle">未播放</div>
-                <div class="mu-mini-artist" id="muMiniArtist">选择一首歌</div>
-            </div>
-            <button class="mu-mini-play" id="muMiniPlay">
-                <svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20" fill="currentColor"/></svg>
-            </button>
-        </div>
-        <div class="mu-expand" id="muExpand">
-            <div class="mu-expand-top" id="muExpandTop">
-                <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="mu-big-cover" id="muBigCover">
-                <svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg>
-                <div class="mu-cover-mask"></div>
-            </div>
-            <div class="mu-song-info">
-                <div class="mu-song-title" id="muSongTitle">未播放</div>
-                <div class="mu-song-artist" id="muSongArtist">选择一首歌</div>
-            </div>
-            <div class="mu-progress-wrap">
-                <div class="mu-progress" id="muProgress">
-                    <div class="mu-progress-fill" id="muProgressFill"></div>
-                    <div class="mu-progress-dot" id="muProgressDot"></div>
+        <div class="mu-player" id="muPlayer">
+            <div class="mu-mini" id="muMini">
+                <div class="mu-mini-cover" id="muMiniCover">
+                    <svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg>
+                    <div class="mu-mini-cover-mask"></div>
                 </div>
-                <div class="mu-time">
-                    <span id="muTimeCur">00:00</span>
-                    <span id="muTimeTotal">00:00</span>
+                <div class="mu-mini-info">
+                    <div class="mu-mini-title" id="muMiniTitle">未播放</div>
+                    <div class="mu-mini-artist" id="muMiniArtist">选择一首歌</div>
+                </div>
+                <button class="mu-mini-play" id="muMiniPlay">
+                    <svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20" fill="currentColor"/></svg>
+                </button>
+            </div>
+            <div class="mu-expand" id="muExpand">
+                <div class="mu-expand-top" id="muExpandTop">
+                    <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
+                <div class="mu-big-cover" id="muBigCover">
+                    <svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg>
+                    <div class="mu-cover-mask"></div>
+                </div>
+                <div class="mu-song-info">
+                    <div class="mu-song-title" id="muSongTitle">未播放</div>
+                    <div class="mu-song-artist" id="muSongArtist">选择一首歌</div>
+                </div>
+                <div class="mu-progress-wrap">
+                    <div class="mu-progress" id="muProgress">
+                        <div class="mu-progress-fill" id="muProgressFill"></div>
+                        <div class="mu-progress-dot" id="muProgressDot"></div>
+                    </div>
+                    <div class="mu-time">
+                        <span id="muTimeCur">00:00</span>
+                        <span id="muTimeTotal">00:00</span>
+                    </div>
+                </div>
+                <div class="mu-controls">
+                    <button class="mu-ctrl" id="muPrev"><svg viewBox="0 0 24 24"><polygon points="19,20 9,12 19,4" fill="currentColor"/><line x1="5" y1="19" x2="5" y2="5"/></svg></button>
+                    <button class="mu-ctrl mu-ctrl-main" id="muPlayMain"><svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20" fill="currentColor"/></svg></button>
+                    <button class="mu-ctrl" id="muNext"><svg viewBox="0 0 24 24"><polygon points="5,4 15,12 5,20" fill="currentColor"/><line x1="19" y1="5" x2="19" y2="19"/></svg></button>
                 </div>
             </div>
-            <div class="mu-controls">
-                <button class="mu-ctrl" id="muPrev"><svg viewBox="0 0 24 24"><polygon points="19,20 9,12 19,4" fill="currentColor"/><line x1="5" y1="19" x2="5" y2="5"/></svg></button>
-                <button class="mu-ctrl mu-ctrl-main" id="muPlayMain"><svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20" fill="currentColor"/></svg></button>
-                <button class="mu-ctrl" id="muNext"><svg viewBox="0 0 24 24"><polygon points="5,4 15,12 5,20" fill="currentColor"/><line x1="19" y1="5" x2="19" y2="19"/></svg></button>
-            </div>
         </div>
+        <audio id="muAudio"></audio>
+        <div class="mu-toast" id="muToast"></div>
     </div>
-    <audio id="muAudio"></audio>
-    <div class="mu-toast" id="muToast"></div>
-</div>
+
     <div class="settings-panel" id="settingsPanel">
         <div class="st-header">
             <button class="st-back" id="stBack"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>返回</button>
-            <span class="st-title">设置</span>
+            <span class="st-title">API</span>
             <span class="st-space"></span>
         </div>
         <div class="st-body">
@@ -1499,7 +1397,7 @@ body.fs-mode .music-panel { border-radius:0; }
 <input type="file" id="bp-icon-uploader" accept="image/*" style="display:none;">
 <input type="file" id="bp-wallpaper-uploader" accept="image/*" multiple style="display:none;">
 <input type="file" id="bp-import-uploader" accept=".json,application/json" style="display:none;">
-<input type="file" id="wx-avatar-uploader"accept="image/*" style="display:none;">
+<input type="file" id="wx-avatar-uploader" accept="image/*" style="display:none;">
 <input type="file" id="wx-chat-avatar-uploader" accept="image/*" style="display:none;">
 <input type="file" id="wx-chat-my-avatar-uploader" accept="image/*" style="display:none;">
 <input type="file" id="wx-chat-bg-uploader" accept="image/*" style="display:none;">
@@ -1707,11 +1605,9 @@ window.addEventListener('DOMContentLoaded', function() {
                 r.readAsDataURL(file);
             });
             resetWp.addEventListener('click', function() { localStorage.removeItem('wallpaper'); setWallpaper(null); });
-/* ===== 导出/导入美化 ===== */
             const exportBtn = $id('bpExportBtn');
             const importBtn = $id('bpImportBtn');
             const importFileInput = $id('bp-import-uploader');
-
             if (exportBtn) exportBtn.addEventListener('click', function() {
                 const data = {};
                 const exactKeys = ['wallpaper', 'fullscreen-mode'];
@@ -1719,18 +1615,10 @@ window.addEventListener('DOMContentLoaded', function() {
                 for (let i = 0; i < localStorage.length; i++) {
                     const k = localStorage.key(i);
                     if (!k) continue;
-                    if (exactKeys.indexOf(k) >= 0) {
-                        data[k] = localStorage.getItem(k);
-                    } else if (prefixes.some(function(p) { return k.indexOf(p) === 0; })) {
-                        data[k] = localStorage.getItem(k);
-                    }
+                    if (exactKeys.indexOf(k) >= 0) { data[k] = localStorage.getItem(k); }
+                    else if (prefixes.some(function(p) { return k.indexOf(p) === 0; })) { data[k] = localStorage.getItem(k); }
                 }
-                const payload = {
-                    app: 'koi-beautify',
-                    version: 1,
-                    exportedAt: new Date().toISOString(),
-                    data: data
-                };
+                const payload = { app: 'koi-beautify', version: 1, exportedAt: new Date().toISOString(), data: data };
                 const json = JSON.stringify(payload, null, 2);
                 const blob = new Blob([json], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
@@ -1743,11 +1631,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
                 alert('已导出 ' + Object.keys(data).length + ' 项配置。\niOS 用户请在"文件"App 的"下载"里查看。');
             });
-
-            if (importBtn) importBtn.addEventListener('click', function() {
-                importFileInput.click();
-            });
-
+            if (importBtn) importBtn.addEventListener('click', function() { importFileInput.click(); });
             if (importFileInput) importFileInput.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -1763,9 +1647,7 @@ window.addEventListener('DOMContentLoaded', function() {
                         });
                         alert('成功导入 ' + count + ' 项美化配置。\n页面即将刷新以应用更改。');
                         setTimeout(function() { location.reload(); }, 600);
-                    } catch (err) {
-                        alert('导入失败：文件格式不正确');
-                    }
+                    } catch (err) { alert('导入失败：文件格式不正确'); }
                     importFileInput.value = '';
                 };
                 reader.readAsText(file);
@@ -1944,7 +1826,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 if (d.toDateString() === yesterday.toDateString()) return '昨天 ' + hh + ':' + mm;
                 return (d.getMonth()+1) + '月' + d.getDate() + '日';
             }
-
             function getReceivedCards() { try { return JSON.parse(localStorage.getItem('wx-family-received') || '[]'); } catch(e){ return []; } }
             function saveReceivedCards(list) { try { localStorage.setItem('wx-family-received', JSON.stringify(list)); } catch(e){} }
             function getGivenCards() { try { return JSON.parse(localStorage.getItem('wx-family-given') || '[]'); } catch(e){ return []; } }
@@ -3068,7 +2949,7 @@ window.addEventListener('DOMContentLoaded', function() {
             });
         })();
 
-        /* 设置App */
+        /* 设置App（API） */
         (function() {
             const entryBtn = $id('settingsEntry');
             const panel = $id('settingsPanel');
@@ -3215,256 +3096,9 @@ window.addEventListener('DOMContentLoaded', function() {
             entryBtn.addEventListener('click', function() { panel.classList.add('open'); });
             backBtn.addEventListener('click', function() { panel.classList.remove('open'); });
         })();
-/* 音乐App */
+
+        /* 音乐App（网易云风格） */
         (function() {
             const entry = $id('musicEntry');
             const panel = $id('musicPanel');
-            if (!entry || !panel) return;
-            const backBtn = $id('muBack');
-            const searchBtn = $id('muSearchBtn');
-            const searchInput = $id('muSearchInput');
-            const searchPanel = $id('muSearchPanel');
-            const resultInput = $id('muResultInput');
-            const searchClose = $id('muSearchClose');
-            const resultList = $id('muResultList');
-            const homeList = $id('muHomeList');
-            const todayEl = $id('muToday');
-            const miniPlayer = $id('muMini');
-            const miniTitle = $id('muMiniTitle');
-            const miniArtist = $id('muMiniArtist');
-            const miniPlay = $id('muMiniPlay');
-            const miniCover = $id('muMiniCover');
-            const expand = $id('muExpand');
-            const expandTop = $id('muExpandTop');
-            const bigCover = $id('muBigCover');
-            const songTitle = $id('muSongTitle');
-            const songArtist = $id('muSongArtist');
-            const progress = $id('muProgress');
-            const progressFill = $id('muProgressFill');
-            const progressDot = $id('muProgressDot');
-            const timeCur = $id('muTimeCur');
-            const timeTotal = $id('muTimeTotal');
-            const playMain = $id('muPlayMain');
-            const prevBtn = $id('muPrev');
-            const nextBtn = $id('muNext');
-            const audio = $id('muAudio');
-            const toast = $id('muToast');
-
-            let currentList = [];
-            let currentIndex = -1;
-            let toastTimer = null;
-
-            function showToast(msg, d) {
-                if (!toast) return;
-                toast.textContent = msg; toast.classList.add('show');
-                if (toastTimer) clearTimeout(toastTimer);
-                toastTimer = setTimeout(function() { toast.classList.remove('show'); }, d || 1500);
-            }
-            function fmtTime(sec) {
-                if (!isFinite(sec) || sec < 0) sec = 0;
-                const m = Math.floor(sec / 60);
-                const s = Math.floor(sec % 60);
-                return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-            }
-            function upscaleArt(url) {
-                if (!url) return '';
-                return url.replace(/\/\d+x\d+bb\./, '/600x600bb.');
-            }
-
-            async function searchItunes(keyword) {
-                const url = 'https://itunes.apple.com/search?term=' + encodeURIComponent(keyword) + '&media=music&limit=25';
-                const resp = await fetch(url);
-                if (!resp.ok) throw new Error('HTTP ' + resp.status);
-                const data = await resp.json();
-                return (data.results const || []).filter(function img(r) { return r.previewUrl =; });
-            }
-
-            function setCover documentImage(el, url) {
-               .createElement const oldImg = el.querySelector('img('');
-                if (oldImg) oldImg.remove();
-                const svg = el.querySelector('svg');
-                if (url) {
-                    if (svg) svg.style.display = 'none';
-                   img'); img.src = url;
-                    el.insertBefore(img, el.firstChild);
-                } else {
-                    if (svg) svg.style.display = '';
-                }
-            }
-
-            function renderSongList(container, songs, emptyText) {
-                container.innerHTML = '';
-                if (!songs || songs.length === 0) {
-                    const empty = document.createElement('div');
-                    empty.className = 'mu-empty';
-                    empty.textContent = emptyText || '没有找到';
-                    container.appendChild(empty);
-                    return;
-                }
-                songs.forEach(function(song, idx) {
-                    const item = document.createElement('div');
-                    item.className = 'mu-song-item';
-                    const cover = document.createElement('div'); cover.className = 'mu-song-cover';
-                    if (song.artworkUrl100) { const img = document.createElement('img'); img.src = upscaleArt(song.artworkUrl100); cover.appendChild(img); }
-                    const info = document.createElement('div'); info.className = 'mu-song-info';
-                    const name = document.createElement('div'); name.className = 'mu-song-name'; name.textContent = song.trackName || '未知';
-                    const artist = document.createElement('div'); artist.className = 'mu-song-artist'; artist.textContent = song.artistName || '未知';
-                    info.appendChild(name); info.appendChild(artist);
-                    const playIcon = document.createElement('div'); playIcon.className = 'mu-song-play';
-                    playIcon.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16" fill="currentColor"/></svg>';
-                    item.appendChild(cover); item.appendChild(info); item.appendChild(playIcon);
-                    item.addEventListener('click', function() { playSong(songs, idx); });
-                    container.appendChild(item);
-                });
-            }
-
-            function updatePlayIcon(playing) {
-                const icon = playing
-                    ? '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="currentColor"/><rect x="14" y="4" width="4" height="16" fill="currentColor"/></svg>'
-                    : '<svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20" fill="currentColor"/></svg>';
-                miniPlay.innerHTML = icon;
-                playMain.innerHTML = icon;
-                if (playing) bigCover.classList.remove('paused');
-                else bigCover.classList.add('paused');
-            }
-
-            function playSong(list, index) {
-                if (!list || index < 0 || index >= list.length) return;
-                currentList = list;
-                currentIndex = index;
-                const song = list[index];
-                audio.src = song.previewUrl;
-                const p = audio.play();
-                if (p && p.catch) p.catch(function(err) { showToast('播放失败：' + (err.message || '未知')); });
-                const cover = upscaleArt(song.artworkUrl100);
-                const title = song.trackName || '未知';
-                const artist = song.artistName || '未知';
-                miniTitle.textContent = title;
-                miniArtist.textContent = artist;
-                songTitle.textContent = title;
-                songArtist.textContent = artist;
-                setCoverImage(miniCover, cover);
-                setCoverImage(bigCover, cover);
-                miniPlayer.classList.add('show');
-                bigCover.classList.add('spin');
-                updatePlayIcon(true);
-            }
-
-            function togglePlay() {
-                if (!audio.src) { showToast('还没有选歌'); return; }
-                if (audio.paused) audio.play(); else audio.pause();
-            }
-
-            miniPlay.addEventListener('click', function(e) { e.stopPropagation(); togglePlay(); });
-            playMain.addEventListener('click', togglePlay);
-
-            prevBtn.addEventListener('click', function() {
-                if (currentList.length === 0) return;
-                const i = currentIndex > 0 ? currentIndex - 1 : currentList.length - 1;
-                playSong(currentList, i);
-            });
-            nextBtn.addEventListener('click', function() {
-                if (currentList.length === 0) return;
-                const i = currentIndex < currentList.length - 1 ? currentIndex + 1 : 0;
-                playSong(currentList, i);
-            });
-
-            audio.addEventListener('timeupdate', function() {
-                const dur = audio.duration || 0;
-                const cur = audio.currentTime || 0;
-                const pct = dur > 0 ? (cur / dur * 100) : 0;
-                progressFill.style.width = pct + '%';
-                progressDot.style.left = pct + '%';
-                timeCur.textContent = fmtTime(cur);
-            });
-            audio.addEventListener('loadedmetadata', function() { timeTotal.textContent = fmtTime(audio.duration); });
-            audio.addEventListener('play', function() { updatePlayIcon(true); });
-            audio.addEventListener('pause', function() { updatePlayIcon(false); });
-            audio.addEventListener('ended', function() {
-                if (currentIndex < currentList.length - 1) playSong(currentList, currentIndex + 1);
-                else updatePlayIcon(false);
-            });
-
-            progress.addEventListener('click', function(e) {
-                if (!audio.duration) return;
-                const rect = progress.getBoundingClientRect();
-                const x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
-                audio.currentTime = (x / rect.width) * audio.duration;
-            });
-
-            miniPlayer.addEventListener('click', function() { expand.classList.add('show'); });
-            expandTop.addEventListener('click', function() { expand.classList.remove('show'); });
-
-            const HOME_KEYWORDS = ['Taylor Swift', '周杰伦', 'Adele', 'Ed Sheeran', 'Bruno Mars', 'Coldplay', '林俊杰'];
-            async function loadHome() {
-                homeList.innerHTML = '<div class="mu-empty">加载中...</div>';
-                try {
-                    const kw = HOME_KEYWORDS[Math.floor(Math.random() * HOME_KEYWORDS.length)];
-                    const songs = await searchItunes(kw);
-                    renderSongList(homeList, songs.slice(0, 12), '暂时没搜到');
-                } catch (err) {
-                    homeList.innerHTML = '<div class="mu-empty">加载失败，检查网络</div>';
-                }
-            }
-
-            function openSearch(kw) {
-                searchPanel.classList.add('show');
-                resultInput.value = kw || '';
-                if (kw) doSearch(kw);
-                else setTimeout(function() { resultInput.focus(); }, 300);
-            }
-            searchBtn.addEventListener('click', function() { openSearch(''); });
-            searchInput.addEventListener('click', function() { openSearch(''); });
-            searchInput.addEventListener('focus', function() { openSearch(''); });
-            searchClose.addEventListener('click', function() { searchPanel.classList.remove('show'); });
-
-            let searchTimer = null;
-            resultInput.addEventListener('input', function() {
-                const kw = resultInput.value.trim();
-                if (searchTimer) clearTimeout(searchTimer);
-                if (!kw) { resultList.innerHTML = '<div class="mu-empty">输入关键词开始搜索</div>'; return; }
-                searchTimer = setTimeout(function() { doSearch(kw); }, 500);
-            });
-            resultInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') { e.preventDefault(); doSearch(resultInput.value.trim()); }
-            });
-
-            async function doSearch(kw) {
-                if (!kw) return;
-                resultList.innerHTML = '<div class="mu-empty">搜索中...</div>';
-                try {
-                    const songs = await searchItunes(kw);
-                    renderSongList(resultList, songs, '没有找到相关歌曲');
-                } catch (err) {
-                    resultList.innerHTML = '<div class="mu-empty">搜索失败，检查网络</div>';
-                }
-            }
-
-            $all('.mu-playlist-item').forEach(function(item) {
-                item.addEventListener('click', function() {
-                    const q = item.dataset.q;
-                    openSearch(q);
-                    doSearch(q);
-                });
-            });
-
-            entry.addEventListener('click', function() {
-                panel.classList.add('open');
-                const d = new Date();
-                todayEl.textContent = (d.getMonth()+1) + '月' + d.getDate() + '日';
-                if (homeList.dataset.loaded !== '1') { homeList.dataset.loaded = '1'; loadHome(); }
-            });
-            backBtn.addEventListener('click', function() {
-                panel.classList.remove('open');
-                expand.classList.remove('show');
-                searchPanel.classList.remove('show');
-            });
-        })();
-    } catch (err) {
-        console.error('初始化错误:', err);
-        alert('页面初始化出错：' + err.message);
-    }
-});
-</script>
-</body>
-</html>
+            if (!entry || !
