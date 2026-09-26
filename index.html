@@ -3940,6 +3940,11 @@ else{setTimeout(init,400);}
 
 <script>
 (function(){
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function uid(p){return p+'_'+Date.now()+'_'+Math.floor(Math.random()*9999);}
+function getBooks(){try{var r=localStorage.getItem('world-books');if(r){var v=JSON.parse(r);if(Array.isArray(v))return v;}}catch(e){}return[];}
+function saveBooks(b){try{localStorage.setItem('world-books',JSON.stringify(b));}catch(e){}}
+function getMasks(){try{var r=localStorage.getItem('contact-chars');if(r){var v=JSON.parse(r);if(Array.isArray(v))return v;}}catch(e){}return[];}
 function init(){
 var phone=document.querySelector('.phone-container');
 if(!phone)return;
@@ -3947,184 +3952,425 @@ if(document.getElementById('worldBookPanel'))return;
 
 var style=document.createElement('style');
 style.textContent=
-'.wb-panel{position:absolute;inset:0;z-index:245;background:#faf7f2;transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;border-radius:30px;overflow:hidden}'+
+'.wb-panel{position:absolute;inset:0;z-index:245;background:#f5f5f7;transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;border-radius:30px;overflow:hidden}'+
 'body.fs-mode .wb-panel{border-radius:0}'+
 '.wb-panel.open{transform:translateX(0)}'+
-'.wb-nav{flex-shrink:0;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 16px}'+
-'.wb-nav button{background:transparent;border:none;color:#3a3a3a;font-size:15px;cursor:pointer;padding:6px 4px;display:flex;align-items:center;gap:3px;font-family:inherit}'+
-'.wb-nav button svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}'+
-'.wb-nav .title{font-size:18px;font-weight:700;color:#2a2a2a}'+
-'.wb-nav .add{width:34px;height:34px;border-radius:50%;background:#2a2a2a;color:#fff;display:flex;align-items:center;justify-content:center;padding:0}'+
-'.wb-nav .add svg{stroke:#fff;width:20px;height:20px}'+
-'.wb-body{flex:1;overflow-y:auto;padding:8px 18px 30px;-webkit-overflow-scrolling:touch}'+
+'.wb-nav{flex-shrink:0;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#f5f5f7;border-bottom:1px solid #e5e5e7;position:relative}'+
+'.wb-nav button{background:transparent;border:none;color:#07c160;font-size:15px;cursor:pointer;padding:6px 4px;display:flex;align-items:center;gap:2px;font-family:inherit;font-weight:500;z-index:1}'+
+'.wb-nav button svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}'+
+'.wb-nav .title{position:absolute;left:50%;transform:translateX(-50%);font-size:17px;font-weight:600;color:#1a1a1a}'+
+'.wb-nav .right{display:flex;gap:4px;z-index:1}'+
+'.wb-body{flex:1;overflow-y:auto;padding:14px;'+
+'-webkit-overflow-scrolling:touch}'+
 '.wb-body::-webkit-scrollbar{display:none}'+
-'.wb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px 12px}'+
-'.wb-book{position:relative;cursor:pointer}'+
-'.wb-cover{width:100%;aspect-ratio:3/4;border-radius:4px;overflow:hidden;background:#e8e4dc;box-shadow:0 3px 10px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;position:relative}'+
-'.wb-cover img{width:100%;height:100%;object-fit:cover;display:block}'+
-'.wb-cover-default{display:flex;flex-direction:column;align-items:center;justify-content:center;color:#b0a99c;gap:6px;padding:8px;text-align:center;width:100%;height:100%}'+
-'.wb-cover-default svg{width:30px;height:30px;stroke:#b0a99c;fill:none;stroke-width:1.5}'+
-'.wb-cover-default .fname{color:#8a8275;font-size:10px;line-height:1.3;word-break:break-all;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}'+
-'.wb-del{position:absolute;top:5px;left:5px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;font-size:14px;line-height:1;z-index:2}'+
-'.wb-title{font-size:13px;color:#2a2a2a;font-weight:600;margin-top:9px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}'+
-'.wb-author{font-size:11px;color:#9a9a9a;margin-top:3px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}'+
-'.wb-empty{text-align:center;color:#b8b8b8;font-size:13px;padding:80px 20px;grid-column:1/-1}'+
-'.wb-empty svg{width:60px;height:60px;stroke:#d0d0d0;fill:none;stroke-width:1.2;margin-bottom:16px}'+
-'.wb-viewer{position:absolute;inset:0;background:#fff;z-index:246;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s}'+
-'.wb-viewer.show{transform:translateX(0)}'+
-'.wb-viewer-nav{flex-shrink:0;height:52px;display:flex;align-items:center;padding:0 14px;background:#f7f7f7;border-bottom:1px solid #e5e5e5}'+
-'.wb-viewer-nav button{background:transparent;border:none;color:#07c160;font-size:15px;cursor:pointer;padding:6px 4px;font-family:inherit}'+
-'.wb-viewer-nav .vtitle{font-size:15px;font-weight:600;color:#2a2a2a;flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 10px}'+
-'.wb-viewer-body{flex:1;overflow-y:auto;padding:16px;font-size:14px;line-height:1.7;color:#1a1a1a;white-space:pre-wrap;word-break:break-word}'+
-'.wb-viewer-body::-webkit-scrollbar{display:none}';
+'.wb-list{display:flex;flex-direction:column;gap:10px}'+
+'.wb-card{background:#fff;border-radius:12px;padding:14px 16px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.04)}'+
+'.wb-card:active{background:#fafafa}'+
+'.wb-card-title{font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:5px;word-break:break-word}'+
+'.wb-card-sub{font-size:12px;color:#999}'+
+'.wb-card-row{display:flex;justify-content:space-between;align-items:center}'+
+'.wb-card-del{background:transparent;border:none;color:#fa5151;font-size:12px;cursor:pointer;padding:4px 6px;font-family:inherit}'+
+'.wb-empty{text-align:center;color:#b8b8b8;font-size:13px;padding:90px 20px;display:flex;flex-direction:column;align-items:center;gap:10px}'+
+'.wb-empty svg{width:60px;height:60px;stroke:#d0d0d0;fill:none;stroke-width:1.2}'+
+/* 编辑条目 */
+'.wb-edit{position:absolute;inset:0;background:#f5f5f7;z-index:247;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s}'+
+'.wb-edit.show{transform:translateX(0)}'+
+'.wb-edit-nav{flex{-shrink:0;heightfont:52px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#fff;border-bottom:1px solid #e5e5e7;position:relative}'+
+'.wb-edit-nav .cancel{background:transparent;border:none;color:#1a1a1a;font-size:15px;cursor:pointer;padding:6px 4px;font-family:inherit}'+
+'.wb-edit-nav .title{position:absolute;left:50%;transform:translateX(-50%);font-size:16px;font-weight:600;color:#1a1a1a}'+
+'.wb-edit-nav .save{background:#07c160;color:#fff;border:none;padding:7px 18px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit}'+
+'.wb-edit-body{flex:1;overflow-y:auto;padding:14px 14px 40px}'+
+'.wb-edit-body::-webkit-scrollbar{display:none}'+
+'.wb-field{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px}'+
+'.wb-field-label{font-size:13px;color:#888;margin-bottom:8px}'+
+'.wb-field-label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}'+
+'.wb-field-label-row .hint{font-size:11px;color:#bbb}'+
+'.wb-input{width:100%;border:none;outline:none;font-size:15px;color:#1a1a1a;background:transparent;font-family:inherit;padding:4px 0}'+
+'.wb-input::placeholder{color:#c0c0c0}'+
+'.wb-input-sm-size:13px}'+
+'.wb-textarea{width:100%;border:none;outline:none;font-size:14px;color:#1a1a1a;background:transparent;font-family:inherit;line-height:1.6;min-height:200px;resize:none;white-space:pre-wrap}'+
+'.wb-textarea::placeholder{color:#c0c0c0}'+
+'.wb-switch-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0}'+
+'.wb-switch-row .lbl{font-size:15px;color:#1a1a1a}'+
+'.wb-switch-row .sub{font-size:11px;color:#999;margin-top:3px}'+
+'.wb-tabs{display:flex;background:#f5f5f5;border-radius:8px;padding:3px;margin-top:10px;width:fit-content;margin-left:auto}'+
+'.wb-tab{padding:6px 18px;border-radius:6px;font-size:13px;color:#666;cursor:pointer;background:transparent;border:none;font-family:inherit}'+
+'.wb-tab.active{background:#fff;color:#1a1a1a;font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.1)}'+
+'.wb-cat{display:inline-block;background:#1a1a1a;color:#fff;font-size:13px;padding:7px 16px;border-radius:18px;cursor:pointer}'+
+'.wb-mask-row{display:flex;gap:8px;flex-wrap:wrap}'+
+'.wb-mask{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid #e5e5e7;border-radius:20px;font-size:13px;color:#333;background:#fff;cursor:pointer;font-family:inherit}'+
+'.wb-mask.active{border-color:#07c160;background:#e8f8ef;color:#07c160}'+
+'.wb-mask-av{width:22px;height:22px;border-radius:50%;background:#4a90d9;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;font-weight:600}'+
+'.wb-mask-av img{width:100%;height:100%;object-fit:cover}'+
+'.wb-mask.global{background:#e8f8ef;border-color:#07c160;color:#07c160}'+
+'.wb-import-row{display:flex;justify-content:flex-end;margin-bottom:6px}'+
+'.wb-import-btn{background:#e8f8ef;color:#07c160;border:none;padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px}'+
+'.wb-import-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}'+
+'.wb-del-btn{width:100%;padding:14px 0;background:#fff;border:none;border-radius:12px;color:#fa5151;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;margin-top:6px}'+
+'.wb-del-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}'+
+'.wb-entry-row{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;background:#fff;border-radius:12px;cursor:pointer;margin-bottom:8px}'+
+'.wb-entry-row:active{background:#fafafa}'+
+'.wb-entry-info{flex:1;min-width:0}'+
+'.wb-entry-t{font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:4px;word-break:break-word}'+
+'.wb-entry-k{font-size:11px;color:#999;margin-bottom:3px;word-break:break-word}'+
+'.wb-entry-c{font-size:12px;color:#bbb;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}'+
+'.wb-entry-off{opacity:.5}'+
+'.wb-add-entry{width:100%;padding:14px 0;background:#fff;border:2px dashed #e0e0e0;border-radius:12px;color:#999;font-size:14px;cursor:pointer;font-family:inherit;margin-top:6px}';
 document.head.appendChild(style);
 
 var panel=document.createElement('div');
 panel.className='wb-panel';
 panel.id='worldBookPanel';
-panel.innerHTML='<div class="wb-nav"><button id="wbBack"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>返回</button><span class="title">世界书</span><button class="add" id="wbAdd"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button></div><div class="wb-body"><div class="wb-grid" id="wbGrid"></div></div>';
+panel.innerHTML='<div class="wb-nav"><button id="wbBack"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>返回</button><span class="title" id="wbTitle">世界书</span><span class="right"><button id="wbAdd" style="font-size:24px;padding:0 8px">＋</button></span></div><div class="wb-body"><div class="wb-list" id="wbList"></div></div>';
 phone.appendChild(panel);
 
-var viewer=document.createElement('div');
-viewer.className='wb-viewer';
-viewer.innerHTML='<div class="wb-viewer-nav"><button id="wbViewerBack">返回</button><span class="vtitle" id="wbViewerTitle"></span><span style="width:44px"></span></div><div class="wb-viewer-body" id="wbViewerBody"></div>';
-phone.appendChild(viewer);
+var editPanel=document.createElement('div');
+editPanel.className='wb-edit';
+editPanel.id='wbEditPanel';
+editPanel.innerHTML='<div class="wb-edit-nav"><button class="cancel" id="wbEditCancel">取消</button><span class="title">编辑条目</span><button class="save" id="wbEditSave">保存</button></div><div class="wb-edit-body">'+
+'<div class="wb-field"><div class="wb-field-label">标题</div><input class="wb-input" id="wbFldTitle" placeholder="输入条目标题"></div>'+
+'<div class="wb-field"><div class="wb-field-label-row"><span class="wb-field-label">触发关键词（逗号分隔）</span><span class="hint">当对话出现这些词时生效</span></div><input class="wb-input wb-input-sm" id="wbFldKeywords" placeholder="例如：魔法, 法力, 施法"></div>'+
+'<div class="wb-field"><div class="wb-switch-row"><div><div class="lbl">属性设置</div><div class="sub">控制生效范围和开关</div></div><div style="display:flex;align-items:center;gap:10px"><label class="wx-switch" style="transform:scale(.85)"><input type="checkbox" id="wbFldEnabled" checked><span class="wx-slider"></span></label></div></div><div class="wb-tabs"><button class="wb-tab active" data-scope="global" id="wbScopeGlobal">全局</button><button class="wb-tab" data-scope="local" id="wbScopeLocal">局部</button></div></div>'+
+'<div class="wb-field"><div class="wb-field-label">所属世界书</div><span class="wb-cat" id="wbFldCategory">默认分类</span></div>'+
+'<div class="wb-field"><div class="wb-field-label-row"><span class="wb-field-label">适用面具</span><span class="hint">空=所有面具共享</span></div><div class="wb-mask-row" id="wbMaskRow"></div></div>'+
+'<div class="wb-field"><div class="wb-import-row"><button class="wb-import-btn" id="wbImportBtn"><svg viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>导入文件（.docx/.txt）</button></div><div class="wb-field-label">内容设定</div><textarea class="wb-textarea" id="wbFldContent" placeholder="输入内容..."></textarea></div>'+
+'<button class="wb-del-btn" id="wbEditDelete"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>删除条目</button>'+
+'</div>';
+phone.appendChild(editPanel);
 
-var grid=panel.querySelector('#wbGrid');
+var listEl=panel.querySelector('#wbList');
+var titleEl=panel.querySelector('#wbTitle');
 var backBtn=panel.querySelector('#wbBack');
 var addBtn=panel.querySelector('#wbAdd');
-var viewerBack=viewer.querySelector('#wbViewerBack');
-var viewerTitle=viewer.querySelector('#wbViewerTitle');
-var viewerBody=viewer.querySelector('#wbViewerBody');
 
-var input=document.createElement('input');
-input.type='file';
-input.accept='.docx,.json';
-input.multiple=true;
-input.style.display='none';
-document.body.appendChild(input);
+var editCancel=editPanel.querySelector('#wbEditCancel');
+var editSave=editPanel.querySelector('#wbEditSave');
+var editDelete=editPanel.querySelector('#wbEditDelete');
+var fldTitle=editPanel.querySelector('#wbFldTitle');
+var fldKeywords=editPanel.querySelector('#wbFldKeywords');
+var fldEnabled=editPanel.querySelector('#wbFldEnabled');
+var fldCategory=editPanel.querySelector('#wbFldCategory');
+var fldContent=editPanel.querySelector('#wbFldContent');
+var maskRow=editPanel.querySelector('#wbMaskRow');
+var scopeGlobal=editPanel.querySelector('#wbScopeGlobal');
+var scopeLocal=editPanel.querySelector('#wbScopeLocal');
+var importBtn=editPanel.querySelector('#wbImportBtn');
 
-function getBooks(){try{var r=localStorage.getItem('world-books');if(r){var v=JSON.parse(r);if(Array.isArray(v))return v;}}catch(e){}return[];}
-function saveBooks(b){try{localStorage.setItem('world-books',JSON.stringify(b));}catch(e){}}
+var fileInput=document.createElement('input');
+fileInput.type='file';
+fileInput.accept='.docx,.json,.txt';
+fileInput.multiple=true;
+fileInput.style.display='none';
+document.body.appendChild(fileInput);
 
-function render(){
+var importFileInput=document.createElement('input');
+importFileInput.type='file';
+importFileInput.accept='.docx,.txt';
+importFileInput.style.display='none';
+document.body.appendChild(importFileInput);
+
+var state={
+currentBookId:null,
+currentEntryId:null,
+editingScope:'global',
+editingMasks:[]
+};
+
+function openBookList(){
+state.currentBookId=null;
+titleEl.textContent='世界书';
+renderBookList();
+}
+function renderBookList(){
 var books=getBooks();
-grid.innerHTML='';
+listEl.innerHTML='';
 if(books.length===0){
-grid.innerHTML='<div class="wb-empty"><svg viewBox="0 0 24 24"><path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M4 16a4 4 0 0 1 4-4h12"/></svg><div>还没有世界书<br>点击右上角 + 上传</div></div>';
+listEl.innerHTML='<div class="wb-empty"><svg viewBox="0 0 24 24"><path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M4 16a4 4 0 0 1 4-4h12"/></svg><div>还没有世界书<br>点击右上角 ＋ 上传</div></div>';
 return;
 }
-books.forEach(function(b,idx){
-var el=document.createElement('div');
-el.className='wb-book';
-var cover=document.createElement('div');
-cover.className='wb-cover';
-if(b.cover){
-var im=document.createElement('img');
-im.src=b.cover;
-cover.appendChild(im);
-}else{
-var dv=document.createElement('div');
-dv.className='wb-cover-default';
-dv.innerHTML='<svg viewBox="0 0 24 24"><path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M4 16a4 4 0 0 1 4-4h12"/></svg>';
-var fn=document.createElement('div');
-fn.className='fname';
-fn.textContent=b.name||'世界书';
-dv.appendChild(fn);
-cover.appendChild(dv);
-}
-el.appendChild(cover);
+books.forEach(function(b){
+var card=document.createElement('div');
+card.className='wb-card';
+var row=document.createElement('div');
+row.className='wb-card-row';
+var left=document.createElement('div');
+left.style.flex='1';
+left.style.minWidth='0';
+var t=document.createElement('div');
+t.className='wb-card-title';
+t.textContent=b.name||'未命名';
+var s=document.createElement('div');
+s.className='wb-card-sub';
+s.textContent=(b.entries||[]).length+' 个条目';
+left.appendChild(t);
+left.appendChild(s);
 var del=document.createElement('button');
-del.className='wb-del';
-del.textContent='×';
+del.className='wb-card-del';
+del.textContent='删除';
 del.addEventListener('click',function(e){
 e.stopPropagation();
-if(!confirm('确定删除「'+(b.name||'世界书')+'」吗？'))return;
+if(!confirm('删除整本「'+(b.name||'未命名')+'」吗？'))return;
 var arr=getBooks();
-arr.splice(idx,1);
-saveBooks(arr);
-render();
+var i=arr.findIndex(function(x){return x.id===b.id;});
+if(i>=0){arr.splice(i,1);saveBooks(arr);}
+renderBookList();
 });
-el.appendChild(del);
+row.appendChild(left);
+row.appendChild(del);
+card.appendChild(row);
+card.addEventListener('click',function(){openBook(b.id);});
+listEl.appendChild(card);
+});
+}
+function openBook(id){
+state.currentBookId=id;
+var books=getBooks();
+var b=books.find(function(x){return x.id===id;});
+if(!b)return;
+titleEl.textContent=b.name||'未命名';
+renderEntryList();
+}
+function renderEntryList(){
+var books=getBooks();
+var b=books.find(function(x){return x.id===state.currentBookId;});
+if(!b)return;
+listEl.innerHTML='';
+(b.entries||[]).forEach(function(e){
+var row=document.createElement('div');
+row.className='wb-entry-row'+(e.enabled===false?' wb-entry-off':'');
+var info=document.createElement('div');
+info.className='wb-entry-info';
 var t=document.createElement('div');
-t.className='wb-title';
-t.textContent=b.name||'未命名';
-el.appendChild(t);
-if(b.subtitle){
-var a=document.createElement('div');
-a.className='wb-author';
-a.textContent=b.subtitle;
-el.appendChild(a);
+t.className='wb-entry-t';
+t.textContent=e.title||'未命名条目';
+var k=document.createElement('div');
+k.className='wb-entry-k';
+k.textContent=e.keywords?('关键词：'+e.keywords):'无关键词';
+var c=document.createElement('div');
+c.className='wb-entry-c';
+c.textContent=(e.content||'').slice(0,80);
+info.appendChild(t);
+info.appendChild(k);
+info.appendChild(c);
+row.appendChild(info);
+row.addEventListener('click',function(){openEdit(e.id);});
+listEl.appendChild(row);
+});
+var addE=document.createElement('button');
+addE.className='wb-add-entry';
+addE.textContent='＋ 添加条目';
+addE.addEventListener('click',function(){openEdit(null);});
+listEl.appendChild(addE);
 }
-el.addEventListener('click',function(){openViewer(b);});
-grid.appendChild(el);
+
+function renderMaskRow(selected){
+var chars=getMasks();
+maskRow.innerHTML='';
+var isShared=!selected||selected.length===0;
+var g=document.createElement('button');
+g.className='wb-mask'+(isShared?' active global':'');
+g.innerHTML='<span class="wb-mask-av" style="background:#07c160">🌐</span><span>共享(所有面具)</span>';
+g.addEventListener('click',function(){
+state.editingMasks=[];
+renderMaskRow([]);
+});
+maskRow.appendChild(g);
+chars.forEach(function(c){
+var on=selected&&selected.indexOf(c.id)>=0;
+var m=document.createElement('button');
+m.className='wb-mask'+(on?' active':'');
+var avHtml=c.avatar?'<img src="'+c.avatar+'">':esc((c.name||'?').charAt(0));
+m.innerHTML='<span class="wb-mask-av">'+avHtml+'</span><span>'+esc(c.name||'未命名')+'</span>';
+m.addEventListener('click',function(){
+var arr=state.editingMasks.slice();
+var i=arr.indexOf(c.id);
+if(i>=0)arr.splice(i,1);else arr.push(c.id);
+state.editingMasks=arr;
+renderMaskRow(arr);
+});
+maskRow.appendChild(m);
 });
 }
 
-function openViewer(b){
-viewerTitle.textContent=b.name||'世界书';
-viewerBody.textContent=b.content||'（无内容）';
-viewer.classList.add('show');
+function openEdit(entryId){
+state.currentEntryId=entryId;
+var books=getBooks();
+var b=books.find(function(x){return x.id===state.currentBookId;});
+if(!b)return;
+var e=entryId?(b.entries||[]).find(function(x){return x.id===entryId;}):null;
+if(e){
+fldTitle.value=e.title||'';
+fldKeywords.value=e.keywords||'';
+fldEnabled.checked=e.enabled!==false;
+fldCategory.textContent=e.category||'默认分类';
+fldContent.value=e.content||'';
+state.editingScope=e.scope||'global';
+state.editingMasks=(e.masks||[]).slice();
+}else{
+fldTitle.value='';
+fldKeywords.value='';
+fldEnabled.checked=true;
+fldCategory.textContent=b.name||'默认分类';
+fldContent.value='';
+state.editingScope='global';
+state.editingMasks=[];
 }
-viewerBack.addEventListener('click',function(){viewer.classList.remove('show');});
+updateScopeUI();
+renderMaskRow(state.editingMasks);
+editPanel.classList.add('show');
+setTimeout(function(){fldTitle.focus();},200);
+}
+function updateScopeUI(){
+scopeGlobal.classList.toggle('active',state.editingScope!=='local');
+scopeLocal.classList.toggle('active',state.editingScope==='local');
+}
+scopeGlobal.addEventListener('click',function(){state.editingScope='global';updateScopeUI();});
+scopeLocal.addEventListener('click',function(){state.editingScope='local';updateScopeUI();});
 
-addBtn.addEventListener('click',function(){input.click();});
-input.addEventListener('change',function(e){
+editCancel.addEventListener('click',function(){editPanel.classList.remove('show');});
+editSave.addEventListener('click',function(){
+var books=getBooks();
+var bi=books.findIndex(function(x){return x.id===state.currentBookId;});
+if(bi<0)return;
+var b=books[bi];
+if(!b.entries)b.entries=[];
+var data={
+title:fldTitle.value.trim()||'未命名条目',
+keywords:fldKeywords.value.trim(),
+enabled:fldEnabled.checked,
+scope:state.editingScope,
+category:fldCategory.textContent,
+masks:state.editingMasks.slice(),
+content:fldContent.value
+};
+if(state.currentEntryId){
+var ei=b.entries.findIndex(function(x){return x.id===state.currentEntryId;});
+if(ei>=0)b.entries[ei]=Object.assign(b.entries[ei],data);
+}else{
+b.entries.push(Object.assign({id:uid('e')},data));
+}
+saveBooks(books);
+editPanel.classList.remove('show');
+renderEntryList();
+});
+editDelete.addEventListener('click',function(){
+if(!state.currentEntryId)return;
+if(!confirm('删除该条目？'))return;
+var books=getBooks();
+var b=books.find(function(x){return x.id===state.currentBookId;});
+if(!b)return;
+b.entries=(b.entries||[]).filter(function(x){return x.id!==state.currentEntryId;});
+saveBooks(books);
+editPanel.classList.remove('show');
+renderEntryList();
+});
+
+importBtn.addEventListener('click',function(){importFileInput.click();});
+importFileInput.addEventListener('change',function(e){
+var f=e.target.files[0];if(!f)return;
+var isDocx=/\.docx$/i.test(f.name);
+var r=new FileReader();
+r.onload=function(ev){
+if(isDocx){
+if(window.mammoth){
+mammoth.extractRawText({arrayBuffer:ev.target.result}).then(function(res){
+fldContent.value=res.value||'';
+importFileInput.value='';
+}).catch(function(){importFileInput.value='';});
+}else{importFileInput.value='';}
+}else{
+fldContent.value=String(ev.target.result||'');
+importFileInput.value='';
+}
+};
+if(isDocx)r.readAsArrayBuffer(f);else r.readAsText(f);
+});
+
+addBtn.addEventListener('click',function(){fileInput.click();});
+fileInput.addEventListener('change',function(e){
 var files=Array.prototype.slice.call(e.target.files||[]);
 if(files.length===0)return;
 var pending=files.length;
 files.forEach(function(f){
 var isDocx=/\.docx$/i.test(f.name);
+var isJson=/\.json$/i.test(f.name);
 var reader=new FileReader();
 reader.onload=function(ev){
 if(isDocx){
 if(window.mammoth){
 mammoth.extractRawText({arrayBuffer:ev.target.result}).then(function(r){
-addBook(f.name,r.value);
-done();
-}).catch(function(){
-addBook(f.name,'（docx 解析失败）');
-done();
-});
-}else{
-addBook(f.name,'（docx 解析库未加载）');
-done();
-}
-}else{
+addNewBook(f.name,r.value);done();
+}).catch(function(){addNewBook(f.name,'');done();});
+}else{addNewBook(f.name,'');done();}
+}else if(isJson){
 var content='';
-try{
-var parsed=JSON.parse(ev.target.result);
-content=JSON.stringify(parsed,null,2);
-}catch(err){
-content=String(ev.target.result);
-}
-addBook(f.name,content);
+var parsed=null;
+try{parsed=JSON.parse(ev.target.result);content=JSON.stringify(parsed,null,2);}catch(err){content=String(ev.target.result);}
+addNewBookFromJson(f.name,parsed,content);
+done();
+}else{
+addNewBook(f.name,String(ev.target.result||''));
 done();
 }
 };
-if(isDocx)reader.readAsArrayBuffer(f);
-else reader.readAsText(f);
+if(isDocx)reader.readAsArrayBuffer(f);else reader.readAsText(f);
 });
-function done(){
-pending--;
-if(pending===0){input.value='';render();}
-}
+function done(){pending--;if(pending===0){fileInput.value='';renderBookList();}}
 });
 
-function addBook(name,content){
+function addNewBook(name,content){
 var arr=getBooks();
-var displayName=name.replace(/\.(docx|json)$/i,'');
+var disp=name.replace(/\.(docx|json|txt)$/i,'');
 arr.unshift({
-id:'b_'+Date.now()+'_'+Math.floor(Math.random()*999),
-name:displayName,
-subtitle:'',
-content:content||'',
-cover:''
+id:uid('wb'),
+name:disp,
+entries:[{
+id:uid('e'),
+title:disp,
+keywords:'',
+enabled:true,
+scope:'global',
+category:disp,
+masks:[],
+content:content||''
+}]
 });
 saveBooks(arr);
 }
+function addNewBookFromJson(name,parsed,content){
+var disp=name.replace(/\.json$/i,'');
+var entries=[];
+if(parsed&&typeof parsed==='object'&&parsed.entries&&typeof parsed.entries==='object'){
+Object.keys(parsed.entries).forEach(function(k){
+var e=parsed.entries[k];
+if(!e)return;
+entries.push({
+id:uid('e'),
+title:e.comment||e.name||k||'未命名',
+keywords:Array.isArray(e.key)?e.key.join(', '):(e.key||''),
+enabled:e.disable!==true,
+scope:e.constant?'global':'local',
+category:disp,
+masks:[],
+content:Array.isArray(e.content)?e.content.join('\n'):(e.content||'')
+});
+});
+}
+if(entries.length===0){
+entries.push({id:uid('e'),title:disp,keywords:'',enabled:true,scope:'global',category:disp,masks:[],content:content||''});
+}
+var arr=getBooks();
+arr.unshift({id:uid('wb'),name:disp,entries:entries});
+saveBooks(arr);
+}
 
-backBtn.addEventListener('click',function(){panel.classList.remove('open');});
+backBtn.addEventListener('click',function(){
+if(state.currentBookId){
+openBookList();
+}else{
+panel.classList.remove('open');
+}
+});
 
 var items=document.querySelectorAll('#page-2 .p2-app-grid .p2-app-item');
 var taobaoIcon=items[1];
@@ -4136,11 +4382,11 @@ if(nm)nm.textContent='世界书';
 nb.addEventListener('click',function(e){
 e.stopPropagation();
 panel.classList.add('open');
-render();
+openBookList();
 });
 }
 
-render();
+renderBookList();
 }
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}
 else{setTimeout(init,500);}
