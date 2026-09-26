@@ -2768,120 +2768,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 el.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); this.blur(); } });
             }
             bindDblEdit(meId, 'wx-me-id');
-            bindDblEdit(meName, 'wx-me-name');
-
-            renderChatList();
-            renderContacts();
-
-/* ===== 朋友圈 ===== */
-            const momentsView = $id('wxMomentsView');
-            const momentsCover = $id('wxMomentsCover');
-            const momentsList = $id('wxMomentsList');
-            const momentsMeName = $id('wxMomentsMeName');
-            const momentsMeAvatar = $id('wxMomentsMeAvatar');
-            const momentsBack = $id('wxMomentsBack');
-            const momentsAddBtn = $id('wxMomentsAddBtn');
-            const momentsEntry = $id('wxMomentsEntry');
-            const momentsCoverUploader = $id('wx-moments-cover-uploader');
-            const momentsImgUploader = $id('wx-moments-img-uploader');
-            let currentMomentIdx = -1;
-
-            function syncMomentsMe() {
-                if (!momentsMeName || !momentsMeAvatar) return;
-                const nm = localStorage.getItem('wx-me-name') || 'Koi Buono';
-                const av = localStorage.getItem('wx-me-avatar') || '';
-                momentsMeName.textContent = nm;
-                momentsMeAvatar.innerHTML = '';
-                if (av) {
-                    const img = document.createElement('img');
-                    img.src = av;
-                    momentsMeAvatar.appendChild(img);
-                } else {
-                    momentsMeAvatar.textContent = nm.charAt(0);
-                }
-            }
-
-            function getMoments() {
-                try {
-                    const raw = localStorage.getItem('wx-moments');
-                    if (raw) { const v = JSON.parse(raw); if (Array.isArray(v)) return v; }
-                } catch(e){}
-                return [
-                    { id: 'm1', day: '23', month: 'Sep', text: 'relationship (kittyflower)', image: '' },
-                    { id: 'm2', day: '22', month: 'Sep', text: '别再自卑了', image: '' },
-                    { id: 'm3', day: '21', month: 'Sep', text: '(> <)', image: '' },
-                    { id: 'm4', day: '12', month: 'Sep', text: '', image: '' }
-                ];
-            }
-            function saveMoments(list) { try { localStorage.setItem('wx-moments', JSON.stringify(list)); } catch(e){} }
-
-            function applyMomentsCover() {
-                if (!momentsCover) return;
-                const bg = localStorage.getItem('wx-moments-cover');
-                if (bg) {
-                    momentsCover.style.backgroundImage = 'url("' + bg + '")';
-                } else {
-                    momentsCover.style.backgroundImage = '';
-                }
-            }
-
-            function renderMoments() {
-                if (!momentsList) return;
-                momentsList.innerHTML = '';
-                const list = getMoments();
-                list.forEach(function(m, idx) {
-                    const item = document.createElement('div');
-                    item.className = 'wx-moment-item';
-                    const date = document.createElement('div');
-                    date.className = 'wx-moment-date';
-                    const day = document.createElement('div');
-                    day.className = 'wx-moment-day';
-                    day.textContent = m.day || '1';
-                    const mon = document.createElement('div');
-                    mon.className = 'wx-moment-month';
-                    mon.textContent = m.month || 'Jan';
-                    date.appendChild(day); date.appendChild(mon);
-                    const content = document.createElement('div');
-                    content.className = 'wx-moment-content';
-                    const imgBox = document.createElement('div');
-                    imgBox.className = 'wx-moment-img';
-                    if (m.image) {
-                        const im = document.createElement('img');
-                        im.src = m.image;
-                        imgBox.appendChild(im);
-                    } else {
-                        imgBox.textContent = '点击上传';
-                    }
-                    imgBox.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        currentMomentIdx = idx;
-                        momentsImgUploader.click();
-                    });
-                    const text = document.createElement('div');
-                    text.className = 'wx-moment-text';
-                    text.textContent = m.text || '';
-                    text.addEventListener('dblclick', function(e) {
-                        e.stopPropagation();
-                        this.contentEditable = 'true';
-                        this.focus();
-                        const r = document.createRange(); const s = window.getSelection();
-                        r.selectNodeContents(this); r.collapse(false);
-                        s.removeAllRanges(); s.addRange(r);
-                    });
-                    text.addEventListener('blur',er function() {
-                        this.contentEditable = 'false';
-                       .addEventListener const arr = getMoments();
-                        if (arr('[idx]) { arr[idx].text = thischange.textContent; saveMoments(arr); }
-', function                    });
-                    text.addEventListener('keydown', function(e) {
-                        if (e.key === 'Enter') { e.preventDefault(); this.blur(); }
-                    });
-                    content.appendChild(imgBox); content.appendChild(text);
-                    item.appendChild(date); item.appendChild(content);
-                    momentsList.appendChild(item);
-                });
-            }
-
+                          
             function openMoments() {
                 syncMomentsMe();
                 applyMomentsCover();
@@ -2912,7 +2799,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 r.readAsDataURL(file);
             });
 
-            if (momentsImgUploader) momentsImgUpload(e) {
+    if (momentsImgUploader) momentsImgUploader.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (!file || currentMomentIdx < 0) return;
                 const idx = currentMomentIdx;
