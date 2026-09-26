@@ -3159,5 +3159,149 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
 else{setTimeout(init,0);}
 })();
 </script>
+
+<script>
+(function(){
+function getArr(){try{var r=localStorage.getItem('wx-moments');if(r){var v=JSON.parse(r);if(Array.isArray(v))return v;}}catch(e){}return[];}
+function saveArr(a){try{localStorage.setItem('wx-moments',JSON.stringify(a));}catch(e){}}
+var state={visible:'public',visibleName:'公开',partialList:[]};
+
+function refreshMoments(){
+setTimeout(function(){
+var entry=document.getElementById('wxMomentsEntry');
+if(entry)entry.click();
+},100);
+}
+
+function fix(){
+var editor=document.querySelector('.wx-post-editor');
+if(!editor)return;
+var visiblePicker=null;
+document.querySelectorAll('.wx-post-picker').forEach(function(p){
+if(p.querySelector('.wx-post-radio'))visiblePicker=p;
+});
+if(!visiblePicker)return;
+
+var oldPub=editor.querySelector('#wxPostPublish');
+if(oldPub && !oldPub.getAttribute('data-fix2')){
+oldPub.setAttribute('data-fix2','1');
+var newPub=oldPub.cloneNode(true);
+oldPub.parentNode.replaceChild(newPub,oldPub);
+newPub.addEventListener('click',function(){
+var ta=editor.querySelector('#wxPostText');
+var text=ta?ta.value.trim():'';
+var imgs=[];
+editor.querySelectorAll('.wx-post-img img').forEach(function(im){if(im.src)imgs.push(im.src);});
+var arr=getArr();
+var now=new Date();
+var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+arr.unshift({
+id:'m_'+Date.now(),
+day:String(now.getDate()),
+month:months[now.getMonth()],
+text:text,
+image:imgs[0]||'',
+images:imgs,
+authorId:'me',
+authorName:'我',
+authorAvatar:localStorage.getItem('wx-me-avatar')||'',
+visible:state.visible,
+visibleName:state.visibleName,
+at:state.partialList.slice()
+});
+saveArr||(arr);
+editor.classList.removeval('show');
+refreshMoments();
+});
+}
+
+==visiblePicker.querySelectorAll('.wx-post-radio').='forEach(function(r){
+if(r.getAttribute('data-fprivateix2'))return;
+r.setAttribute('data-fix2','1');
+var val=r.getAttribute('data-value');
+var nr=r.cloneNode(true);
+r.parentNode.replaceChild(nr,r);
+nr.addEventListener('click',function(){
+if(val==='public''){
+state.visible=val;
+state.visibleName=val==='public'?'公开':'私密';
+state.partialList=[];
+var l=document.getElementById('wxPostVisibleLabel');
+if(l)l.textContent=state.visibleName;
+visiblePicker.querySelectorAll('.wx-post-radio').forEach(function(x){x.classList.toggle('selected',x.getAttribute('data-value')===val);});
+setTimeout(function(){visiblePicker.classList.remove('show');},150);
+}else{
+state.visible=val;
+state.visibleName=val==='partial'?'部分可见':'不给谁看';
+visiblePicker.classList.remove('show');
+openCharPicker(val);
+}
+});
+});
+}
+
+function openCharPicker(mode){
+var cp=document.getElementById('wxPostCharPicker');
+if(!cp){
+var wp=document.getElementById('wechatPanel');
+if(!wp)return;
+cp=document.createElement('div');
+cp.id='wxPostCharPicker';
+cp.className='wx-post-picker';
+cp.style.zIndex='602';
+cp.innerHTML='<div class="wx-post-picker-nav"><button class="cancel" id="wxCPBack">返回</button><span class="title" id="wxCPTitle">选择联系人</span><button class="cancel" id="wxCPDone" style="color:#07c160;font-weight:600">完成</button></div><div class="wx-post-picker-body" id="wxCPList"></div>';
+wp.appendChild(cp);
+cp.querySelector('#wxCPBack').addEventListener('click',function(){cp.classList.remove('show');});
+cp.querySelector('#wxCPDone').addEventListener('click',function(){
+state.partialList=(window.__partialSelected||[]).slice();
+var l=document.getElementById('wxPostVisibleLabel');
+if(l){
+var t=state.visibleName;
+if(state.partialList.length>0)t+='('+state.partialList.length+'人)';
+l.textContent=t;
+}
+cp.classList.remove('show');
+});
+}
+window.__partialSelected=[];
+var t=cp.querySelector('#wxCPTitle');
+if(t)t.textContent=mode==='partial'?'部分可见':'不给谁看';
+var list=cp.querySelector('#wxCPList');
+list.innerHTML='';
+var chars=[];
+try{chars=JSON.parse(localStorage.getItem('contact-chars')||'[]');}catch(e){}
+if(chars.length===0){
+list.innerHTML='<div style="text-align:center;color:#b8b8b8;padding:60px 20px;font-size:13px">暂无联系人<br>请先添加联系人</div>';
+}else{
+chars.forEach(function(c){
+var item=document.createElement('div');
+item.className='wx-post-at-item';
+var av=document.createElement('div');
+av.className='wx-post-at-avatar';
+if(c.avatar){var im=document.createElement('img');im.src=c.avatar;av.appendChild(im);}
+else{av.style.background='#4a90d9';av.textContent=(c.name||'?').charAt(0);}
+var nm=document.createElement('div');
+nm.className='wx-post-at-name';
+nm.textContent=c.name||'未命名';
+var ck=document.createElement('div');
+ck.className='wx-post-at-check';
+ck.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';
+item.appendChild(av);item.appendChild(nm);item.appendChild(ck);
+item.addEventListener('click',function(){
+var idx=window.__partialSelected.findIndex(function(x){return x.id===c.id;});
+if(idx>=0){window.__partialSelected.splice(idx,1);ck.classList.remove('selected');}
+else{window.__partialSelected.push({id:c.id,name:c.name});ck.classList.add('selected');}
+});
+list.appendChild(item);
+});
+}
+cp.classList.add('show');
+}
+
+var ob=new MutationObserver(function(){setTimeout(fix,100);});
+ob.observe(document.body,{childList:true,subtree:true});
+setTimeout(fix,500);
+})();
+</script>
 </body>
 </html>
