@@ -215,13 +215,28 @@ body.fs-mode .beautify-panel, body.fs-mode .wechat-panel, body.fs-mode .contact-
 .wx-me-arrow-right { display:flex; align-items:center; }
 .wx-me-arrow-right svg { width:16px; height:16px; stroke:#c0c0c0; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
 .wx-me-item.danger .wx-me-label { color:#fa5151; }
-.wx-tabbar { flex-shrink:0; height:calc(54px + env(safe-area-inset-bottom, 0px)); display:flex; background:#f7f7f7; border-top:1px solid #d9d9d9; padding-bottom:env(safe-area-inset-bottom, 0px); }
-.wx-tab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; font-size:10px; color:#999; cursor:pointer; user-select:none; position:relative; }
-.wx-tab.active { color:#07c160; }
-.wx-tab-svg { width:24px; height:24px; display:block; flex-shrink:0; color:#7f7f7f; }
-.wx-tab.active .wx-tab-svg { color:#07c160; }
-.wx-tab-dot { position:absolute; top:4px; left:50%; margin-left:6px; width:8px; height:8px; background:#fa5151; border-radius:50%; pointer-events:none; }
-.wx-msg-list { flex:1; overflow-y:auto; padding:14px 12px 6px; background:#ededed; -webkit-overflow-scrolling:touch; background-size:cover; background-position:center; background-repeat:no-repeat; }
+.w.wx-tabbar {
+    flex-sxhrink: 0;
+    height: calc(46px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    align-items: stretch;
+    background: #f7f7f7;
+    border-top: 1px solid #d9d9d9;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-top:-tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;   /* 图标贴底 */
+    gap: 1px;
+    font-size: 10px;
+    color: #999;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    padding-bottom: 3px;
+}.wx-msg-list { flex:1; overflow-y:auto; padding:14px 12px 6px; background:#ededed; -webkit-overflow-scrolling:touch; background-size:cover; background-position:center; background-repeat:no-repeat; }
 .wx-msg-list::-webkit-scrollbar { display:none; }
 .wx-msg-time { text-align:center; font-size:11px; color:#999; margin:6px 0 12px 0; }
 .wx-msg-time span { background:rgba(0,0,0,0.12); padding:2px 8px; border-radius:4px; color:#fff; }
