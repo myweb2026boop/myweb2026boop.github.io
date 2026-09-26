@@ -3303,5 +3303,266 @@ ob.observe(document.body,{childList:true,subtree:true});
 setTimeout(fix,500);
 })();
 </script>
+
+<script>
+(function(){
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function getArr(){try{var r=localStorage.getItem('wx-moments');if(r){var v=JSON.parse(r);if(Array.isArray(v))return v;}}catch(e){}return[];}
+function saveArr(a){try{localStorage.setItem('wx-moments',JSON.stringify(a));}catch(e){}}
+
+setTimeout(function(){
+var wechatPanel=document.getElementById('wechatPanel');
+if(!wechatPanel)return;
+
+var style=document.createElement('style');
+style.textContent=
+'.wxp-edit{position:absolute;inset:0;background:#fff;z-index:900;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s}'+
+'.wxp-edit.show{transform:translateX(0)}'+
+'.wxp-nav{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#ededed;border-bottom:1px solid #d9d9d9;flex-shrink:0}'+
+'.wxp-nav button{background:transparent;border:none;font-size:16px;color:#1a1a1a;padding:6px 4px;font-family:inherit;cursor:pointer}'+
+'.wxp-nav .pub{background:#07c160;color:#fff;font-size:15px;font-weight:500;padding:6px 16px;border-radius:6px}'+
+'.wxp-nav .pub:disabled{background:#d0d0d0}'+
+'.wxp-nav .title{font-size:17px;font-weight:600;color:#1a1a1a}'+
+'.wxp-body{flex:1;overflow-y:auto;padding:14px 16px}'+
+'.wxp-text{width:100%;border:none;outline:none;font-size:16px;color:#1a1a1a;line-height:1.5;min-height:140px;font-family:inherit;resize:none;background:transparent}'+
+'.wxp-text::placeholder{color:#c0c0c0}'+
+'.wxp-bar{flex-shrink:0;display:flex;gap:8px;padding:10px 12px;border-top:1px solid #f0f0f0;background:#f7f7f7}'+
+'.wxp-bar-item{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;color:#576b95;padding:9px 6px;border-radius:8px;background:#fff;cursor:pointer;overflow:hidden}'+
+'.wxp-bar-item svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}'+
+'.wxp-bar-item span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
+'.wxp-pick{position:absolute;inset:0;background:#fff;z-index:901;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s}'+
+'.wxp-pick.show{transform:translateX(0)}'+
+'.wxp-pick-nav{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#ededed;border-bottom:1px solid #d9d9d9;flex-shrink:0}'+
+'.wxp-pick-nav button{background:transparent;border:none;font-size:15px;color:#1a1a1a;padding:6px 4px;font-family:inherit;cursor:pointer}'+
+'.wxp-pick-nav .title{font-size:17px;font-weight:600;color:#1a1a1a}'+
+'.wxp-pick-nav .done{color:#07c160;font-weight:600}'+
+'.wxp-pick-body{flex:1;overflow-y:auto}'+
+'.wxp-radio{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid #f5f5f5;cursor:pointer}'+
+'.wxp-radio-mark{width:22px;height:22px;border-radius:50%;border:1.5px solid #ccc;margin-right:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center}'+
+'.wxp-radio.selected .wxp-radio-mark{background:#07c160;border-color:#07c160}'+
+'.wxp-radio-mark svg{width:12px;height:12px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;display:none}'+
+'.wxp-radio.selected .wxp-radio-mark svg{display:block}'+
+'.wxp-radio-n{font-size:15px;color:#1a1a1a}'+
+'.wxp-radio-d{font-size:11px;color:#999;margin-top:3px}'+
+'.wxp-person{display:flex;align-items:center;padding:12px 16px;gap:12px;border-bottom:1px solid #f5f5f5;cursor:pointer}'+
+'.wxp-person-av{width:40px;height:40px;border-radius:50%;background:#4a90d9;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:600;overflow:hidden;flex-shrink:0}'+
+'.wxp-person-av img{width:100%;height:100%;object-fit:cover}'+
+'.wxp-person-n{flex:1;font-size:15px;color:#1a1a1a}'+
+'.wxp-person-ck{width:22px;height:22px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center}'+
+'.wxp-person-ck svg{width:12px;height:12px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;display:none}'+
+'.wxp-person-ck.selected{background:#07c160;border-color:#07c160}'+
+'.wxp-person-ck.selected svg{display:block}'+
+'.wxp-empty{text-align:center;color:#b8b8b8;font-size:13px;padding:60px 20px}';
+document.head.appendChild(style);
+
+// 编辑器
+var ed=document.createElement('div');
+ed.className='wxp-edit';
+ed.innerHTML='<div class="wxp-nav"><button id="wxpCancel">取消</button><span class="title">发表</span><button class="pub" id="wxpPub" disabled>发表</button></div>'+
+'<div class="wxp-body"><textarea class="wxp-text" id="wxpText" placeholder="这一刻的想法..."></textarea></div>'+
+'<div class="wxp-bar">'+
+'<div class="wxp-bar-item" id="wxpVisBtn"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="3"/></svg><span id="wxpVisLabel">公开</span></div>'+
+'<div class="wxp-bar-item" id="wxpAtBtn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></svg><span id="wxpAtLabel">提醒谁看</span></div>'+
+'</div>';
+wechatPanel.appendChild(ed);
+var textEl=ed.querySelector('#wxpText');
+var pubBtn=ed.querySelector('#wxpPub');
+var visLabel=ed.querySelector('#wxpVisLabel');
+var atLabel=ed.querySelector('#wxpAtLabel');
+var state={visible:'public',visName:'公开',list:[],at:[]};
+
+// 可见范围 picker
+var vis=document.createElement('div');
+vis.className='wxp-pick';
+vis.innerHTML='<div class="wxp-pick-nav"><button id="wxpVisBack">取消</button><span class="title">谁可以看</span><span style="width:44px"></span></div><div class="wxp-pick-body" id="wxpVisBody"></div>';
+wechatPanel.appendChild(vis);
+function renderVis(){
+var body=vis.querySelector('#wxpVisBody');
+body.innerHTML='';
+[{v:'public',n:'公开',d:'所有人可见'},{v:'private',n:'私密',d:'仅自己可见'},{v:'partial',n:'部分可见',d:'选中的朋友可见'},{v:'exclude',n:'不给谁看',d:'选中的朋友不可见'}].forEach(function(o){
+var r=document.createElement('div');
+r.className='wxp-radio'+(o.v===state.visible?' selected':'');
+r.innerHTML='<div class="wxp-radio-mark"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div><div><div class="wxp-radio-n">'+o.n+'</div><div class="wxp-radio-d">'+o.d+'</div></div>';
+r.addEventListener('click',function(){
+if(o.v==='public'||o.v==='private'){
+state.visible=o.v;state.visName=o.n;state.list=[];
+visLabel.textContent=state.visName;
+vis.classList.remove('show');
+}else{
+state.visible=o.v;state.visName=o.n;
+vis.classList.remove('show');
+openPersons(o.v);
+}
+});
+body.appendChild(r);
+});
+}
+vis.querySelector('#wxpVisBack').addEventListener('click',function(){vis.classList.remove('show');});
+
+// 联系人 picker
+var pp=document.createElement('div');
+pp.className='wxp-pick';
+pp.innerHTML='<div class="wxp-pick-nav"><button id="wxpPerBack">返回</button><span class="title" id="wxpPerTitle">选择联系人</span><button class="done" id="wxpPerDone">完成</button></div><div class="wxp-pick-body" id="wxpPerBody"></div>';
+wechatPanel.appendChild(pp);
+var tempList=[];
+function openPersons(mode){
+tempList=state.list.slice();
+pp.querySelector('#wxpPerTitle').textContent=(mode==='partial')?'部分可见':'不给谁看';
+renderPersons();
+pp.classList.add('show');
+}
+function renderPersons(){
+var body=pp.querySelector('#wxpPerBody');
+body.innerHTML='';
+var chars=[];try{chars=JSON.parse(localStorage.getItem('contact-chars')||'[]');}catch(e){}
+if(chars.length===0){body.innerHTML='<div class="wxp-empty">暂无联系人<br>请先到联系人 App 创建</div>';return;}
+chars.forEach(function(c){
+var sel=tempList.some(function(x){return x.id===c.id;});
+var p=document.createElement('div');p.className='wxp-person';
+var av=document.createElement('div');av.className='wxp-person-av';
+if(c.avatar){var im=document.createElement('img');im.src=c.avatar;av.appendChild(im);}else{av.textContent=(c.name||'?').charAt(0);}
+var nm=document.createElement('div');nm.className='wxp-person-n';nm.textContent=c.name||'未命名';
+var ck=document.createElement('div');ck.className='wxp-person-ck'+(sel?' selected':'');ck.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';
+p.appendChild(av);p.appendChild(nm);p.appendChild(ck);
+p.addEventListener('click',function(){
+var i=tempList.findIndex(function(x){return x.id===c.id;});
+if(i>=0)tempList.splice(i,1);else tempList.push({id:c.id,name:c.name});
+renderPersons();
+});
+body.appendChild(p);
+});
+}
+pp.querySelector('#wxpPerBack').addEventListener('click',function(){pp.classList.remove('show');});
+pp.querySelector('#wxpPerDone').addEventListener('click',function(){
+state.list=tempList.slice();
+visLabel.textContent=state.visName+(state.list.length?'('+state.list.length+'人)':'');
+pp.classList.remove('show');
+});
+
+// 提醒谁看 picker
+var at=document.createElement('div');
+at.className='wxp-pick';
+at.innerHTML='<div class="wxp-pick-nav"><button id="wxpAtBack">取消</button><span class="title">提醒谁看</span><button class="done" id="wxpAtDone">完成</button></div><div class="wxp-pick-body" id="wxpAtBody"></div>';
+wechatPanel.appendChild(at);
+var tempAt=[];
+function renderAt(){
+var body=at.querySelector('#wxpAtBody');body.innerHTML='';
+var chars=[];try{chars=JSON.parse(localStorage.getItem('contact-chars')||'[]');}catch(e){}
+if(chars.length===0){body.innerHTML='<div class="wxp-empty">暂无联系人</div>';return;}
+chars.forEach(function(c){
+var sel=tempAt.some(function(x){return x.id===c.id;});
+var p=document.createElement('div');p.className='wxp-person';
+var av=document.createElement('div');av.className='wxp-person-av';
+if(c.avatar){var im=document.createElement('img');im.src=c.avatar;av.appendChild(im);}else{av.textContent=(c.name||'?').charAt(0);}
+var nm=document.createElement('div');nm.className='wxp-person-n';nm.textContent=c.name||'未命名';
+var ck=document.createElement('div');ck.className='wxp-person-ck'+(sel?' selected':'');ck.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';
+p.appendChild(av);p.appendChild(nm);p.appendChild(ck);
+p.addEventListener('click',function(){
+var i=tempAt.findIndex(function(x){return x.id===c.id;});
+if(i>=0)tempAt.splice(i,1);else tempAt.push({id:c.id,name:c.name});
+renderAt();
+});
+body.appendChild(p);
+});
+}
+at.querySelector('#wxpAtBack').addEventListener('click',function(){at.classList.remove('show');});
+at.querySelector('#wxpAtDone').addEventListener('click',function(){
+state.at=tempAt.slice();
+atLabel.textContent=state.at.length?'提醒 '+state.at.length+' 人':'提醒谁看';
+at.classList.remove('show');
+});
+
+// 绑定
+ed.querySelector('#wxpVisBtn').addEventListener('click',function(){renderVis();vis.classList.add('show');});
+ed.querySelector('#wxpAtBtn').addEventListener('click',function(){tempAt=state.at.slice();renderAt();at.classList.add('show');});
+ed.querySelector('#wxpCancel').addEventListener('click',function(){ed.classList.remove('show');});
+textEl.addEventListener('input',function(){pubBtn.disabled=textEl.value.trim().length===0;});
+
+// + 按钮
+var addBtn=document.getElementById('wxMomentsAddBtn');
+if(addBtn){
+var nb=addBtn.cloneNode(true);
+addBtn.parentNode.replaceChild(nb,addBtn);
+nb.addEventListener('click',function(e){
+e.stopPropagation();
+textEl.value='';
+state={visible:'public',visName:'公开',list:[],at:[]};
+visLabel.textContent='公开';
+atLabel.textContent='提醒谁看';
+pubBtn.disabled=true;
+ed.classList.add('show');
+setTimeout(function(){textEl.focus();},300);
+});
+}
+
+// 发表（不刷新，直接插到列表顶部）
+pubBtn.addEventListener('click',function(){
+var text=textEl.value.trim();
+if(!text)return;
+var arr=getArr();
+var now=new Date();
+var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var m={
+id:'m_'+Date.now(),
+day:String(now.getDate()),
+month:months[now.getMonth()],
+text:text,
+image:'',
+images:[],
+authorId:'me',
+authorName:'我',
+authorAvatar:localStorage.getItem('wx-me-avatar')||'',
+visible:state.visible,
+visibleName:state.visName,
+at:state.at.slice()
+};
+arr.unshift(m);
+saveArr(arr);
+ed.classList.remove('show');
+insertTop(m);
+});
+
+function insertTop(m){
+var listEl=document.getElementById('wxMomentsList');
+if(!listEl)return;
+var item=document.createElement('div');
+item.className='wx-moment-item';
+item.setAttribute('data-decorated','1');
+item.style.flexWrap='wrap';
+item.style.position='relative';
+var dateHtml='<div class="wx-moment-date"><div class="wx-moment-day">'+esc(m.day)+'</div><div class="wx-moment-month">'+esc(m.month)+'</div></div>';
+var contentHtml='<div class="wx-moment-content"><div class="wx-moment-img">点击上传</div><div class="wx-moment-text">'+esc(m.text)+'</div></div>';
+item.innerHTML=dateHtml+contentHtml;
+var ar=document.createElement('div');
+ar.className='wx-moment-author';
+var avHtml=m.authorAvatar?'<img src="'+m.authorAvatar+'">':'我';
+ar.innerHTML='<div class="wx-moment-author-avatar">'+avHtml+'</div><span class="wx-moment-author-name">我</span>';
+item.insertBefore(ar,item.firstChild);
+var parts=[];
+if(m.visibleName&&m.visibleName!=='公开')parts.push(m.visibleName);
+if(m.at&&m.at.length)parts.push('@'+m.at.map(function(a){return a.name;}).join(' '));
+if(parts.length){
+var ex=document.createElement('div');
+ex.className='wx-moment-extra';
+ex.textContent=parts.join(' · ');
+item.appendChild(ex);
+}
+var del=document.createElement('button');
+del.className='wx-moment-delete';
+del.textContent='删除';
+del.addEventListener('click',function(e){
+e.stopPropagation();
+if(!confirm('确定删除这条朋友圈吗？'))return;
+var a2=getArr();
+var i=a2.findIndex(function(x){return x.id===m.id;});
+if(i>=0){a2.splice(i,1);saveArr(a2);}
+item.remove();
+});
+item.appendChild(del);
+listEl.insertBefore(item,listEl.firstChild);
+}
+},400);
+})();
+</script>
 </body>
 </html>
