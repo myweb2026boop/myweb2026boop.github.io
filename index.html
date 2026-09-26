@@ -2805,145 +2805,285 @@ alert('页面初始化出错：' + err.message);
 (function(){
 try{
 var raw=localStorage.getItem('wx-moments');
-if(raw){
-var v=JSON.parse(raw);
-if(Array.isArray(v)){
-var filtered=v.filter(function(m){return m.authorId;});
-localStorage.setItem('wx-moments',JSON.stringify(filtered));
-}
-}else{
-localStorage.setItem('wx-moments','[]');
-}
+if(raw){var v=JSON.parse(raw);if(Array.isArray(v)){var f=v.filter(function(m){return m.authorId;});if(f.length!==v.length)localStorage.setItem('wx-moments',JSON.stringify(f));}}
+else{localStorage.setItem('wx-moments','[]');}
 }catch(e){}
 function init(){
 var style=document.createElement('style');
 style.textContent='.wx-moments-me{bottom:20px!important}'+
-'.wx-moments-publish-mask{position:absolute;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:540}'+
-'.wx-moments-publish-mask.show{opacity:1;pointer-events:auto}'+
-'.wx-moments-publish-sheet{position:absolute;left:0;right:0;bottom:0;background:#f7f7f7;border-radius:18px 18px 0 0;padding:8px 12px 18px;transform:translateY(110%);transition:transform .3s;z-index:541;max-height:80%;overflow-y:auto}'+
-'.wx-moments-publish-sheet.show{transform:translateY(0)}'+
-'.wx-moments-publish-label{font-size:12px;color:#888;text-align:center;padding:10px 0 6px}'+
-'.wx-moments-publish-authors{display:flex;gap:14px;overflow-x:auto;padding:6px 8px 14px}'+
-'.wx-moments-publish-author{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;flex-shrink:0}'+
-'.wx-moments-publish-author-avatar{width:52px;height:52px;border-radius:50%;background:#e5e5e5;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;font-weight:600;overflow:hidden;border:2.5px solid transparent;transition:border-color .2s}'+
-'.wx-moments-publish-author.selected .wx-moments-publish-author-avatar{border-color:#07c160}'+
-'.wx-moments-publish-author-avatar img{width:100%;height:100%;object-fit:cover}'+
-'.wx-moments-publish-author-name{font-size:11px;color:#666;max-width:60px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
-'.wx-moments-publish-btn{width:100%;padding:15px 0;border:none;background:#fff;border-radius:12px;font-size:16px;color:#1a1a1a;font-weight:500;cursor:pointer;margin-bottom:8px;font-family:inherit}'+
-'.wx-moments-publish-btn:active{background:#f0f0f0}'+
-'.wx-moments-publish-cancel{width:100%;padding:15px 0;border:none;background:#fff;border-radius:12px;font-size:16px;color:#666;cursor:pointer;font-family:inherit}'+
+'.wx-post-editor{position:absolute;inset:0;background:#fff;z-index:600;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s}'+
+'.wx-post-editor.show{transform:translateX(0)}'+
+'.wx-post-nav{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#ededed;border-bottom:1px solid #d9d9d9;flex-shrink:0}'+
+'.wx-post-nav .cancel{background:transparent;border:none;font-size:16px;color:#1a1a1a;cursor:pointer;font-family:inherit}'+
+'.wx-post-nav .publish{background:#07c160;border:none;color:#fff;font-size:15px;font-weight:500;padding:6px 16px;border-radius:6px;cursor:pointer;font-family:inherit}'+
+'.wx-post-nav .publish:disabled{background:#d0d0d0}'+
+'.wx-post-nav .title{font-size:17px;font-weight:600;color:#1a1a1a}'+
+'.wx-post-body{flex:1;overflow-y:auto;padding:14px 16px}'+
+'.wx-post-textarea{width:100%;border:none;outline:none;font-size:16px;color:#1a1a1a;line-height:1.5;min-height:100px;font-family:inherit;resize:none;background:transparent}'+
+'.wx-post-textarea::placeholder{color:#c0c0c0}'+
+'.wx-post-images{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}'+
+'.wx-post-img{position:relative;aspect-ratio:1;background:#f0f0f0;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden}'+
+'.wx-post-img img{width:100%;height:100%;object-fit:cover;display:block}'+
+'.wx-post-img-add{color:#c0c0c0}'+
+'.wx-post-img-add svg{width:36px;height:36px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round}'+
+'.wx-post-img-del{position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;border:none;font-size:14px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}'+
+'.wx-post-toolbar{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-top:1px solid #f0f0f0;background:#f7f7f7}'+
+'.wx-post-toolbar-item{display:flex;align-items:center;gap:6px;font-size:13px;color:#576b95;cursor:pointer;padding:6px 10px;border-radius:6px;background:#fff}'+
+'.wx-post-toolbar-item svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}'+
+'.wx-post-picker{position:absolute;inset:0;background:#fff;z-index:601;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s}'+
+'.wx-post-picker.show{transform:translateX(0)}'+
+'.wx-post-picker-nav{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#ededed;border-bottom:1px solid #d9d9d9;flex-shrink:0}'+
+'.wx-post-picker-nav .cancel{background:transparent;border:none;font-size:16px;color:#1a1a1a;cursor:pointer;font-family:inherit}'+
+'.wx-post-picker-nav .title{font-size:17px;font-weight:600;color:#1a1a1a}'+
+'.wx-post-picker-body{flex:1;overflow-y:auto}'+
+'.wx-post-radio{display:flex;align-items:center;padding:14px 16px;cursor:pointer;border-bottom:1px solid #f5f5f5}'+
+'.wx-post-radio-mark{width:22px;height:22px;border-radius:50%;border:1.5px solid #ccc;display:flex;align-items:center;justify-content:center;margin-right:12px;flex-shrink:0}'+
+'.wx-post-radio.selected .wx-post-radio-mark{background:#07c160;border-color:#07c160}'+
+'.wx-post-radio-mark svg{width:12px;height:12px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;display:none}'+
+'.wx-post-radio.selected .wx-post-radio-mark svg{display:block}'+
+'.wx-post-radio-label{flex:1;font-size:15px;color:#1a1a1a}'+
+'.wx-post-radio-desc{font-size:11px;color:#999;margin-top:2px}'+
+'.wx-post-at-item{display:flex;align-items:center;padding:12px 16px;cursor:pointer;gap:12px;border-bottom:1px solid #f5f5f5}'+
+'.wx-post-at-item:active{background:#f5f5f5}'+
+'.wx-post-at-avatar{width:40px;height:40px;border-radius:50%;background:#e5e5e5;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:600;overflow:hidden;flex-shrink:0}'+
+'.wx-post-at-avatar img{width:100%;height:100%;object-fit:cover}'+
+'.wx-post-at-name{flex:1;font-size:15px;color:#1a1a1a}'+
+'.wx-post-at-check{width:22px;height:22px;border-radius:50%;border:1.5px solid #ccc;display:flex;align-items:center;justify-content:center;flex-shrink:0}'+
+'.wx-post-at-check svg{width:12px;height:12px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;display:none}'+
+'.wx-post-at-check.selected{background:#07c160;border-color:#07c160}'+
+'.wx-post-at-check.selected svg{display:block}'+
 '.wx-moment-author{flex-basis:100%;display:flex;align-items:center;gap:6px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid #f5f5f5}'+
 '.wx-moment-author-avatar{width:24px;height:24px;border-radius:50%;background:#07c160;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:600;overflow:hidden;flex-shrink:0}'+
 '.wx-moment-author-avatar img{width:100%;height:100%;object-fit:cover}'+
-'.wx-moment-author-name{font-size:13px;color:#576b95;font-weight:500}';
+'.wx-moment-author-name{font-size:13px;color:#576b95;font-weight:500}'+
+'.wx-moment-extra{flex-basis:100%;font-size:12px;color:#576b95;margin-top:6px;padding-left:34px}'+
+'.wx-moment-delete{position:absolute;right:12px;top:18px;background:transparent;border:none;color:#999;cursor:pointer;padding:4px 8px;font-size:12px;font-family:inherit}'+
+'.wx-moment-images{flex-basis:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:8px;padding-left:66px}'+
+'.wx-moment-images img{width:100%;aspect-ratio:1;object-fit:cover;display:block}';
 document.head.appendChild(style);
-var addBtn=document.getElementById('wxMomentsAddBtn');
-if(!addBtn)return;
-var newBtn=addBtn.cloneNode(true);
-addBtn.parentNode.replaceChild(newBtn,addBtn);
-var mask=document.getElementById('wxMomentsPublishMask');
-var sheet=document.getElementById('wxMomentsPublishSheet');
-if(!mask||!sheet){
-var wrap=document.getElementById('wxMomentsView');
-if(!wrap)return;
-wrap.insertAdjacentHTML('beforeend','<div class="wx-moments-publish-mask" id="wxMomentsPublishMask"></div><div class="wx-moments-publish-sheet" id="wxMomentsPublishSheet"><div class="wx-moments-publish-label">选择发布者</div><div class="wx-moments-publish-authors" id="wxMomentsAuthors"></div><button class="wx-moments-publish-btn" id="wxMomentTextBtn">发纯文字</button><button class="wx-moments-publish-btn" id="wxMomentImageBtn">发图片</button><button class="wx-moments-publish-cancel" id="wxMomentPublishCancel">取消</button></div>');
-mask=document.getElementById('wxMomentsPublishMask');
-sheet=document.getElementById('wxMomentsPublishSheet');
+
+var oldSheet=document.getElementById('wxMomentsPublishSheet');
+if(oldSheet)oldSheet.remove();
+var oldMask=document.getElementById('wxMomentsPublishMask');
+if(oldMask)oldMask.remove();
+
+var wechatPanel=document.getElementById('wechatPanel');
+if(!wechatPanel)return;
+
+var editor=document.createElement('div');
+editor.className='wx-post-editor';
+editor.innerHTML='<div class="wx-post-nav"><button class="cancel" id="wxPostCancel">取消</button><span class="title">发表</span><button class="publish" id="wxPostPublish" disabled>发表</button></div><div class="wx-post-body"><textarea class="wx-post-textarea" id="wxPostText" placeholder="这一刻的想法..."></textarea><div class="wx-post-images" id="wxPostImages"></div></div><div class="wx-post-toolbar"><div class="wx-post-toolbar-item" id="wxPostVisibleBtn"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="3"/></svg><span id="wxPostVisibleLabel">公开</span></div><div class="wx-post-toolbar-item" id="wxPostAtBtn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></svg><span id="wxPostAtLabel">提醒谁看</span></div></div>';
+wechatPanel.appendChild(editor);
+
+var imagesContainer=editor.querySelector('#wxPostImages');
+var textarea=editor.querySelector('#wxPostText');
+var publishBtn=editor.querySelector('#wxPostPublish');
+var visibleLabel=editor.querySelector('#wxPostVisibleLabel');
+var atLabel=editor.querySelector('#wxPostAtLabel');
+
+var postImages=[];
+var postVisible='public';
+var postVisibleName='公开';
+var postAt=[];
+
+var imgPicker=document.createElement('input');
+imgPicker.type='file';
+imgPicker.accept='image/*';
+imgPicker.multiple=true;
+imgPicker.style.display='none';
+document.body.appendChild(imgPicker);
+
+function renderImages(){
+imagesContainer.innerHTML='';
+postImages.forEach(function(src,i){
+var box=document.createElement('div');
+box.className='wx-post-img';
+var im=document.createElement('img');
+im.src=src;
+box.appendChild(im);
+var del=document.createElement('button');
+del.className='wx-post-img-del';
+del.textContent='×';
+del.addEventListener('click',function(e){
+e.stopPropagation();
+postImages.splice(i,1);
+renderImages();
+updatePublishBtn();
+});
+box.appendChild(del);
+imagesContainer.appendChild(box);
+});
+if(postImages.length<9){
+var add=document.createElement('div');
+add.className='wx-post-img wx-post-img-add';
+add.innerHTML='<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>';
+add.addEventListener('click',function(){imgPicker.click();});
+imagesContainer.appendChild(add);
 }
-var authorsEl=document.getElementById('wxMomentsAuthors');
-if(!authorsEl&&sheet){
-var label=document.createElement('div');
-label.className='wx-moments-publish-label';
-label.textContent='选择发布者';
-var ad=document.createElement('div');
-ad.className='wx-moments-publish-authors';
-ad.id='wxMomentsAuthors';
-sheet.insertBefore(label,sheet.firstChild);
-sheet.insertBefore(ad,label.nextSibling);
-authorsEl=ad;
 }
-var newUploader=document.getElementById('wxMomentsNewUploader');
-if(!newUploader){
-newUploader=document.createElement('input');
-newUploader.type='file';
-newUploader.id='wxMomentsNewUploader';
-newUploader.accept='image/*';
-newUploader.multiple=true;
-newUploader.style.display='none';
-document.body.appendChild(newUploader);
+imgPicker.addEventListener('change',function(e){
+var files=Array.prototype.slice.call(e.target.files).slice(0,9-postImages.length);
+files.forEach(function(f){
+var r=new FileReader();
+r.onload=function(ev){
+postImages.push(ev.target.result);
+renderImages();
+updatePublishBtn();
+};
+r.readAsDataURL(f);
+});
+imgPicker.value='';
+});
+function updatePublishBtn(){
+var hasText=textarea.value.trim().length>0;
+var hasImg=postImages.length>0;
+publishBtn.disabled=!(hasText||hasImg);
 }
-var selectedAuthor='me';
-function getAuthors(){
-var authors=[{id:'me',name:localStorage.getItem('wx-me-name')||'我',avatar:localStorage.getItem('wx-me-avatar')||''}];
+textarea.addEventListener('input',updatePublishBtn);
+
+function openEditor(){
+postImages=[];
+postVisible='public';
+postVisibleName='公开';
+postAt=[];
+textarea.value='';
+visibleLabel.textContent='公开';
+atLabel.textContent='提醒谁看';
+renderImages();
+updatePublishBtn();
+editor.classList.add('show');
+setTimeout(function(){textarea.focus();},300);
+}
+function closeEditor(){editor.classList.remove('show');}
+editor.querySelector('#wxPostCancel').addEventListener('click',closeEditor);
+
+var visiblePicker=document.createElement('div');
+visiblePicker.className='wx-post-picker';
+visiblePicker.innerHTML='<div class="wx-post-picker-nav"><button class="cancel" id="wxVisibleCancel">取消</button><span class="title">谁可以看</span><span style="width:40px"></span></div><div class="wx-post-picker-body"><div class="wx-post-radio" data-value="public"><div class="wx-post-radio-mark"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div><div class="wx-post-radio-label">公开<div class="wx-post-radio-desc">所有人可见</div></div></div><div class="wx-post-radio" data-value="private"><div class="wx-post-radio-mark"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div><div class="wx-post-radio-label">私密<div class="wx-post-radio-desc">仅自己可见</div></div></div><div class="wx-post-radio" data-value="partial"><div class="wx-post-radio-mark"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div><div class="wx-post-radio-label">部分可见<div class="wx-post-radio-desc">选中的朋友可见</div></div></div><div class="wx-post-radio" data-value="exclude"><div class="wx-post-radio-mark"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div><div class="wx-post-radio-label">不给谁看<div class="wx-post-radio-desc">选中的朋友不可见</div></div></div></div>';
+wechatPanel.appendChild(visiblePicker);
+function updateVisibleUI(){
+visiblePicker.querySelectorAll('.wx-post-radio').forEach(function(el){
+el.classList.toggle('selected',el.dataset.value===postVisible);
+});
+}
+visiblePicker.querySelector('#wxVisibleCancel').addEventListener('click',function(){
+visiblePicker.classList.remove('show');
+});
+visiblePicker.querySelectorAll('.wx-post-radio').forEach(function(el){
+el.addEventListener('click',function(){
+postVisible=el.dataset.value;
+var labels={public:'公开',private:'私密',partial:'部分可见',exclude:'不给谁看'};
+postVisibleName=labels[postVisible];
+visibleLabel.textContent=postVisibleName;
+updateVisibleUI();
+setTimeout(function(){visiblePicker.classList.remove('show');},150);
+});
+});
+
+var atPicker=document.createElement('div');
+atPicker.className='wx-post-picker';
+atPicker.innerHTML='<div class="wx-post-picker-nav"><button class="cancel" id="wxAtCancel">取消</button><span class="title">提醒谁看</span><span style="width:40px"></span></div><div class="wx-post-picker-body" id="wxAtList"></div>';
+wechatPanel.appendChild(atPicker);
+atPicker.querySelector('#wxAtCancel').addEventListener('click',function(){
+atPicker.classList.remove('show');
+updateAtLabel();
+});
+function renderAtList(){
+var list=atPicker.querySelector('#wxAtList');
+list.innerHTML='';
 var chars=[];
 try{chars=JSON.parse(localStorage.getItem('contact-chars')||'[]');}catch(e){}
-var ids=[];
-try{ids=JSON.parse(localStorage.getItem('wx-added-chars')||'[]');}catch(e){}
+if(chars.length===0){
+list.innerHTML='<div style="text-align:center;color:#b8b8b8;padding:60px 20px;font-size:13px">暂无联系人</div>';
+return;
+}
 chars.forEach(function(c){
-if(ids.indexOf(c.id)>=0){authors.push({id:c.id,name:c.name||'未命名',avatar:c.avatar||''});}
-});
-return authors;
-}
-function renderAuthors(){
-if(!authorsEl)return;
-authorsEl.innerHTML='';
-getAuthors().forEach(function(a){
-var el=document.createElement('div');
-el.className='wx-moments-publish-author'+(a.id===selectedAuthor?' selected':'');
+var selected=postAt.some(function(a){return a.id===c.id;});
+var item=document.createElement('div');
+item.className='wx-post-at-item';
 var av=document.createElement('div');
-av.className='wx-moments-publish-author-avatar';
-if(a.avatar){var im=document.createElement('img');im.src=a.avatar;av.appendChild(im);}
-else{av.textContent=(a.id==='me'?'我':a.name).charAt(0);}
+av.className='wx-post-at-avatar';
+if(c.avatar){var im=document.createElement('img');im.src=c.avatar;av.appendChild(im);}
+else{av.style.background='#4a90d9';av.textContent=(c.name||'?').charAt(0);}
 var nm=document.createElement('div');
-nm.className='wx-moments-publish-author-name';
-nm.textContent=a.id==='me'?'我':a.name;
-el.appendChild(av);el.appendChild(nm);
-el.addEventListener('click',function(){selectedAuthor=a.id;renderAuthors();});
-authorsEl.appendChild(el);
+nm.className='wx-post-at-name';
+nm.textContent=c.name||'未命名';
+var ck=document.createElement('div');
+ck.className='wx-post-at-check'+(selected?' selected':'');
+ck.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';
+item.appendChild(av);item.appendChild(nm);item.appendChild(ck);
+item.addEventListener('click',function(){
+var idx=postAt.findIndex(function(a){return a.id===c.id;});
+if(idx>=0){postAt.splice(idx,1);}else{postAt.push({id:c.id,name:c.name});}
+renderAtList();
+});
+list.appendChild(item);
 });
 }
-function getArr(){
-try{var r=localStorage.getItem('wx-moments');if(r){var v=JSON.parse(r);if(Array.isArray(v))return v;}}catch(e){}
-return[];
+function updateAtLabel(){
+if(postAt.length===0){atLabel.textContent='提醒谁看';}
+else{atLabel.textContent='提醒 '+postAt.length+' 人';}
 }
-function saveArr(a){try{localStorage.setItem('wx-moments',JSON.stringify(a));}catch(e){}}
-function publish(image){
-var arr=getArr();
+editor.querySelector('#wxPostVisibleBtn').addEventListener('click',function(){
+updateVisibleUI();
+visiblePicker.classList.add('show');
+});
+editor.querySelector('#wxPostAtBtn').addEventListener('click',function(){
+renderAtList();
+atPicker.classList.add('show');
+});
+
+publishBtn.addEventListener('click',function(){
+var text=textarea.value.trim();
+var images=postImages.slice();
+var arr=[];
+try{var r=localStorage.getItem('wx-moments');if(r){var v=JSON.parse(r);if(Array.isArray(v))arr=v;}}catch(e){}
 var now=new Date();
 var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-var authors=getAuthors();
-var au=authors.find(function(x){return x.id===selectedAuthor;})||authors[0];
-arr.unshift({id:'m_'+Date.now(),day:String(now.getDate()),month:months[now.getMonth()],text:'',image:image||'',authorId:au.id,authorName:au.id==='me'?'我':au.name,authorAvatar:au.avatar||''});
-saveArr(arr);
+arr.unshift({
+id:'m_'+Date.now(),
+day:String(now.getDate()),
+month:months[now.getMonth()],
+text:text,
+image:images[0]||'',
+images:images,
+authorId:'me',
+authorName:'我',
+authorAvatar:localStorage.getItem('wx-me-avatar')||'',
+visible:postVisible,
+visibleName:postVisibleName,
+at:postAt.slice()
+});
+try{localStorage.setItem('wx-moments',JSON.stringify(arr));}catch(e){}
+closeEditor();
 var backBtn=document.getElementById('wxMomentsBack');
 var entryBtn=document.getElementById('wxMomentsEntry');
 if(backBtn)backBtn.click();
 setTimeout(function(){if(entryBtn)entryBtn.click();},350);
-}
-function openSheet(){selectedAuthor='me';renderAuthors();mask.classList.add('show');sheet.classList.add('show');}
-function closeSheet(){mask.classList.remove('show');sheet.classList.remove('show');}
-newBtn.addEventListener('click',function(e){e.stopPropagation();openSheet();});
-mask.addEventListener('click',closeSheet);
-var cancelBtn=document.getElementById('wxMomentPublishCancel');
-if(cancelBtn)cancelBtn.addEventListener('click',closeSheet);
-var textBtn=document.getElementById('wxMomentTextBtn');
-if(textBtn)textBtn.addEventListener('click',function(){closeSheet();publish('');});
-var imageBtn=document.getElementById('wxMomentImageBtn');
-if(imageBtn)imageBtn.addEventListener('click',function(){closeSheet();setTimeout(function(){newUploader.click();},200);});
-newUploader.addEventListener('change',function(e){
-var f=e.target.files[0];if(!f)return;
-var r=new FileReader();
-r.onload=function(ev){publish(ev.target.result);newUploader.value='';};
-r.readAsDataURL(f);
 });
+
+var oldAddBtn=document.getElementById('wxMomentsAddBtn');
+if(!oldAddBtn)return;
+var newAddBtn=oldAddBtn.cloneNode(true);
+oldAddBtn.parentNode.replaceChild(newAddBtn,oldAddBtn);
+newAddBtn.addEventListener('click',function(e){
+e.stopPropagation();
+openEditor();
+});
+
 function decorateMoments(){
-var items=document.querySelectorAll('.wx-moment-item');
-var arr=getArr();
+var listEl=document.getElementById('wxMomentsList');
+if(!listEl)return;
+var items=listEl.querySelectorAll('.wx-moment-item');
+var arr=[];
+try{var r=localStorage.getItem('wx-moments');if(r){var v=JSON.parse(r);if(Array.isArray(v))arr=v;}}catch(e){}
 items.forEach(function(item,idx){
 if(item.getAttribute('data-decorated')==='1')return;
 item.setAttribute('data-decorated','1');
 item.style.flexWrap='wrap';
-var m=arr[idx];if(!m)return;
+item.style.position='relative';
+var m=arr[idx];
+if(!m)return;
 var authorName=m.authorName||'';
 var authorAvatar=m.authorAvatar||'';
 if(!authorName){
@@ -2954,6 +3094,7 @@ var ch=chars.find(function(x){return x.id===m.authorId;});
 if(ch){authorName=ch.name||'未命名';authorAvatar=ch.avatar||'';}
 }else{authorName='我';authorAvatar=localStorage.getItem('wx-me-avatar')||'';}
 }
+if(authorName){
 var authorRow=document.createElement('div');
 authorRow.className='wx-moment-author';
 var av=document.createElement('div');
@@ -2965,6 +3106,46 @@ nm.className='wx-moment-author-name';
 nm.textContent=authorName;
 authorRow.appendChild(av);authorRow.appendChild(nm);
 item.insertBefore(authorRow,item.firstChild);
+}
+var extraParts=[];
+if(m.visibleName&&m.visibleName!=='公开')extraParts.push(m.visibleName);
+if(m.at&&m.at.length>0){extraParts.push('@'+m.at.map(function(a){return a.name;}).join(' '));}
+if(extraParts.length>0){
+var extra=document.createElement('div');
+extra.className='wx-moment-extra';
+extra.textContent=extraParts.join(' · ');
+item.appendChild(extra);
+}
+if(m.images&&m.images.length>1){
+var imgGrid=item.querySelector('.wx-moment-img');
+if(imgGrid)imgGrid.style.display='none';
+var grid=document.createElement('div');
+grid.className='wx-moment-images';
+m.images.forEach(function(src){
+var im=document.createElement('img');
+im.src=src;
+grid.appendChild(im);
+});
+item.appendChild(grid);
+}
+if(m.authorId==='me'){
+var delBtn=document.createElement('button');
+delBtn.className='wx-moment-delete';
+delBtn.textContent='删除';
+delBtn.addEventListener('click',function(e){
+e.stopPropagation();
+if(!confirm('确定删除这条朋友圈吗？'))return;
+var a2=[];
+try{var r2=localStorage.getItem('wx-moments');if(r2){var v2=JSON.parse(r2);if(Array.isArray(v2))a2=v2;}}catch(e2){}
+a2.splice(idx,1);
+try{localStorage.setItem('wx-moments',JSON.stringify(a2));}catch(e2){}
+var backBtn=document.getElementById('wxMomentsBack');
+var entryBtn=document.getElementById('wxMomentsEntry');
+if(backBtn)backBtn.click();
+setTimeout(function(){if(entryBtn)entryBtn.click();},350);
+});
+item.appendChild(delBtn);
+}
 });
 }
 var listEl=document.getElementById('wxMomentsList');
@@ -2974,7 +3155,8 @@ obs.observe(listEl,{childList:true});
 }
 decorateMoments();
 }
-if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{setTimeout(init,0);}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}
+else{setTimeout(init,0);}
 })();
 </script>
 </body>
