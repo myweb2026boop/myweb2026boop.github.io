@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="mobile-web-app-capable" content="yes">
 <title>Koi Buono Profile</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; -webkit-tap-highlight-color:transparent; }
@@ -226,11 +229,13 @@ body.fs-mode .settings-panel { border-radius:0; }
 .wx-placeholder { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#b8b8b8; font-size:13px; background:#ededed; gap:8px; }
 .wx-placeholder-icon { font-size:42px; opacity:.55; }
 
-.wx-tabbar { flex-shrink:0; height:54px; display:flex; background:#f7f7f7; border-top:1px solid #d9d9d9; padding-bottom:env(safe-area-inset-bottom,0px); }
+/* 底栏：高度包含安全区，避免内容被挤压 */
+.wx-tabbar { flex-shrink:0; height:calc(54px + env(safe-area-inset-bottom, 0px)); display:flex; background:#f7f7f7; border-top:1px solid #d9d9d9; padding-bottom:env(safe-area-inset-bottom, 0px); }
 .wx-tab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; font-size:10px; color:#999; cursor:pointer; user-select:none; position:relative; }
 .wx-tab.active { color:#07c160; }
-.wx-tab-icon { font-size:22px; line-height:1; }
-.wx-tab-dot { position:absolute; top:5px; right:calc(50% - 14px); width:8px; height:8px; background:#fa5151; border-radius:50%; }
+.wx-tab-svg { width:24px; height:24px; display:block; flex-shrink:0; color:#7f7f7f; }
+.wx-tab.active .wx-tab-svg { color:#07c160; }
+.wx-tab-dot { position:absolute; top:4px; left:50%; margin-left:6px; width:8px; height:8px; background:#fa5151; border-radius:50%; pointer-events:none; }
 
 .wx-msg-list { flex:1; overflow-y:auto; padding:14px 12px 6px; background:#ededed; -webkit-overflow-scrolling:touch; background-size:cover; background-position:center; background-repeat:no-repeat; }
 .wx-msg-list::-webkit-scrollbar { display:none; }
@@ -766,10 +771,36 @@ textarea.ct-field-input { min-height:90px; line-height:1.5; }
                 </div>
             </div>
             <div class="wx-tabbar">
-                <div class="wx-tab active" data-tab="chat"><span class="wx-tab-icon">💬</span><span>微信</span></div>
-                <div class="wx-tab" data-tab="contacts"><span class="wx-tab-icon">👥</span><span>通讯录</span></div>
-                <div class="wx-tab" data-tab="discover"><span class="wx-tab-icon">🧭</span><span>发现</span><span class="wx-tab-dot"></span></div>
-                <div class="wx-tab" data-tab="me"><span class="wx-tab-icon">👤</span><span>我</span></div>
+                <div class="wx-tab active" data-tab="chat">
+                    <svg class="wx-tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                    </svg>
+                    <span>微信</span>
+                </div>
+                <div class="wx-tab" data-tab="contacts">
+                    <svg class="wx-tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span>通讯录</span>
+                </div>
+                <div class="wx-tab" data-tab="discover">
+                    <svg class="wx-tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+                    </svg>
+                    <span>发现</span>
+                    <span class="wx-tab-dot"></span>
+                </div>
+                <div class="wx-tab" data-tab="me">
+                    <svg class="wx-tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <span>我</span>
+                </div>
             </div>
         </div>
 
@@ -1213,6 +1244,19 @@ window.addEventListener('DOMContentLoaded', function() {
             }
         } catch (e) {}
 
+        /* PWA 添加到主屏幕后自动启用全屏，避免手机外框溢出 */
+        (function() {
+            const isStandalone =
+                window.navigator.standalone === true ||
+                (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+                (window.matchMedia && window.matchMedia('(display-mode: fullscreen)').matches);
+            if (isStandalone) {
+                document.body.classList.add('fs-mode');
+                document.documentElement.style.height = '100%';
+                document.body.style.height = '100%';
+            }
+        })();
+
         function $id(id) { return document.getElementById(id); }
         function $all(sel) { return document.querySelectorAll(sel); }
 
@@ -1434,9 +1478,10 @@ window.addEventListener('DOMContentLoaded', function() {
             const billView = $id('wxBillView');
             const billBack = $id('wxBillBack');
             const billList = $id('wxBillList');
-            const rechargeMask = $id('wxRechargeMask');
-            const rechargeSheet = $id('wxRechargeSheet');
-            const rechargeInput = $id('wxRechargeInput');
+            const rechargeMask = $');
+id('wxRechargeMask');
+            const rechargeSheet            = $id('wxRechargeSheet');
+ const            const rechargeInput chatSettingsBack = $id('wxRechargeInput');
             const rechargeQuick = $id('wxRechargeQuick');
             const rechargeConfirm = $id('wxRechargeConfirm');
             const toastEl = $id('wxToast');
@@ -1445,8 +1490,7 @@ window.addEventListener('DOMContentLoaded', function() {
             const charPickerList = $id('wxCharPickerList');
             const charPickerClose = $id('wxCharPickerClose');
             const chatMoreBtn = $id('wxChatMoreBtn');
-            const chatSettingsView = $id('wxChatSettingsView');
-            const chatSettingsBack = $id('wxChatSettingsBack');
+            const chatSettingsView = $id('wxChatSettingsView = $id('wxChatSettingsBack');
             const chatDetailAvatar = $id('wxChatDetailAvatar');
             const chatDetailName = $id('wxChatDetailName');
             const moreSearch = $id('wxMoreSearch');
