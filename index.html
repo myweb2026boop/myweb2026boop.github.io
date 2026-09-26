@@ -3096,6 +3096,170 @@ window.addEventListener('DOMContentLoaded', function() {
             entryBtn.addEventListener('click', function() { panel.classList.add('open'); });
             backBtn.addEventListener('click', function() { panel.classList.remove('open'); });
         })();
+/* 音乐App */
+        (function() {
+            const entry = $id('musicEntry');
+            const panel = $id('musicPanel');
+            if (!entry || !panel) return;
+            const audio = $id('muAudio');
+            const homeList = $id('muHomeList');
+            const resultList = $id('muResultList');
+            const searchPanel = $id('muSearchPanel');
+            const resultInput = $id('muResultInput');
+            const mini = $id('muMini');
+            const miniTitle = $id('muMiniTitle');
+            const miniArtist = $id('muMiniArtist');
+            const miniPlay = $id('muMiniPlay');
+            const miniCover = $id('muMiniCover');
+            const expand = $id('muExpand');
+            const expandTop = $id('muExpandTop');
+            const songTitle = $id('muSongTitle');
+            const songArtist = $id('muSongArtist');
+            const bigCover = $id('muBigCover');
+            const playMain = $id('muPlayMain');
+            const progressFill = $id('muProgressFill');
+            const progressDot = $id('muProgressDot');
+            const timeCur = $id('muTimeCur');
+            const timeTotal = $id('muTimeTotal');
+            const progress = $id('muProgress');
+            const prevBtn = $id('muPrev');
+            const) nextBtn = $id('muNext');
+            let {
+ list = [], index = -1;
+
+                           function fmt(s if (!isFinite(s)) s = 0;
+                return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(Math.floor(s%60)).padStart(2,'0');
+            }
+            function art(u) { return u ? u.replace(/\/\d+x\d+bb\./, '/600x600bb.') : ''; }
+            function setCover(el, u) {
+                const old = el.querySelector('img'); if (old) old.remove();
+                const svg = el.querySelector('svg');
+                if (u) { if (svg) svg.style.display='none'; const img=document.createElement('img'); img.src=u; el.insertBefore(img, el.firstChild); }
+                else if (svg) svg.style.display='';
+            }
+            async function search(kw) {
+                const r = await fetch('https://itunes.apple.com/search?term=' + encodeURIComponent(kw) + '&media=music&limit=25');
+                const d = await r.json();
+                return (d.results || []).filter(function(x) { return x.previewUrl; });
+            }
+            function render(el, songs, empty) {
+                el.innerHTML = '';
+                if (!songs.length) { el.innerHTML = '<div class="mu-empty">' + (empty||'没有找到') + '</div>'; return; }
+                songs.forEach(function(s, i) {
+                    const it = document.createElement('div'); it.className = 'mu-song-item';
+                    const c = document.createElement('div'); c.className = 'mu-song-cover';
+                    if (s.artworkUrl100) { const im = document.createElement('img'); im.src = art(s.artworkUrl100); c.appendChild(im); }
+                    const info = document.createElement('div'); info.className = 'mu-song-info';
+                    const n = document.createElement('div'); n.className = 'mu-song-name'; n.textContent = s.trackName || '未知';
+                    const a = document.createElement('div'); a.className = 'mu-song-artist'; a.textContent = s.artistName || '未知';
+                    info.appendChild(n); info.appendChild(a);
+                    const p = document.createElement('div'); p.className = 'mu-song-play';
+                    p.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16" fill="currentColor"/></svg>';
+                    it.appendChild(c); it.appendChild(info); it.appendChild(p);
+                    it.onclick = function() { play(songs, i); };
+                    el.appendChild(it);
+                });
+            }
+            function updateIcon(playing) {
+                const ic = playing
+                    ? '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="currentColor"/><rect x="14" y="4" width="4" height="16" fill="currentColor"/></svg>'
+                    : '<svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20" fill="currentColor"/></svg>';
+                miniPlay.innerHTML = ic; playMain.innerHTML = ic;
+                if (playing) bigCover.classList.remove('paused'); else bigCover.classList.add('paused');
+            }
+            function play(songs, i) {
+                list = songs; index = i;
+                const s = songs[i];
+                audio.src = s.previewUrl;
+                audio.play().catch(function(){});
+                const cover = art(s.artworkUrl100);
+                const t = s.trackName || '未知', a = s.artistName || '未知';
+                miniTitle.textContent = t; miniArtist.textContent = a;
+                songTitle.textContent = t; songArtist.textContent = a;
+                setCover(miniCover, cover); setCover(bigCover, cover);
+                mini.classList.add('show');
+                bigCover.classList.add('spin');
+                updateIcon(true);
+            }
+            function toggle() {
+                if (!audio.src) return;
+                if (audio.paused) audio.play(); else audio.pause();
+            }
+            miniPlay.onclick = function(e) { e.stopPropagation(); toggle(); };
+            playMain.onclick = toggle;
+            prevBtn.onclick = function() { if (list.length) play(list, index>0?index-1:list.length-1); };
+            nextBtn.onclick = function() { if (list.length) play(list, index<list.length-1?index+1:0); };
+            audio.ontimeupdate = function() {
+                const d = audio.duration || 0, c = audio.currentTime || 0;
+                const pct = d>0 ? c/d*100 : 0;
+                progressFill.style.width = pct + '%';
+                progressDot.style.left = pct + '%';
+                timeCur.textContent = fmt(c);
+            };
+            audio.onloadedmetadata = function() { timeTotal.textContent = fmt(audio.duration); };
+            audio.onplay = function() { updateIcon(true); };
+            audio.onpause = function() { updateIcon(false); };
+            audio.onended = function() { if (index < list.length-1) play(list, index+1); else updateIcon(false); };
+            progress.onclick = function(e) {
+                if (!audio.duration) return;
+                const r = progress.getBoundingClientRect();
+                const x = Math.max(0, Math.min(r.width, e.clientX - r.left));
+                audio.currentTime = (x / r.width) * audio.duration;
+            };
+            mini.onclick = function() { expand.classList.add('show'); };
+            expandTop.onclick = function() { expand.classList.remove('show'); };
+
+            const KW = ['Taylor Swift', '周杰伦', 'Adele', 'Ed Sheeran', 'Coldplay', '林俊杰'];
+            async function loadHome() {
+                homeList.innerHTML = '<div class="mu-empty">加载中...</div>';
+                try {
+                    const s = await search(KW[Math.floor(Math.random()*KW.length)]);
+                    render(homeList, s.slice(0,12), '暂时没搜到');
+                } catch(e) { homeList.innerHTML = '<div class="mu-empty">加载失败</div>'; }
+            }
+            function openSearch(kw) {
+                searchPanel.classList.add('show');
+                resultInput.value = kw || '';
+                if (kw) doSearch(kw); else setTimeout(function(){ resultInput.focus(); }, 300);
+            }
+            $id('muSearchBtn').onclick = function() { openSearch(''); };
+            $id('muSearchInput').onclick = function() { openSearch(''); };
+            $id('muSearchInput').onfocus = function() { openSearch(''); };
+            $id('muSearchClose').onclick = function() { searchPanel.classList.remove('show'); };
+
+            let timer = null;
+            resultInput.oninput = function() {
+                const kw = resultInput.value.trim();
+                if (timer) clearTimeout(timer);
+                if (!kw) { resultList.innerHTML = '<div class="mu-empty">输入关键词开始搜索</div>'; return; }
+                timer = setTimeout(function(){ doSearch(kw); }, 500);
+            };
+            resultInput.onkeydown = function(e) { if (e.key === 'Enter') { e.preventDefault(); doSearch(resultInput.value.trim()); } };
+            async function doSearch(kw) {
+                if (!kw) return;
+                resultList.innerHTML = '<div class="mu-empty">搜索中...</div>';
+                try {
+                    const s = await search(kw);
+                    render(resultList, s, '没有找到相关歌曲');
+                } catch(e) { resultList.innerHTML = '<div class="mu-empty">搜索失败</div>'; }
+            }
+            $all('.mu-playlist-item').forEach(function(it) {
+                it.onclick = function() { const q = it.dataset.q; openSearch(q); doSearch(q); };
+            });
+
+            const todayEl = $id('muToday');
+            entry.onclick = function() {
+                panel.classList.add('open');
+                const d = new Date();
+                todayEl.textContent = (d.getMonth()+1) + '月' + d.getDate() + '日';
+                if (homeList.dataset.loaded !== '1') { homeList.dataset.loaded = '1'; loadHome(); }
+            };
+            $id('muBack').onclick = function() {
+                panel.classList.remove('open');
+                expand.classList.remove('show');
+                searchPanel.classList.remove('show');
+            };
+        })();
 } catch (err) {
         console.error('初始化错误:', err);
         alert('页面初始化出错：' + err.message);
