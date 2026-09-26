@@ -3216,7 +3216,251 @@ window.addEventListener('DOMContentLoaded', function() {
             entryBtn.addEventListener('click', function() { panel.classList.add('open'); });
             backBtn.addEventListener('click', function() { panel.classList.remove('open'); });
         })();
+/* 音乐App */
+        (function() {
+            const entry = $id('musicEntry');
+            const panel = $id('musicPanel');
+            if (!entry || !panel) return;
+            const backBtn = $id('muBack');
+            const searchBtn = $id('muSearchBtn');
+            const searchInput = $id('muSearchInput');
+            const searchPanel = $id('muSearchPanel');
+            const resultInput = $id('muResultInput');
+            const searchClose = $id('muSearchClose');
+            const resultList = $id('muResultList');
+            const homeList = $id('muHomeList');
+            const todayEl = $id('muToday');
+            const miniPlayer = $id('muMini');
+            const miniTitle = $id('muMiniTitle');
+            const miniArtist = $id('muMiniArtist');
+            const miniPlay = $id('muMiniPlay');
+            const miniCover = $id('muMiniCover');
+            const expand = $id('muExpand');
+            const expandTop = $id('muExpandTop');
+            const bigCover = $id('muBigCover');
+            const songTitle = $id('muSongTitle');
+            const songArtist = $id('muSongArtist');
+            const progress = $id('muProgress');
+            const progressFill = $id('muProgressFill');
+            const progressDot = $id('muProgressDot');
+            const timeCur = $id('muTimeCur');
+            const timeTotal = $id('muTimeTotal');
+            const playMain = $id('muPlayMain');
+            const prevBtn = $id('muPrev');
+            const nextBtn = $id('muNext');
+            const audio = $id('muAudio');
+            const toast = $id('muToast');
 
+            let currentList = [];
+            let currentIndex = -1;
+            let toastTimer = null;
+
+            function showToast(msg, d) {
+                if (!toast) return;
+                toast.textContent = msg; toast.classList.add('show');
+                if (toastTimer) clearTimeout(toastTimer);
+                toastTimer = setTimeout(function() { toast.classList.remove('show'); }, d || 1500);
+            }
+            function fmtTime(sec) {
+                if (!isFinite(sec) || sec < 0) sec = 0;
+                const m = Math.floor(sec / 60);
+                const s = Math.floor(sec % 60);
+                return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+            }
+            function upscaleArt(url) {
+                if (!url) return '';
+                return url.replace(/\/\d+x\d+bb\./, '/600x600bb.');
+            }
+
+            async function searchItunes(keyword) {
+                const url = 'https://itunes.apple.com/search?term=' + encodeURIComponent(keyword) + '&media=music&limit=25';
+                const resp = await fetch(url);
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                const data = await resp.json();
+                return (data.results const || []).filter(function img(r) { return r.previewUrl =; });
+            }
+
+            function setCover documentImage(el, url) {
+               .createElement const oldImg = el.querySelector('img('');
+                if (oldImg) oldImg.remove();
+                const svg = el.querySelector('svg');
+                if (url) {
+                    if (svg) svg.style.display = 'none';
+                   img'); img.src = url;
+                    el.insertBefore(img, el.firstChild);
+                } else {
+                    if (svg) svg.style.display = '';
+                }
+            }
+
+            function renderSongList(container, songs, emptyText) {
+                container.innerHTML = '';
+                if (!songs || songs.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.className = 'mu-empty';
+                    empty.textContent = emptyText || '没有找到';
+                    container.appendChild(empty);
+                    return;
+                }
+                songs.forEach(function(song, idx) {
+                    const item = document.createElement('div');
+                    item.className = 'mu-song-item';
+                    const cover = document.createElement('div'); cover.className = 'mu-song-cover';
+                    if (song.artworkUrl100) { const img = document.createElement('img'); img.src = upscaleArt(song.artworkUrl100); cover.appendChild(img); }
+                    const info = document.createElement('div'); info.className = 'mu-song-info';
+                    const name = document.createElement('div'); name.className = 'mu-song-name'; name.textContent = song.trackName || '未知';
+                    const artist = document.createElement('div'); artist.className = 'mu-song-artist'; artist.textContent = song.artistName || '未知';
+                    info.appendChild(name); info.appendChild(artist);
+                    const playIcon = document.createElement('div'); playIcon.className = 'mu-song-play';
+                    playIcon.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16" fill="currentColor"/></svg>';
+                    item.appendChild(cover); item.appendChild(info); item.appendChild(playIcon);
+                    item.addEventListener('click', function() { playSong(songs, idx); });
+                    container.appendChild(item);
+                });
+            }
+
+            function updatePlayIcon(playing) {
+                const icon = playing
+                    ? '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="currentColor"/><rect x="14" y="4" width="4" height="16" fill="currentColor"/></svg>'
+                    : '<svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20" fill="currentColor"/></svg>';
+                miniPlay.innerHTML = icon;
+                playMain.innerHTML = icon;
+                if (playing) bigCover.classList.remove('paused');
+                else bigCover.classList.add('paused');
+            }
+
+            function playSong(list, index) {
+                if (!list || index < 0 || index >= list.length) return;
+                currentList = list;
+                currentIndex = index;
+                const song = list[index];
+                audio.src = song.previewUrl;
+                const p = audio.play();
+                if (p && p.catch) p.catch(function(err) { showToast('播放失败：' + (err.message || '未知')); });
+                const cover = upscaleArt(song.artworkUrl100);
+                const title = song.trackName || '未知';
+                const artist = song.artistName || '未知';
+                miniTitle.textContent = title;
+                miniArtist.textContent = artist;
+                songTitle.textContent = title;
+                songArtist.textContent = artist;
+                setCoverImage(miniCover, cover);
+                setCoverImage(bigCover, cover);
+                miniPlayer.classList.add('show');
+                bigCover.classList.add('spin');
+                updatePlayIcon(true);
+            }
+
+            function togglePlay() {
+                if (!audio.src) { showToast('还没有选歌'); return; }
+                if (audio.paused) audio.play(); else audio.pause();
+            }
+
+            miniPlay.addEventListener('click', function(e) { e.stopPropagation(); togglePlay(); });
+            playMain.addEventListener('click', togglePlay);
+
+            prevBtn.addEventListener('click', function() {
+                if (currentList.length === 0) return;
+                const i = currentIndex > 0 ? currentIndex - 1 : currentList.length - 1;
+                playSong(currentList, i);
+            });
+            nextBtn.addEventListener('click', function() {
+                if (currentList.length === 0) return;
+                const i = currentIndex < currentList.length - 1 ? currentIndex + 1 : 0;
+                playSong(currentList, i);
+            });
+
+            audio.addEventListener('timeupdate', function() {
+                const dur = audio.duration || 0;
+                const cur = audio.currentTime || 0;
+                const pct = dur > 0 ? (cur / dur * 100) : 0;
+                progressFill.style.width = pct + '%';
+                progressDot.style.left = pct + '%';
+                timeCur.textContent = fmtTime(cur);
+            });
+            audio.addEventListener('loadedmetadata', function() { timeTotal.textContent = fmtTime(audio.duration); });
+            audio.addEventListener('play', function() { updatePlayIcon(true); });
+            audio.addEventListener('pause', function() { updatePlayIcon(false); });
+            audio.addEventListener('ended', function() {
+                if (currentIndex < currentList.length - 1) playSong(currentList, currentIndex + 1);
+                else updatePlayIcon(false);
+            });
+
+            progress.addEventListener('click', function(e) {
+                if (!audio.duration) return;
+                const rect = progress.getBoundingClientRect();
+                const x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
+                audio.currentTime = (x / rect.width) * audio.duration;
+            });
+
+            miniPlayer.addEventListener('click', function() { expand.classList.add('show'); });
+            expandTop.addEventListener('click', function() { expand.classList.remove('show'); });
+
+            const HOME_KEYWORDS = ['Taylor Swift', '周杰伦', 'Adele', 'Ed Sheeran', 'Bruno Mars', 'Coldplay', '林俊杰'];
+            async function loadHome() {
+                homeList.innerHTML = '<div class="mu-empty">加载中...</div>';
+                try {
+                    const kw = HOME_KEYWORDS[Math.floor(Math.random() * HOME_KEYWORDS.length)];
+                    const songs = await searchItunes(kw);
+                    renderSongList(homeList, songs.slice(0, 12), '暂时没搜到');
+                } catch (err) {
+                    homeList.innerHTML = '<div class="mu-empty">加载失败，检查网络</div>';
+                }
+            }
+
+            function openSearch(kw) {
+                searchPanel.classList.add('show');
+                resultInput.value = kw || '';
+                if (kw) doSearch(kw);
+                else setTimeout(function() { resultInput.focus(); }, 300);
+            }
+            searchBtn.addEventListener('click', function() { openSearch(''); });
+            searchInput.addEventListener('click', function() { openSearch(''); });
+            searchInput.addEventListener('focus', function() { openSearch(''); });
+            searchClose.addEventListener('click', function() { searchPanel.classList.remove('show'); });
+
+            let searchTimer = null;
+            resultInput.addEventListener('input', function() {
+                const kw = resultInput.value.trim();
+                if (searchTimer) clearTimeout(searchTimer);
+                if (!kw) { resultList.innerHTML = '<div class="mu-empty">输入关键词开始搜索</div>'; return; }
+                searchTimer = setTimeout(function() { doSearch(kw); }, 500);
+            });
+            resultInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') { e.preventDefault(); doSearch(resultInput.value.trim()); }
+            });
+
+            async function doSearch(kw) {
+                if (!kw) return;
+                resultList.innerHTML = '<div class="mu-empty">搜索中...</div>';
+                try {
+                    const songs = await searchItunes(kw);
+                    renderSongList(resultList, songs, '没有找到相关歌曲');
+                } catch (err) {
+                    resultList.innerHTML = '<div class="mu-empty">搜索失败，检查网络</div>';
+                }
+            }
+
+            $all('.mu-playlist-item').forEach(function(item) {
+                item.addEventListener('click', function() {
+                    const q = item.dataset.q;
+                    openSearch(q);
+                    doSearch(q);
+                });
+            });
+
+            entry.addEventListener('click', function() {
+                panel.classList.add('open');
+                const d = new Date();
+                todayEl.textContent = (d.getMonth()+1) + '月' + d.getDate() + '日';
+                if (homeList.dataset.loaded !== '1') { homeList.dataset.loaded = '1'; loadHome(); }
+            });
+            backBtn.addEventListener('click', function() {
+                panel.classList.remove('open');
+                expand.classList.remove('show');
+                searchPanel.classList.remove('show');
+            });
+        })();
     } catch (err) {
         console.error('初始化错误:', err);
         alert('页面初始化出错：' + err.message);
