@@ -2800,5 +2800,182 @@ alert('页面初始化出错：' + err.message);
 }
 });
 </script>
+
+<script>
+(function(){
+try{
+var raw=localStorage.getItem('wx-moments');
+if(raw){
+var v=JSON.parse(raw);
+if(Array.isArray(v)){
+var filtered=v.filter(function(m){return m.authorId;});
+localStorage.setItem('wx-moments',JSON.stringify(filtered));
+}
+}else{
+localStorage.setItem('wx-moments','[]');
+}
+}catch(e){}
+function init(){
+var style=document.createElement('style');
+style.textContent='.wx-moments-me{bottom:20px!important}'+
+'.wx-moments-publish-mask{position:absolute;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:540}'+
+'.wx-moments-publish-mask.show{opacity:1;pointer-events:auto}'+
+'.wx-moments-publish-sheet{position:absolute;left:0;right:0;bottom:0;background:#f7f7f7;border-radius:18px 18px 0 0;padding:8px 12px 18px;transform:translateY(110%);transition:transform .3s;z-index:541;max-height:80%;overflow-y:auto}'+
+'.wx-moments-publish-sheet.show{transform:translateY(0)}'+
+'.wx-moments-publish-label{font-size:12px;color:#888;text-align:center;padding:10px 0 6px}'+
+'.wx-moments-publish-authors{display:flex;gap:14px;overflow-x:auto;padding:6px 8px 14px}'+
+'.wx-moments-publish-author{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;flex-shrink:0}'+
+'.wx-moments-publish-author-avatar{width:52px;height:52px;border-radius:50%;background:#e5e5e5;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;font-weight:600;overflow:hidden;border:2.5px solid transparent;transition:border-color .2s}'+
+'.wx-moments-publish-author.selected .wx-moments-publish-author-avatar{border-color:#07c160}'+
+'.wx-moments-publish-author-avatar img{width:100%;height:100%;object-fit:cover}'+
+'.wx-moments-publish-author-name{font-size:11px;color:#666;max-width:60px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
+'.wx-moments-publish-btn{width:100%;padding:15px 0;border:none;background:#fff;border-radius:12px;font-size:16px;color:#1a1a1a;font-weight:500;cursor:pointer;margin-bottom:8px;font-family:inherit}'+
+'.wx-moments-publish-btn:active{background:#f0f0f0}'+
+'.wx-moments-publish-cancel{width:100%;padding:15px 0;border:none;background:#fff;border-radius:12px;font-size:16px;color:#666;cursor:pointer;font-family:inherit}'+
+'.wx-moment-author{flex-basis:100%;display:flex;align-items:center;gap:6px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid #f5f5f5}'+
+'.wx-moment-author-avatar{width:24px;height:24px;border-radius:50%;background:#07c160;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:600;overflow:hidden;flex-shrink:0}'+
+'.wx-moment-author-avatar img{width:100%;height:100%;object-fit:cover}'+
+'.wx-moment-author-name{font-size:13px;color:#576b95;font-weight:500}';
+document.head.appendChild(style);
+var addBtn=document.getElementById('wxMomentsAddBtn');
+if(!addBtn)return;
+var newBtn=addBtn.cloneNode(true);
+addBtn.parentNode.replaceChild(newBtn,addBtn);
+var mask=document.getElementById('wxMomentsPublishMask');
+var sheet=document.getElementById('wxMomentsPublishSheet');
+if(!mask||!sheet){
+var wrap=document.getElementById('wxMomentsView');
+if(!wrap)return;
+wrap.insertAdjacentHTML('beforeend','<div class="wx-moments-publish-mask" id="wxMomentsPublishMask"></div><div class="wx-moments-publish-sheet" id="wxMomentsPublishSheet"><div class="wx-moments-publish-label">选择发布者</div><div class="wx-moments-publish-authors" id="wxMomentsAuthors"></div><button class="wx-moments-publish-btn" id="wxMomentTextBtn">发纯文字</button><button class="wx-moments-publish-btn" id="wxMomentImageBtn">发图片</button><button class="wx-moments-publish-cancel" id="wxMomentPublishCancel">取消</button></div>');
+mask=document.getElementById('wxMomentsPublishMask');
+sheet=document.getElementById('wxMomentsPublishSheet');
+}
+var authorsEl=document.getElementById('wxMomentsAuthors');
+if(!authorsEl&&sheet){
+var label=document.createElement('div');
+label.className='wx-moments-publish-label';
+label.textContent='选择发布者';
+var ad=document.createElement('div');
+ad.className='wx-moments-publish-authors';
+ad.id='wxMomentsAuthors';
+sheet.insertBefore(label,sheet.firstChild);
+sheet.insertBefore(ad,label.nextSibling);
+authorsEl=ad;
+}
+var newUploader=document.getElementById('wxMomentsNewUploader');
+if(!newUploader){
+newUploader=document.createElement('input');
+newUploader.type='file';
+newUploader.id='wxMomentsNewUploader';
+newUploader.accept='image/*';
+newUploader.multiple=true;
+newUploader.style.display='none';
+document.body.appendChild(newUploader);
+}
+var selectedAuthor='me';
+function getAuthors(){
+var authors=[{id:'me',name:localStorage.getItem('wx-me-name')||'我',avatar:localStorage.getItem('wx-me-avatar')||''}];
+var chars=[];
+try{chars=JSON.parse(localStorage.getItem('contact-chars')||'[]');}catch(e){}
+var ids=[];
+try{ids=JSON.parse(localStorage.getItem('wx-added-chars')||'[]');}catch(e){}
+chars.forEach(function(c){
+if(ids.indexOf(c.id)>=0){authors.push({id:c.id,name:c.name||'未命名',avatar:c.avatar||''});}
+});
+return authors;
+}
+function renderAuthors(){
+if(!authorsEl)return;
+authorsEl.innerHTML='';
+getAuthors().forEach(function(a){
+var el=document.createElement('div');
+el.className='wx-moments-publish-author'+(a.id===selectedAuthor?' selected':'');
+var av=document.createElement('div');
+av.className='wx-moments-publish-author-avatar';
+if(a.avatar){var im=document.createElement('img');im.src=a.avatar;av.appendChild(im);}
+else{av.textContent=(a.id==='me'?'我':a.name).charAt(0);}
+var nm=document.createElement('div');
+nm.className='wx-moments-publish-author-name';
+nm.textContent=a.id==='me'?'我':a.name;
+el.appendChild(av);el.appendChild(nm);
+el.addEventListener('click',function(){selectedAuthor=a.id;renderAuthors();});
+authorsEl.appendChild(el);
+});
+}
+function getArr(){
+try{var r=localStorage.getItem('wx-moments');if(r){var v=JSON.parse(r);if(Array.isArray(v))return v;}}catch(e){}
+return[];
+}
+function saveArr(a){try{localStorage.setItem('wx-moments',JSON.stringify(a));}catch(e){}}
+function publish(image){
+var arr=getArr();
+var now=new Date();
+var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var authors=getAuthors();
+var au=authors.find(function(x){return x.id===selectedAuthor;})||authors[0];
+arr.unshift({id:'m_'+Date.now(),day:String(now.getDate()),month:months[now.getMonth()],text:'',image:image||'',authorId:au.id,authorName:au.id==='me'?'我':au.name,authorAvatar:au.avatar||''});
+saveArr(arr);
+var backBtn=document.getElementById('wxMomentsBack');
+var entryBtn=document.getElementById('wxMomentsEntry');
+if(backBtn)backBtn.click();
+setTimeout(function(){if(entryBtn)entryBtn.click();},350);
+}
+function openSheet(){selectedAuthor='me';renderAuthors();mask.classList.add('show');sheet.classList.add('show');}
+function closeSheet(){mask.classList.remove('show');sheet.classList.remove('show');}
+newBtn.addEventListener('click',function(e){e.stopPropagation();openSheet();});
+mask.addEventListener('click',closeSheet);
+var cancelBtn=document.getElementById('wxMomentPublishCancel');
+if(cancelBtn)cancelBtn.addEventListener('click',closeSheet);
+var textBtn=document.getElementById('wxMomentTextBtn');
+if(textBtn)textBtn.addEventListener('click',function(){closeSheet();publish('');});
+var imageBtn=document.getElementById('wxMomentImageBtn');
+if(imageBtn)imageBtn.addEventListener('click',function(){closeSheet();setTimeout(function(){newUploader.click();},200);});
+newUploader.addEventListener('change',function(e){
+var f=e.target.files[0];if(!f)return;
+var r=new FileReader();
+r.onload=function(ev){publish(ev.target.result);newUploader.value='';};
+r.readAsDataURL(f);
+});
+function decorateMoments(){
+var items=document.querySelectorAll('.wx-moment-item');
+var arr=getArr();
+items.forEach(function(item,idx){
+if(item.getAttribute('data-decorated')==='1')return;
+item.setAttribute('data-decorated','1');
+item.style.flexWrap='wrap';
+var m=arr[idx];if(!m)return;
+var authorName=m.authorName||'';
+var authorAvatar=m.authorAvatar||'';
+if(!authorName){
+if(m.authorId&&m.authorId!=='me'){
+var chars=[];
+try{chars=JSON.parse(localStorage.getItem('contact-chars')||'[]');}catch(e){}
+var ch=chars.find(function(x){return x.id===m.authorId;});
+if(ch){authorName=ch.name||'未命名';authorAvatar=ch.avatar||'';}
+}else{authorName='我';authorAvatar=localStorage.getItem('wx-me-avatar')||'';}
+}
+var authorRow=document.createElement('div');
+authorRow.className='wx-moment-author';
+var av=document.createElement('div');
+av.className='wx-moment-author-avatar';
+if(authorAvatar){var im=document.createElement('img');im.src=authorAvatar;av.appendChild(im);}
+else{av.textContent=authorName.charAt(0);}
+var nm=document.createElement('span');
+nm.className='wx-moment-author-name';
+nm.textContent=authorName;
+authorRow.appendChild(av);authorRow.appendChild(nm);
+item.insertBefore(authorRow,item.firstChild);
+});
+}
+var listEl=document.getElementById('wxMomentsList');
+if(listEl&&window.MutationObserver){
+var obs=new MutationObserver(function(){setTimeout(decorateMoments,30);});
+obs.observe(listEl,{childList:true});
+}
+decorateMoments();
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{setTimeout(init,0);}
+})();
+</script>
 </body>
 </html>
