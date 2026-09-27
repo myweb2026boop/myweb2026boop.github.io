@@ -620,6 +620,19 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 .wbs-e-c{font-size:12px;color:#bbb;white-space:pre-wrap;max-height:40px;overflow:hidden}
 .wbs-add{width:100%;padding:14px;background:#fff;border:2px dashed #ddd;border-radius:12px;color:#999;cursor:pointer}
 .wbs-empty{text-align:center;color:#bbb;padding:80px 20px}
+/* 世界书条目 - 范围/绑定 面板 */
+.wbs-scope-tabs{display:flex;gap:6px;margin-top:8px}
+.wbs-scope-tab{flex:1;padding:8px 0;text-align:center;border:1px solid #e5e5e7;border-radius:8px;font-size:13px;color:#666;cursor:pointer;background:#fff}
+.wbs-scope-tab.active{background:#07c160;color:#fff;border-color:#07c160}
+.wbs-char-row{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid #f5f5f5;cursor:pointer;background:#fff}
+.wbs-char-row:last-child{border-bottom:none}
+.wbs-char-av{width:28px;height:28px;border-radius:50%;background:#4a90d9;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;font-weight:600}
+.wbs-char-av img{width:100%;height:100%;object-fit:cover}
+.wbs-char-nm{flex:1;font-size:14px;color:#1a1a1a}
+.wbs-char-ck{width:22px;height:22px;border-radius:50%;border:1.5px solid #ccc;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wbs-char-ck svg{width:12px;height:12px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;display:none}
+.wbs-char-ck.on{background:#07c160;border-color:#07c160}
+.wbs-char-ck.on svg{display:block}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
 </head>
@@ -854,6 +867,7 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 <div class="wx-me-item" id="wxMoreProactive"><span class="wx-me-label">允许主动发消息</span><label class="wx-switch"><input type="checkbox" id="wxProactiveToggle"><span class="wx-slider"></span></label></div>
 <div class="wx-me-item" id="wxMorePin"><span class="wx-me-label">置顶聊天</span><label class="wx-switch"><input type="checkbox" id="wxPinToggle"><span class="wx-slider"></span></label></div>
 <div class="wx-me-item" id="wxMoreRemark"><span class="wx-me-label">设置备注</span><span class="wx-me-arrow-right"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></div>
+<div class="wx-me-item" id="wxMoreWorldbook"><span class="wx-me-label">绑定世界书</span><span class="wx-me-arrow-right"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></div>
 </div>
 <div class="wx-me-gap"></div>
 <div class="wx-me-group">
@@ -1027,6 +1041,7 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 <input type="file" id="wx-chat-bg-uploader" accept="image/*" style="display:none">
 <input type="file" id="ct-avatar-uploader" accept="image/*" style="display:none">
 <input type="file" id="ct-docx-uploader" accept=".docx,.doc,.txt,.md" style="display:none">
+<input type="file" id="koiMp3Uploader" accept="audio/*,.mp3,.m4a,.wav,.ogg,.flac,.aac" multiple style="display:none">
 
 <script>
 window.addEventListener('DOMContentLoaded',function(){
@@ -1044,7 +1059,27 @@ var fileInput=$id('file-uploader');
 var currentTarget=null,currentUploadKey=null;
 function renderImage(c,url){var img=c.querySelector('img');if(!img){img=document.createElement('img');img.className='uploaded-img';var ph=c.querySelector('.placeholder-img');if(ph)ph.remove();c.insertBefore(img,c.firstChild)}img.src=url}
 uploadTriggers.forEach(function(t,i){var key='uploaded-img-'+i;var saved=localStorage.getItem(key);if(saved)renderImage(t,saved);t.addEventListener('click',function(e){e.stopPropagation();currentTarget=t;currentUploadKey=key;fileInput.click()})});
-if(fileInput){fileInput.addEventListener('change',function(e){var f=e.target.files[0];if(!f||!currentTarget)return;var r=new FileReader();r.onload=function(ev){renderImage(currentTarget,ev.target.result);try{localStorage.setItem(currentUploadKey,ev.target.result);if(currentUploadKey==='uploaded-img-0'){try{localStorage.setItem('wx-me-avatar',ev.target.result)}catch(er2){}try{window.dispatchEvent(new Event('koi-avatar-change'))}catch(er2){}}}catch(e){}fileInput.value=''};r.readAsDataURL(f)})}
+if(fileInput){fileInput.addEventListener('change',function(e){var f=e.target.files[0];if(!f||!currentTarget)return;var r=new FileReader();r.onload=function(ev){renderImage(currentTarget,ev.target.result);try{
+  localStorage.setItem(currentUploadKey,ev.target.result);
+  if(currentUploadKey==='uploaded-img-0'){
+    try{localStorage.setItem('wx-me-avatar',ev.target.result)}catch(er2){}
+    // ★ 让所有关注的角色都记住用户换了头像
+    try{
+      var added=JSON.parse(localStorage.getItem('wx-added-chars')||'[]');
+      if(Array.isArray(added)){
+        added.forEach(function(cid){
+          var k='wx-avatar-memory-'+cid;
+          var arr=[];
+          try{arr=JSON.parse(localStorage.getItem(k)||'[]')}catch(e2){}
+          if(!Array.isArray(arr))arr=[];
+          arr.unshift({time:Date.now()});
+          localStorage.setItem(k,JSON.stringify(arr.slice(0,5)));
+        });
+      }
+    }catch(er2){}
+    try{window.dispatchEvent(new Event('koi-avatar-change'))}catch(er2){}
+  }
+}catch(e){}fileInput.value=''};r.readAsDataURL(f)})}
 
 /* ===== 美化App ===== */
 (function(){
@@ -1084,7 +1119,7 @@ var entry=$id('wechatEntry'),panel=$id('wechatPanel');if(!entry||!panel)return;
 var chatListEl=$id('wxChatList'),contactsListEl=$id('wxContactsList'),chatViewEl=$id('wxChatView'),msgListEl=$id('wxMsgList'),chatNameEl=$id('wxChatName'),backBtn=$id('wxBack'),inputEl=$id('wxInput'),voiceBtn=$id('wxVoiceBtn'),faceBtn=$id('wxFaceBtn'),plusBtn=$id('wxPlusBtn'),emojiPanel=$id('wxEmojiPanel'),plusPanel=$id('wxPlusPanel'),plusPages=$id('wxPlusPages'),plusDot0=$id('wxPlusDot0'),plusDot1=$id('wxPlusDot1');
 var walletView=$id('wxWalletView'),walletBack=$id('wxWalletBack'),walletEntry=$id('wxWalletEntry'),walletBalance=$id('wxWalletBalance'),walletEye=$id('wxWalletEye'),rechargeBtn=$id('wxRechargeBtn'),familyCardEntry=$id('wxFamilyCardEntry'),billEntry=$id('wxBillEntry'),billView=$id('wxBillView'),billBack=$id('wxBillBack'),billList=$id('wxBillList'),rechargeMask=$id('wxRechargeMask'),rechargeSheet=$id('wxRechargeSheet'),rechargeInput=$id('wxRechargeInput'),rechargeQuick=$id('wxRechargeQuick'),rechargeConfirm=$id('wxRechargeConfirm'),toastEl=$id('wxToast');
 var addBtn=$id('wxAddChatBtn'),charPicker=$id('wxCharPicker'),charPickerList=$id('wxCharPickerList'),charPickerClose=$id('wxCharPickerClose'),chatMoreBtn=$id('wxChatMoreBtn'),chatSettingsView=$id('wxChatSettingsView'),chatSettingsBack=$id('wxChatSettingsBack'),chatDetailAvatar=$id('wxChatDetailAvatar'),chatDetailName=$id('wxChatDetailName');
-var moreSearch=$id('wxMoreSearch'),moreProactive=$id('wxMoreProactive'),proactiveToggle=$id('wxProactiveToggle'),morePin=$id('wxMorePin'),pinToggle=$id('wxPinToggle'),moreRemark=$id('wxMoreRemark'),moreMyAvatar=$id('wxMoreMyAvatar'),moreBg=$id('wxMoreBg'),moreClear=$id('wxMoreClear'),moreDelete=$id('wxMoreDelete');
+var moreSearch=$id('wxMoreSearch'),moreProactive=$id('wxMoreProactive'),proactiveToggle=$id('wxProactiveToggle'),morePin=$id('wxMorePin'),pinToggle=$id('wxPinToggle'),moreRemark=$id('wxMoreRemark'),moreMyAvatar=$id('wxMoreMyAvatar'),moreBg=$id('wxMoreBg'),moreClear=$id('wxMoreClear'),moreDelete=$id('wxMoreDelete'),moreWorldbook=$id('wxMoreWorldbook');
 var searchPanel=$id('wxSearchPanel'),searchInput=$id('wxSearchInput'),searchResults=$id('wxSearchResults'),searchClose=$id('wxSearchClose');
 var remarkMask=$id('wxRemarkMask'),remarkInput=$id('wxRemarkInput'),remarkCancel=$id('wxRemarkCancel'),remarkConfirm=$id('wxRemarkConfirm');
 var chatAvatarUploader=$id('wx-chat-avatar-uploader'),chatMyAvatarUploader=$id('wx-chat-my-avatar-uploader'),chatBgUploader=$id('wx-chat-bg-uploader');
@@ -1246,6 +1281,13 @@ if(remarkCancel)remarkCancel.addEventListener('click',function(){remarkMask.clas
 if(remarkConfirm)remarkConfirm.addEventListener('click',function(){if(!activeChar)return;var v=remarkInput.value.trim();if(v){try{localStorage.setItem('wx-chat-remark-'+activeChar.id,v)}catch(e){}}else{localStorage.removeItem('wx-chat-remark-'+activeChar.id)}chatNameEl.textContent=getDN(activeChar);chatDetailName.textContent=getDN(activeChar);renderChats();renderContacts();remarkMask.classList.remove('show');showToast('备注已更新')});
 if(moreBg)moreBg.addEventListener('click',function(){if(!activeChar)return;chatBgUploader.click()});
 if(chatBgUploader)chatBgUploader.addEventListener('change',function(e){var f=e.target.files[0];if(!f||!activeChar)return;var tid=activeChar.id;var r=new FileReader();r.onload=function(ev){try{localStorage.setItem('wx-chat-bg-'+tid,ev.target.result)}catch(err){}applyBg(tid);showToast('聊天背景已更新');chatBgUploader.value=''};r.readAsDataURL(f)});
+
+/* ★ 绑定世界书：打开世界书面板并显示当前角色可用的世界书勾选 */
+if(moreWorldbook)moreWorldbook.addEventListener('click',function(){
+  if(!activeChar)return;
+  if(window.koiOpenWorldbookBind)window.koiOpenWorldbookBind(activeChar.id);
+});
+
 if(moreSearch)moreSearch.addEventListener('click',function(){if(!activeChar)return;searchInput.value='';renderSearch('');searchPanel.classList.add('show');setTimeout(function(){searchInput.focus()},300)});
 if(searchClose)searchClose.addEventListener('click',function(){searchPanel.classList.remove('show')});
 if(searchInput)searchInput.addEventListener('input',function(){renderSearch(searchInput.value)});
@@ -1350,7 +1392,8 @@ var qm=document.createElement('div');qm.className='koiQm';qm.id='koiQm';
 qm.innerHTML='<div class="koiQmNav"><button id="koiQmBack">返回</button><span class="t">QQ音乐</span><span style="width:50px"></span></div><div class="koiQmBody"><div class="koiQmDisc" id="koiQmDisc"><svg viewBox="0 0 24 24" style="width:54px;height:54px;stroke:#3a3a3a;fill:none;stroke-width:1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></div><div class="koiQmT" id="koiQmT">未选择音乐</div><div class="koiQmS" id="koiQmS">点击下方上传 mp3 文件</div><div class="koiQmProg"><span id="koiQmCur">0:00</span><input type="range" id="koiQmSlider" min="0" max="1000" value="0"><span id="koiQmDur">0:00</span></div><div class="koiQmCtrl"><button id="koiQmPrev"><svg viewBox="0 0 24 24"><polygon points="19,20 9,12 19,4" fill="currentColor" stroke="none"/><line x1="5" y1="19" x2="5" y2="5"/></svg></button><button class="pl" id="koiQmPlay"><svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20" fill="currentColor" stroke="none"/></svg></button><button id="koiQmNext"><svg viewBox="0 0 24 24"><polygon points="5,4 15,12 5,20" fill="currentColor" stroke="none"/><line x1="19" y1="5" x2="19" y2="19"/></svg></button></div><button class="koiQmUp" id="koiQmUp">＋ 上传 mp3</button><div style="font-size:11px;color:#888;margin-bottom:8px;text-align:center">播放列表</div><div class="koiQmL" id="koiQmL"></div></div>';
 P.appendChild(qm);
 var audio=document.createElement('audio');audio.id='koiAudio';audio.style.display='none';audio.preload='metadata';document.body.appendChild(audio);
-var input=document.createElement('input');input.type='file';input.accept='audio/*';input.multiple=true;input.style.display='none';document.body.appendChild(input);
+/* 使用页面中已存在的 input */
+var input=$id('koiMp3Uploader');
 var playlist=[];var curIdx=-1;
 function fmt(t){if(!isFinite(t)||t<0)t=0;var m=Math.floor(t/60),s=Math.floor(t%60);return m+':'+String(s).padStart(2,'0')}
 function renderL(){var L=$id('koiQmL');L.innerHTML='';if(!playlist.length){L.innerHTML='<div style="text-align:center;color:#666;font-size:12px;padding:20px">暂无音乐</div>';return}playlist.forEach(function(t,i){var item=document.createElement('div');item.className='koiQmLi'+(i===curIdx?' active':'');item.innerHTML='<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><circle cx="7" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M10 18V6l11-2v12"/></svg><span class="n"></span><button class="d">删除</button>';item.querySelector('.n').textContent=t.name;item.querySelector('.d').addEventListener('click',function(e){e.stopPropagation();if(i===curIdx){audio.pause();audio.removeAttribute('src');audio.load();curIdx=-1;update()}else if(i<curIdx)curIdx--;playlist.splice(i,1);renderL()});item.addEventListener('click',function(){playIdx(i)});L.appendChild(item)})}
@@ -1365,7 +1408,10 @@ audio.addEventListener('ended',function(){if(playlist.length>1)playIdx((curIdx+1
 audio.addEventListener('play',update);audio.addEventListener('pause',update);
 $id('koiQmSlider').addEventListener('input',function(){if(audio.duration&&isFinite(audio.duration))audio.currentTime=($id('koiQmSlider').value/1000)*audio.duration});
 $id('koiQmUp').addEventListener('click',function(){input.click()});
-input.addEventListener('change',function(e){var fs=Array.prototype.slice.call(e.target.files||[]);if(!fs.length)return;fs.forEach(function(f){var url=URL.createObjectURL(f);playlist.push({name:f.name.replace(/\.[^.]+$/,''),url:url})});input.value='';renderL();if(curIdx<0&&playlist.length)playIdx(0)});
+input.addEventListener('change',function(e){var fs=Array.prototype.slice.call(e.target.files||[]);if(!fs.length)return;fs.forEach(function(f){
+  var url=URL.createObjectURL(f);
+  playlist.push({name:f.name.replace(/\.[^.]+$/,''),url:url});
+});input.value='';renderL();if(curIdx<0&&playlist.length)playIdx(0)});
 $id('koiQmBack').addEventListener('click',function(){qm.classList.remove('open')});
 var qmEntry=document.getElementById('qqmusicEntry');
 if(qmEntry){qmEntry.addEventListener('click',function(e){e.stopPropagation();qm.classList.add('open');renderL();update()})}
@@ -1689,7 +1735,6 @@ async function checkImageToMoment(charId){
   var cfg=getApiCfg();
   if(!cfg.apiUrl||!cfg.apiKey||!cfg.model)return;
   try{
-    // 取出最近的聊天上下文（图片前后各几条），让 AI 综合判断
     var ctx=[];
     for(var j=Math.max(0,h.length-8);j<h.length;j++){
       var m=h[j];
@@ -1725,7 +1770,6 @@ async function checkImageToMoment(charId){
     var data=await resp.json();
     var reply=(data&&data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)||'';
     var mm=reply.match(/\{[\s\S]*\}/);
-    // 标记已处理，避免重复
     processed.push(imgKey);
     ls(pk,processed.slice(-30));
     if(!mm)return;
@@ -1733,7 +1777,6 @@ async function checkImageToMoment(charId){
     try{r=JSON.parse(mm[0])}catch(e){return}
     if(!r.post)return;
 
-    // ========= 决定发朋友圈 =========
     var caption=(r.caption||'').trim();
     var now=new Date();
     var mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -1768,7 +1811,7 @@ async function checkImageToMoment(charId){
   }catch(e){console.warn('[koi] 图片发朋友圈判断失败',e)}
 }
 
-/* ============ 朋友圈记忆注入 ============ */
+/* ============ 记忆注入 ============ */
 var _f=window.fetch;
 window.fetch=function(){
 var args=arguments;
@@ -1795,6 +1838,17 @@ if(typeof url==='string'&&url.indexOf('/chat/completions')>=0&&args[1]&&args[1].
           var upl=userPosts.map(function(m){return '- '+getMyName()+'发了朋友圈：「'+(m.text||'（图片）')+'」'}).join('\n');
           sys+='\n【用户最近的朋友圈】\n'+upl+'\n';
         }
+        // ★ 用户换过头像的记忆
+        try{
+          var avArr=JSON.parse(localStorage.getItem('wx-avatar-memory-'+curChar.id)||'[]');
+          if(Array.isArray(avArr)&&avArr.length){
+            var latest=avArr[0];
+            var days=(Date.now()-latest.time)/86400000;
+            if(days<3){
+              sys+='\n【提醒】用户最近换过头像。你可以在合适的时候自然提起（是否提起取决于你的性格）。\n';
+            }
+          }
+        }catch(e){}
       }
       b.messages[0].content=sys;
       args=[url,Object.assign({},args[1],{body:JSON.stringify(b)})];
@@ -1805,7 +1859,13 @@ if(typeof url==='string'&&url.indexOf('/chat/completions')>=0&&args[1]&&args[1].
 return _f.apply(this,args);
 };
 
-/* ============ 打开朋友圈视图 ============ */
+/* ============ 世界书绑定接口（暴露给聊天详情用） ============ */
+window.koiOpenWorldbookBind=function(charId){
+  if(!window.__koiWbsBind)return;
+  window.__koiWbsBind(charId);
+};
+
+/* ============ 打开朋友圈 ============ */
 function openMomentsView(silent){
 var view=document.getElementById('wxMomentsView');if(!view)return;
 var N=document.getElementById('wxMomentsMeName'),A=document.getElementById('wxMomentsMeAvatar');
@@ -1818,185 +1878,61 @@ var ns=getNotifications();ns.forEach(function(n){n.read=true});saveNotifications
 if(!silent)view.classList.add('active');
 }
 
-/* ============ 朋友圈完整初始化 ============ */
+/* ============ 朋友圈发布流程 ============ */
 function momInit(){
 initMomentCommentBar();
 renderMomentsList();
-
 var wechatPanel=document.getElementById('wechatPanel');
 if(!wechatPanel)return;
-
 var state={images:[],visible:'public',visName:'公开',list:[],at:[],mode:'text'};
-
 var modeEl=document.createElement('div');modeEl.className='koiM';modeEl.id='koiMomMode';
 modeEl.innerHTML='<div class="koiM-s"><button class="koiM-b" data-m="text">发纯文字</button><button class="koiM-b" data-m="image">发图文</button><button class="koiM-b" data-m="cancel" style="color:#666">取消</button></div>';
 wechatPanel.appendChild(modeEl);
 modeEl.addEventListener('click',function(e){if(e.target===modeEl)modeEl.classList.remove('show')});
-
 var ed=document.createElement('div');ed.className='koiMomE';ed.id='koiMomE';
 ed.innerHTML='<div class="koiMomNav"><button id="koiMomC">取消</button><span class="t">发表</span><button class="pub" id="koiMomPub" disabled>发表</button></div><div class="koiMomBody"><textarea class="koiMomTa" id="koiMomTa" placeholder="这一刻的想法..."></textarea><div class="koiMomImgs" id="koiMomImgs"></div></div><div class="koiMomBar"><div class="koiMomBarItem" id="koiMomVis"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="3"/></svg><span id="koiMomVlab">公开</span></div><div class="koiMomBarItem" id="koiMomAt"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></svg><span id="koiMomAlab">提醒谁看</span></div></div>';
 wechatPanel.appendChild(ed);
-
 var imgPicker=document.createElement('input');imgPicker.type='file';imgPicker.accept='image/*';imgPicker.multiple=true;imgPicker.style.display='none';document.body.appendChild(imgPicker);
 var ta=document.getElementById('koiMomTa'),pubBtn=document.getElementById('koiMomPub'),vlab=document.getElementById('koiMomVlab'),alab=document.getElementById('koiMomAlab'),imgsEl=document.getElementById('koiMomImgs');
-
-function renderImgs(){
-imgsEl.innerHTML='';
-if(state.mode!=='image')return;
-state.images.forEach(function(src,i){
-  var box=document.createElement('div');box.className='koiMomImg';
-  var im=document.createElement('img');im.src=src;box.appendChild(im);
-  var d=document.createElement('button');d.className='koiMomImgDel';d.textContent='×';
-  d.addEventListener('click',function(e){e.stopPropagation();state.images.splice(i,1);renderImgs();updPub()});
-  box.appendChild(d);imgsEl.appendChild(box);
-});
-if(state.images.length<9){
-  var a=document.createElement('div');a.className='koiMomImg koiMomImgAdd';a.textContent='＋';
-  a.addEventListener('click',function(){imgPicker.click()});
-  imgsEl.appendChild(a);
-}
-}
-imgPicker.addEventListener('change',function(e){
-var fs=Array.prototype.slice.call(e.target.files||[]).slice(0,9-state.images.length);
-fs.forEach(function(f){var r=new FileReader();r.onload=function(ev){state.images.push(ev.target.result);renderImgs();updPub()};r.readAsDataURL(f)});
-imgPicker.value='';
-});
+function renderImgs(){imgsEl.innerHTML='';if(state.mode!=='image')return;state.images.forEach(function(src,i){var box=document.createElement('div');box.className='koiMomImg';var im=document.createElement('img');im.src=src;box.appendChild(im);var d=document.createElement('button');d.className='koiMomImgDel';d.textContent='×';d.addEventListener('click',function(e){e.stopPropagation();state.images.splice(i,1);renderImgs();updPub()});box.appendChild(d);imgsEl.appendChild(box)});if(state.images.length<9){var a=document.createElement('div');a.className='koiMomImg koiMomImgAdd';a.textContent='＋';a.addEventListener('click',function(){imgPicker.click()});imgsEl.appendChild(a)}}
+imgPicker.addEventListener('change',function(e){var fs=Array.prototype.slice.call(e.target.files||[]).slice(0,9-state.images.length);fs.forEach(function(f){var r=new FileReader();r.onload=function(ev){state.images.push(ev.target.result);renderImgs();updPub()};r.readAsDataURL(f)});imgPicker.value=''});
 function updPub(){var ht=ta.value.trim().length>0;var hi=state.mode==='image'&&state.images.length>0;pubBtn.disabled=!(ht||hi)}
 ta.addEventListener('input',updPub);
-
 var vis=document.createElement('div');vis.className='koiPick';vis.id='koiMomVisPanel';
 vis.innerHTML='<div class="koiPickNav"><button id="koiVisBack">取消</button><span class="t">谁可以看</span><span style="width:44px"></span></div><div class="koiPickBody" id="koiVisBody"></div>';
 wechatPanel.appendChild(vis);
-function renderVis(){
-var b=vis.querySelector('#koiVisBody');b.innerHTML='';
-[{v:'public',n:'公开',d:'所有人可见'},{v:'private',n:'私密',d:'仅自己可见'},{v:'partial',n:'部分可见',d:'选中的朋友可见'},{v:'exclude',n:'不给谁看',d:'选中的朋友不可见'}].forEach(function(o){
-  var r=document.createElement('div');r.className='koiRadio'+(o.v===state.visible?' selected':'');
-  r.innerHTML='<div class="koiRadioM"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div><div><div class="koiRadioN">'+o.n+'</div><div class="koiRadioD">'+o.d+'</div></div>';
-  r.addEventListener('click',function(){
-    if(o.v==='public'||o.v==='private'){state.visible=o.v;state.visName=o.n;state.list=[];vlab.textContent=state.visName;vis.classList.remove('show')}
-    else{state.visible=o.v;state.visName=o.n;vis.classList.remove('show');openPersons(o.v)}
-  });
-  b.appendChild(r);
-});
-}
+function renderVis(){var b=vis.querySelector('#koiVisBody');b.innerHTML='';[{v:'public',n:'公开',d:'所有人可见'},{v:'private',n:'私密',d:'仅自己可见'},{v:'partial',n:'部分可见',d:'选中的朋友可见'},{v:'exclude',n:'不给谁看',d:'选中的朋友不可见'}].forEach(function(o){var r=document.createElement('div');r.className='koiRadio'+(o.v===state.visible?' selected':'');r.innerHTML='<div class="koiRadioM"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div><div><div class="koiRadioN">'+o.n+'</div><div class="koiRadioD">'+o.d+'</div></div>';r.addEventListener('click',function(){if(o.v==='public'||o.v==='private'){state.visible=o.v;state.visName=o.n;state.list=[];vlab.textContent=state.visName;vis.classList.remove('show')}else{state.visible=o.v;state.visName=o.n;vis.classList.remove('show');openPersons(o.v)}});b.appendChild(r)})}
 vis.querySelector('#koiVisBack').addEventListener('click',function(){vis.classList.remove('show')});
-
 var pp=document.createElement('div');pp.className='koiPick';pp.id='koiMomPersonPanel';
 pp.innerHTML='<div class="koiPickNav"><button id="koiPerBack">返回</button><span class="t" id="koiPerTitle">选择联系人</span><button class="done" id="koiPerDone">完成</button></div><div class="koiPickBody" id="koiPerBody"></div>';
 wechatPanel.appendChild(pp);
 var tempList=[];
 function openPersons(m){tempList=state.list.slice();pp.querySelector('#koiPerTitle').textContent=(m==='partial')?'部分可见':'不给谁看';renderPersons();pp.classList.add('show')}
-function renderPersons(){
-var b=pp.querySelector('#koiPerBody');b.innerHTML='';
-var cs=chars();
-if(!cs.length){b.innerHTML='<div style="text-align:center;color:#bbb;padding:40px">暂无联系人</div>';return}
-cs.forEach(function(c){
-  var sel=tempList.some(function(x){return x.id===c.id});
-  var p=document.createElement('div');p.className='koiPson';
-  var av=document.createElement('div');av.className='koiPsonAv';
-  if(c.avatar){var im=document.createElement('img');im.src=c.avatar;av.appendChild(im)}else av.textContent=(c.name||'?').charAt(0);
-  var nm=document.createElement('div');nm.className='koiPsonN';nm.textContent=c.name||'未命名';
-  var ck=document.createElement('div');ck.className='koiPsonCk'+(sel?' selected':'');ck.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';
-  p.appendChild(av);p.appendChild(nm);p.appendChild(ck);
-  p.addEventListener('click',function(){var i=tempList.findIndex(function(x){return x.id===c.id});if(i>=0)tempList.splice(i,1);else tempList.push({id:c.id,name:c.name});renderPersons()});
-  b.appendChild(p);
-});
-}
+function renderPersons(){var b=pp.querySelector('#koiPerBody');b.innerHTML='';var cs=chars();if(!cs.length){b.innerHTML='<div style="text-align:center;color:#bbb;padding:40px">暂无联系人</div>';return}cs.forEach(function(c){var sel=tempList.some(function(x){return x.id===c.id});var p=document.createElement('div');p.className='koiPson';var av=document.createElement('div');av.className='koiPsonAv';if(c.avatar){var im=document.createElement('img');im.src=c.avatar;av.appendChild(im)}else av.textContent=(c.name||'?').charAt(0);var nm=document.createElement('div');nm.className='koiPsonN';nm.textContent=c.name||'未命名';var ck=document.createElement('div');ck.className='koiPsonCk'+(sel?' selected':'');ck.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';p.appendChild(av);p.appendChild(nm);p.appendChild(ck);p.addEventListener('click',function(){var i=tempList.findIndex(function(x){return x.id===c.id});if(i>=0)tempList.splice(i,1);else tempList.push({id:c.id,name:c.name});renderPersons()});b.appendChild(p)})}
 pp.querySelector('#koiPerBack').addEventListener('click',function(){pp.classList.remove('show')});
 pp.querySelector('#koiPerDone').addEventListener('click',function(){state.list=tempList.slice();vlab.textContent=state.visName+(state.list.length?'('+state.list.length+'人)':'');pp.classList.remove('show')});
-
 var at=document.createElement('div');at.className='koiPick';at.id='koiMomAtPanel';
 at.innerHTML='<div class="koiPickNav"><button id="koiAtBack">取消</button><span class="t">提醒谁看</span><button class="done" id="koiAtDone">完成</button></div><div class="koiPickBody" id="koiAtBody"></div>';
 wechatPanel.appendChild(at);
 var tempAt=[];
-function renderAt(){
-var b=at.querySelector('#koiAtBody');b.innerHTML='';
-var cs=chars();
-if(!cs.length){b.innerHTML='<div style="text-align:center;color:#bbb;padding:40px">暂无联系人</div>';return}
-cs.forEach(function(c){
-  var sel=tempAt.some(function(x){return x.id===c.id});
-  var p=document.createElement('div');p.className='koiPson';
-  var av=document.createElement('div');av.className='koiPsonAv';
-  if(c.avatar){var im=document.createElement('img');im.src=c.avatar;av.appendChild(im)}else av.textContent=(c.name||'?').charAt(0);
-  var nm=document.createElement('div');nm.className='koiPsonN';nm.textContent=c.name||'未命名';
-  var ck=document.createElement('div');ck.className='koiPsonCk'+(sel?' selected':'');ck.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';
-  p.appendChild(av);p.appendChild(nm);p.appendChild(ck);
-  p.addEventListener('click',function(){var i=tempAt.findIndex(function(x){return x.id===c.id});if(i>=0)tempAt.splice(i,1);else tempAt.push({id:c.id,name:c.name});renderAt()});
-  b.appendChild(p);
-});
-}
+function renderAt(){var b=at.querySelector('#koiAtBody');b.innerHTML='';var cs=chars();if(!cs.length){b.innerHTML='<div style="text-align:center;color:#bbb;padding:40px">暂无联系人</div>';return}cs.forEach(function(c){var sel=tempAt.some(function(x){return x.id===c.id});var p=document.createElement('div');p.className='koiPson';var av=document.createElement('div');av.className='koiPsonAv';if(c.avatar){var im=document.createElement('img');im.src=c.avatar;av.appendChild(im)}else av.textContent=(c.name||'?').charAt(0);var nm=document.createElement('div');nm.className='koiPsonN';nm.textContent=c.name||'未命名';var ck=document.createElement('div');ck.className='koiPsonCk'+(sel?' selected':'');ck.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';p.appendChild(av);p.appendChild(nm);p.appendChild(ck);p.addEventListener('click',function(){var i=tempAt.findIndex(function(x){return x.id===c.id});if(i>=0)tempAt.splice(i,1);else tempAt.push({id:c.id,name:c.name});renderAt()});b.appendChild(p)})}
 at.querySelector('#koiAtBack').addEventListener('click',function(){at.classList.remove('show')});
 at.querySelector('#koiAtDone').addEventListener('click',function(){state.at=tempAt.slice();alab.textContent=state.at.length?'提醒 '+state.at.length+' 人':'提醒谁看';at.classList.remove('show')});
-
 document.getElementById('koiMomVis').addEventListener('click',function(){renderVis();vis.classList.add('show')});
 document.getElementById('koiMomAt').addEventListener('click',function(){tempAt=state.at.slice();renderAt();at.classList.add('show')});
-
-function openEditor(m){
-state.mode=m;state.images=[];state.visible='public';state.visName='公开';state.list=[];state.at=[];
-ta.value='';vlab.textContent='公开';alab.textContent='提醒谁看';
-ed.querySelector('.t').textContent=m==='image'?'发表图文':'发表文字';
-renderImgs();updPub();ed.classList.add('show');
-setTimeout(function(){ta.focus()},300);
-}
+function openEditor(m){state.mode=m;state.images=[];state.visible='public';state.visName='公开';state.list=[];state.at=[];ta.value='';vlab.textContent='公开';alab.textContent='提醒谁看';ed.querySelector('.t').textContent=m==='image'?'发表图文':'发表文字';renderImgs();updPub();ed.classList.add('show');setTimeout(function(){ta.focus()},300)}
 document.getElementById('koiMomC').addEventListener('click',function(){ed.classList.remove('show')});
-modeEl.querySelectorAll('.koiM-b').forEach(function(b){
-  b.addEventListener('click',function(){
-    var m=b.getAttribute('data-m');
-    modeEl.classList.remove('show');
-    if(m==='text'||m==='image')setTimeout(function(){openEditor(m)},200);
-  });
-});
-
-pubBtn.addEventListener('click',function(){
-var text=ta.value.trim();
-var imgs=(state.mode==='image')?state.images.slice():[];
-if(!text&&!imgs.length)return;
-var arr=getArr();
-var now=new Date();
-var mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-var post={id:'m_'+Date.now(),day:String(now.getDate()),month:mo[now.getMonth()],text:text,image:imgs[0]||'',images:imgs,authorId:'me',authorName:getMyName(),authorAvatar:meAv(),visible:state.visible,visibleName:state.visName,at:state.at.slice(),likes:[],comments:[],time:now.getTime()};
-arr.unshift(post);
-saveArr(arr);
-ed.classList.remove('show');
-renderMomentsList();
-setTimeout(function(){onUserPostMoment(post)},500);
-});
-
+modeEl.querySelectorAll('.koiM-b').forEach(function(b){b.addEventListener('click',function(){var m=b.getAttribute('data-m');modeEl.classList.remove('show');if(m==='text'||m==='image')setTimeout(function(){openEditor(m)},200)})});
+pubBtn.addEventListener('click',function(){var text=ta.value.trim();var imgs=(state.mode==='image')?state.images.slice():[];if(!text&&!imgs.length)return;var arr=getArr();var now=new Date();var mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];var post={id:'m_'+Date.now(),day:String(now.getDate()),month:mo[now.getMonth()],text:text,image:imgs[0]||'',images:imgs,authorId:'me',authorName:getMyName(),authorAvatar:meAv(),visible:state.visible,visibleName:state.visName,at:state.at.slice(),likes:[],comments:[],time:now.getTime()};arr.unshift(post);saveArr(arr);ed.classList.remove('show');renderMomentsList();setTimeout(function(){onUserPostMoment(post)},500)});
 var entry=document.getElementById('wxMomentsEntry');
-if(entry){
-  var nb=entry.cloneNode(true);
-  entry.parentNode.replaceChild(nb,entry);
-  nb.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();openMomentsView()});
-}
-
+if(entry){var nb=entry.cloneNode(true);entry.parentNode.replaceChild(nb,entry);nb.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();openMomentsView()})}
 var cover=document.getElementById('wxMomentsCover');
 var coverUp=document.getElementById('wx-moments-cover-uploader');
-if(cover&&coverUp){
-  cover.addEventListener('click',function(e){
-    if(e.target.closest('#wxMomentsBack'))return;
-    if(e.target.closest('#wxMomentsAddBtn'))return;
-    coverUp.click();
-  });
-  coverUp.addEventListener('change',function(){
-    var f=coverUp.files&&coverUp.files[0];if(!f)return;
-    var r=new FileReader();
-    r.onload=function(ev){try{localStorage.setItem('wx-moments-cover',ev.target.result)}catch(e){};cover.style.backgroundImage='url("'+ev.target.result+'")';cover.style.backgroundSize='cover';coverUp.value=''};
-    r.readAsDataURL(f);
-  });
-}
-
+if(cover&&coverUp){cover.addEventListener('click',function(e){if(e.target.closest('#wxMomentsBack'))return;if(e.target.closest('#wxMomentsAddBtn'))return;coverUp.click()});coverUp.addEventListener('change',function(){var f=coverUp.files&&coverUp.files[0];if(!f)return;var r=new FileReader();r.onload=function(ev){try{localStorage.setItem('wx-moments-cover',ev.target.result)}catch(e){};cover.style.backgroundImage='url("'+ev.target.result+'")';cover.style.backgroundSize='cover';coverUp.value=''};r.readAsDataURL(f)})}
 var backBtn=document.getElementById('wxMomentsBack');
 if(backBtn){backBtn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();document.getElementById('wxMomentsView').classList.remove('active')})}
-
 var addBtn=document.getElementById('wxMomentsAddBtn');
-if(addBtn){
-  addBtn.addEventListener('click',function(e){
-    e.preventDefault();
-    e.stopPropagation();
-    modeEl.classList.add('show');
-  },true);
-}
-
+if(addBtn){addBtn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();modeEl.classList.add('show')},true)}
 window.addEventListener('koi-avatar-change',function(){openMomentsView(true)});
 }
 
@@ -2015,6 +1951,7 @@ window.koiOnUserPostMoment=onUserPostMoment;
 window.koiTriggerCharMoments=tickCharMoments;
 window.koiCheckImageToMoment=checkImageToMoment;
 window.koiOpenMoments=openMomentsView;
+window.koiGetCharName=getMyName;
 
 /* ============ 全部数据备份 ============ */
 function backupInit(){
@@ -2025,7 +1962,7 @@ var row=document.createElement('div');row.className='bp-btn-row';
 var e=document.createElement('button');e.className='bp-btn';e.id='koiFullExport';e.textContent='导出全部数据';
 var i2=document.createElement('button');i2.className='bp-btn bp-btn-ghost';i2.id='koiFullImport';i2.textContent='导入全部数据';
 row.appendChild(e);row.appendChild(i2);
-var tip=document.createElement('div');tip.className='bp-tip';tip.textContent='包含朋友圈、联系人、聊天记录、钱包、账单、API 配置、壁纸美化、世界书、朋友圈记忆等全部数据。导入会覆盖当前数据并刷新页面。';
+var tip=document.createElement('div');tip.className='bp-tip';tip.textContent='包含朋友圈、联系人、聊天记录、钱包、账单、API 配置、壁纸美化、世界书、朋友圈记忆、世界书绑定等全部数据。导入会覆盖当前数据并刷新页面。';
 bpBody.appendChild(t);bpBody.appendChild(row);bpBody.appendChild(tip);
 var inp=document.createElement('input');inp.type='file';inp.accept='.json,application/json';inp.style.display='none';document.body.appendChild(inp);
 e.addEventListener('click',function(){
@@ -2037,7 +1974,7 @@ e.addEventListener('click',function(){
   var a=document.createElement('a');a.href=u;a.download='koi-full-'+new Date().toISOString().slice(0,10)+'.json';
   document.body.appendChild(a);a.click();document.body.removeChild(a);
   setTimeout(function(){URL.revokeObjectURL(u)},1500);
-  alert('已导出 '+Object.keys(data).length+' 项数据（含 API 配置、聊天、朋友圈等全部）。')
+  alert('已导出 '+Object.keys(data).length+' 项数据。')
 });
 i2.addEventListener('click',function(){inp.click()});
 inp.addEventListener('change',function(ev){
@@ -2047,7 +1984,7 @@ inp.addEventListener('change',function(ev){
     try{
       var p=JSON.parse(e2.target.result);var d=p&&p.data?p.data:p;
       if(!d||typeof d!=='object')throw new Error('格式错误');
-      if(!confirm('导入会覆盖当前所有数据（含 API 配置、聊天记录、朋友圈等），确定继续吗？'))return;
+      if(!confirm('导入会覆盖当前所有数据，确定继续吗？'))return;
       Object.keys(d).forEach(function(k){try{localStorage.setItem(k,d[k])}catch(err){}});
       alert('导入完成，页面即将刷新。');
       setTimeout(function(){location.reload()},600);
@@ -2067,32 +2004,52 @@ setTimeout(function(){updateMomentsDot()},2000);
 </script>
 
 <script>
-/* ============ 世界书 ============ */
+/* ============================================================
+   世界书（含全局/局部 + 聊天详情绑定）
+   ============================================================ */
 (function(){
 if(window.__wbsLoaded)return;window.__wbsLoaded=true;
+
 function initWBS(){
 var P=document.querySelector('.phone-container');
 if(!P||document.getElementById('wbSimple'))return;
+
+// 面板
 var panel=document.createElement('div');
 panel.className='wbs';panel.id='wbSimple';
 panel.innerHTML='<div class="wbs-n"><button id="wbsBack">返回</button><span class="t" id="wbsTitle">世界书</span><button id="wbsAdd" style="font-size:24px;font-weight:300">＋</button></div><div class="wbs-b" id="wbsBody"></div>';
 P.appendChild(panel);
+
+// 编辑面板
 var editP=document.createElement('div');
 editP.className='wbs';editP.id='wbSimpleEdit';editP.style.zIndex='251';
 editP.innerHTML='<div class="wbs-n"><button id="wbsEditC">取消</button><span class="t">编辑条目</span><button id="wbsEditS" style="background:#07c160;color:#fff;padding:6px 14px;border-radius:8px">保存</button></div><div class="wbs-b">'+
 '<div style="background:#fff;border-radius:12px;padding:16px;margin-bottom:12px"><div style="font-size:13px;color:#888;margin-bottom:8px">标题</div><input id="wbsFT" style="width:100%;border:none;outline:none;font-size:15px" placeholder="条目名"></div>'+
 '<div style="background:#fff;border-radius:12px;padding:16px;margin-bottom:12px"><div style="font-size:13px;color:#888;margin-bottom:8px">读取深度</div><input type="number" id="wbsFD" value="100" style="width:100%;border:none;outline:none;font-size:15px"><div style="font-size:11px;color:#bbb;margin-top:4px">越大越靠前</div></div>'+
 '<div style="background:#fff;border-radius:12px;padding:16px;margin-bottom:12px"><div style="font-size:13px;color:#888;margin-bottom:8px">读取位置</div><select id="wbsFP" style="width:100%;border:none;outline:none;font-size:15px;background:transparent"><option value="before">人设前</option><option value="middle" selected>人设中</option><option value="after">人设后</option></select></div>'+
+'<div style="background:#fff;border-radius:12px;padding:16px;margin-bottom:12px"><div style="font-size:13px;color:#888;margin-bottom:8px">范围</div><div class="wbs-scope-tabs"><button class="wbs-scope-tab active" id="wbsScopeG">全局（所有角色可用）</button><button class="wbs-scope-tab" id="wbsScopeL">局部（仅指定角色）</button></div></div>'+
+'<div style="background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;display:none" id="wbsCharBox"><div style="font-size:13px;color:#888;margin-bottom:8px">指定角色（可多选）</div><div id="wbsCharList" style="max-height:200px;overflow-y:auto;border-radius:8px;border:1px solid #f0f0f0"></div></div>'+
 '<div style="background:#fff;border-radius:12px;padding:16px;margin-bottom:12px"><div style="font-size:13px;color:#888;margin-bottom:8px">内容</div><textarea id="wbsFC" style="width:100%;border:none;outline:none;font-size:14px;min-height:240px;font-family:inherit;line-height:1.6;resize:none" placeholder="世界书内容..."></textarea></div>'+
 '<button id="wbsEditDel" style="width:100%;padding:14px;background:#fff;border:none;border-radius:12px;color:#fa5151;font-size:15px;cursor:pointer">删除条目</button>'+
 '</div>';
 P.appendChild(editP);
+
+// 绑定面板（聊天详情用）
+var bindP=document.createElement('div');
+bindP.className='wbs';bindP.id='wbBindPanel';bindP.style.zIndex='252';
+bindP.innerHTML='<div class="wbs-n"><button id="wbsBindBack">返回</button><span class="t">绑定世界书</span><span style="width:40px"></span></div><div class="wbs-b" id="wbsBindBody"></div>';
+P.appendChild(bindP);
+
 var fileIn=document.createElement('input');fileIn.type='file';fileIn.accept='.docx,.json,.txt';fileIn.multiple=true;fileIn.style.display='none';document.body.appendChild(fileIn);
+
 function getBooks(){try{var v=localStorage.getItem('world-books');if(v){var r=JSON.parse(v);if(Array.isArray(r))return r}}catch(e){}return[]}
 function saveBooks(a){try{localStorage.setItem('world-books',JSON.stringify(a))}catch(e){}}
 function uid(p){return p+'_'+Date.now()+'_'+Math.floor(Math.random()*999)}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-var st={bid:null,eid:null};
+function getCharsList(){try{var v=localStorage.getItem('contact-chars');if(v){var r=JSON.parse(v);if(Array.isArray(r))return r}}catch(e){}return[]}
+
+var st={bid:null,eid:null,scope:'global',masks:[]};
+
 function renderBooks(){
 var L=document.getElementById('wbsBody');L.innerHTML='';
 var books=getBooks();
@@ -2113,7 +2070,8 @@ var b=getBooks().find(function(x){return x.id===st.bid});if(!b)return;
 (b.entries||[]).forEach(function(e){
 var el=document.createElement('div');el.className='wbs-e';
 var pos=e.position==='before'?'人设前':(e.position==='after'?'人设后':'人设中');
-el.innerHTML='<div class="wbs-e-t">'+esc(e.title||'未命名')+'</div><div style="font-size:11px;color:#999;margin-bottom:4px">'+pos+' · 深度 '+(e.depth||100)+'</div><div class="wbs-e-c">'+esc((e.content||'').slice(0,100))+'</div>';
+var scopeTxt=(e.scope==='local')?'局部':'全局';
+el.innerHTML='<div class="wbs-e-t">'+esc(e.title||'未命名')+'</div><div style="font-size:11px;color:#999;margin-bottom:4px">'+scopeTxt+' · '+pos+' · 深度 '+(e.depth||100)+'</div><div class="wbs-e-c">'+esc((e.content||'').slice(0,100))+'</div>';
 el.addEventListener('click',function(){openEdit(e.id)});
 L.appendChild(el);
 });
@@ -2121,6 +2079,36 @@ var a=document.createElement('button');a.className='wbs-add';a.textContent='＋ 
 a.addEventListener('click',function(){openEdit(null)});
 L.appendChild(a);
 }
+function renderCharList(){
+var box=document.getElementById('wbsCharList');box.innerHTML='';
+var cs=getCharsList();
+if(!cs.length){box.innerHTML='<div style="text-align:center;color:#bbb;padding:20px;font-size:12px">暂无角色，请先到联系人App创建</div>';return}
+cs.forEach(function(c){
+  var on=st.masks.indexOf(c.id)>=0;
+  var row=document.createElement('div');row.className='wbs-char-row';
+  var av=document.createElement('div');av.className='wbs-char-av';
+  if(c.avatar){var im=document.createElement('img');im.src=c.avatar;av.appendChild(im)}else av.textContent=(c.name||'?').charAt(0);
+  var nm=document.createElement('div');nm.className='wbs-char-nm';nm.textContent=c.name||'未命名';
+  var ck=document.createElement('div');ck.className='wbs-char-ck'+(on?' on':'');ck.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';
+  row.appendChild(av);row.appendChild(nm);row.appendChild(ck);
+  row.addEventListener('click',function(){
+    var i=st.masks.indexOf(c.id);
+    if(i>=0)st.masks.splice(i,1);else st.masks.push(c.id);
+    renderCharList();
+  });
+  box.appendChild(row);
+});
+}
+function updScope(){
+var g=document.getElementById('wbsScopeG'),l=document.getElementById('wbsScopeL');
+g.classList.toggle('active',st.scope!=='local');
+l.classList.toggle('active',st.scope==='local');
+document.getElementById('wbsCharBox').style.display=(st.scope==='local')?'block':'none';
+if(st.scope==='local')renderCharList();
+}
+document.getElementById('wbsScopeG').addEventListener('click',function(){st.scope='global';updScope()});
+document.getElementById('wbsScopeL').addEventListener('click',function(){st.scope='local';updScope()});
+
 function openEdit(eid){
 st.eid=eid;
 var b=getBooks().find(function(x){return x.id===st.bid});if(!b)return;
@@ -2129,13 +2117,16 @@ document.getElementById('wbsFT').value=e?e.title||'':'';
 document.getElementById('wbsFD').value=e?e.depth||100:100;
 document.getElementById('wbsFP').value=e?e.position||'middle':'middle';
 document.getElementById('wbsFC').value=e?e.content||'':'';
+st.scope=e?(e.scope||'global'):'global';
+st.masks=e?(e.masks||[]).slice():[];
+updScope();
 editP.classList.add('open');
 }
 document.getElementById('wbsEditC').addEventListener('click',function(){editP.classList.remove('open')});
 document.getElementById('wbsEditS').addEventListener('click',function(){
 var bks=getBooks();var bi=bks.findIndex(function(x){return x.id===st.bid});if(bi<0)return;
 var b=bks[bi];if(!b.entries)b.entries=[];
-var data={title:document.getElementById('wbsFT').value.trim()||'未命名',depth:parseInt(document.getElementById('wbsFD').value,10)||100,position:document.getElementById('wbsFP').value||'middle',content:document.getElementById('wbsFC').value,enabled:true,scope:'global',masks:[]};
+var data={title:document.getElementById('wbsFT').value.trim()||'未命名',depth:parseInt(document.getElementById('wbsFD').value,10)||100,position:document.getElementById('wbsFP').value||'middle',content:document.getElementById('wbsFC').value,enabled:true,scope:st.scope,masks:st.masks.slice()};
 if(st.eid){var ei=b.entries.findIndex(function(x){return x.id===st.eid});if(ei>=0)b.entries[ei]=Object.assign(b.entries[ei],data)}
 else b.entries.push(Object.assign({id:uid('e')},data));
 saveBooks(bks);editP.classList.remove('open');renderEntries();
@@ -2189,19 +2180,96 @@ if(!es.length)es.push({id:uid('e'),title:d,content:JSON.stringify(parsed,null,2)
 var a=getBooks();a.unshift({id:uid('wb'),name:d,entries:es});saveBooks(a);
 }
 renderBooks();
+
+// 入口
 var wbEntry=document.getElementById('worldbookEntry');
 if(wbEntry){wbEntry.addEventListener('click',function(e){e.stopPropagation();renderBooks();panel.classList.add('open')})}
-function getWB(){
-var books=getBooks();var B=[],M=[],A=[];
-books.forEach(function(b){(b.entries||[]).forEach(function(e){
-if(e.enabled===false)return;
-var tx=(e.content||'').trim();if(!tx)return;
-var d=parseInt(e.depth,10)||100;var pos=e.position||'middle';
-var o={t:tx,d:d};
-if(pos==='before')B.push(o);else if(pos==='after')A.push(o);else M.push(o);
-})});
+
+// 绑定面板
+var bindCharId=null;
+window.__koiWbsBind=function(charId){
+  bindCharId=charId;
+  renderBindList();
+  panel.classList.add('open');
+  bindP.classList.add('open');
+  document.getElementById('wbsTitle').textContent='世界书';
+  document.getElementById('wbsBody').innerHTML='';
+};
+document.getElementById('wbsBindBack').addEventListener('click',function(){
+  bindP.classList.remove('open');
+  // 回到世界书主页
+  renderBooks();
+});
+function renderBindList(){
+  var L=document.getElementById('wbsBindBody');L.innerHTML='';
+  var books=getBooks();
+  var c=getCharsList().find(function(x){return x.id===bindCharId});
+  var cName=c?(c.name||'未命名'):'当前角色';
+  var hd=document.createElement('div');hd.style.cssText='padding:10px 4px 14px;font-size:12px;color:#888';hd.textContent='为「'+cName+'」绑定要使用的世界书：';L.appendChild(hd);
+  if(!books.length){var em=document.createElement('div');em.style.cssText='text-align:center;color:#bbb;padding:40px;font-size:13px';em.textContent='还没有世界书，请先到世界书App里创建';L.appendChild(em);return}
+  books.forEach(function(b){
+    var bound=lj2('wx-char-worldbooks-'+bindCharId,[]);
+    if(!Array.isArray(bound))bound=[];
+    var on=bound.indexOf(b.id)>=0;
+    var row=document.createElement('div');row.className='wbs-char-row';
+    var ic=document.createElement('div');ic.className='wbs-char-av';ic.style.background='#4a90d9';ic.textContent='书';
+    var nm=document.createElement('div');nm.className='wbs-char-nm';nm.innerHTML=esc(b.name||'未命名')+'<div style="font-size:11px;color:#999;margin-top:2px">'+((b.entries||[]).length)+' 个条目</div>';
+    var ck=document.createElement('div');ck.className='wbs-char-ck'+(on?' on':'');ck.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';
+    row.appendChild(ic);row.appendChild(nm);row.appendChild(ck);
+    row.addEventListener('click',function(){
+      var arr=lj2('wx-char-worldbooks-'+bindCharId,[]);
+      if(!Array.isArray(arr))arr=[];
+      var i=arr.indexOf(b.id);
+      if(i>=0)arr.splice(i,1);else arr.push(b.id);
+      ls2('wx-char-worldbooks-'+bindCharId,arr);
+      renderBindList();
+    });
+    L.appendChild(row);
+  });
+}
+function lj2(k,d){try{var v=localStorage.getItem(k);if(v){var r=JSON.parse(v);if(r!=null)return r}}catch(e){}return d}
+function ls2(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+
+/* ============ 世界书注入 ============ */
+function getWB(charId){
+var books=getBooks();
+var bound=[];
+if(charId){
+  bound=lj2('wx-char-worldbooks-'+charId,[]);
+  if(!Array.isArray(bound))bound=[];
+}
+var B=[],M=[],A=[];
+books.forEach(function(b){
+  // 如果角色指定了绑定，只用绑定的；否则用全部
+  if(charId&&bound.length){
+    if(bound.indexOf(b.id)<0)return;
+  }
+  (b.entries||[]).forEach(function(e){
+    if(e.enabled===false)return;
+    var tx=(e.content||'').trim();if(!tx)return;
+    // 全局/局部判断
+    if(e.scope==='local'){
+      if(!charId)return;
+      var masks=e.masks||[];
+      if(masks.length&&masks.indexOf(charId)<0)return;
+    }
+    var d=parseInt(e.depth,10)||100;var pos=e.position||'middle';
+    var o={t:tx,d:d};
+    if(pos==='before')B.push(o);else if(pos==='after')A.push(o);else M.push(o);
+  });
+});
 function s(a,b){return b.d-a.d}B.sort(s);M.sort(s);A.sort(s);
 return{before:B.map(function(x){return x.t}).join('\n'),middle:M.map(function(x){return x.t}).join('\n'),after:A.map(function(x){return x.t}).join('\n')};
+}
+function currentCharIdByName(){
+var el=document.getElementById('wxChatName');if(!el)return null;
+var n=(el.textContent||'').trim();
+var cs=getCharsList();
+for(var i=0;i<cs.length;i++){
+  var rk=localStorage.getItem('wx-chat-remark-'+cs[i].id);
+  if((rk||cs[i].name||'')===n)return cs[i].id;
+}
+return null;
 }
 var _f=window.fetch;
 window.fetch=function(){
@@ -2213,7 +2281,8 @@ var b=JSON.parse(args[1].body);
 if(b.messages&&b.messages[0]&&b.messages[0].role==='system'){
 var sys=b.messages[0].content;
 if(typeof sys==='string'){
-var wb=getWB();
+var cid=currentCharIdByName();
+var wb=getWB(cid);
 if(wb.before||wb.middle||wb.after){
 var p=[sys,'','===== 行为规则（必须严格遵守）====='];
 if(wb.before){p.push('【重要规则】',wb.before,'')}
