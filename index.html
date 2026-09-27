@@ -4439,5 +4439,366 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
 else{setTimeout(init,600);}
 })();
 </script>
+
+<script>
+(function(){
+if(window.__wbFix)return;window.__wbFix=true;
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function uid(p){return p+'_'+Date.now()+'_'+Math.floor(Math.random()*9999);}
+function getBooks(){try{var r=localStorage.getItem('world-books');if(r){var v=JSON.parse(r);if(Array.isArray(v))return v;}}catch(e){}return[];}
+function saveBooks(b){try{localStorage.setItem('world-books',JSON.stringify(b));}catch(e){}}
+function getMasks(){try{var r=localStorage.getItem('contact-chars');if(r){var v=JSON.parse(r);if(Array.isArray(v))return v;}}catch(e){}return[];}
+function getCurrentCharId(){
+var el=document.getElementById('wxChatName');if(!el)return null;
+var name=(el.textContent||'').trim();if(!name)return null;
+var chars=[];try{chars=JSON.parse(localStorage.getItem('contact-chars')||'[]');}catch(e){}
+for(var i=0;i<chars.length;i++){
+var c=chars[i];
+var rk=localStorage.getItem('wx-chat-remark-'+c.id);
+if((rk||c.name||'')===name)return c.id;
+}
+return null;
+}
+function buildWB(charId){
+var books=getBooks();var before=[],middle=[],after=[];
+books.forEach(function(b){(b.entries||[]).forEach(function(e){
+if(e.enabled===false)return;
+if(e.scope==='local'&&e.masks&&e.masks.length>0){if(!charId||e.masks.indexOf(charId)<0)return;}
+var block=(e.content||'').trim();if(!block)return;
+var d=parseInt(e.depth,10)||100;var pos=e.position||'middle';
+var o={t:block,d:d};
+if(pos==='before')before.push(o);else if(pos==='after')after.push(o);else middle.push(o);
+});});
+function srt(a,b){return b.d-a.d;}
+before.sort(srt);middle.sort(srt);after.sort(srt);
+return{before:before.map(function(x){return x.t;}).join('\n'),middle:middle.map(function(x){return x.t;}).join('\n'),after:after.map(function(x){return x.t;}).join('\n')};
+}
+function injectPrompt(orig,wb){
+var p=['===== 角色设定（你的身份）=====',orig,'','===== 行为规则（必须严格遵守）====='];
+if(wb.before){风格的约束。p');
+.push('【重要规则 - p优先级最高】');p.push(wb.before);p.push('');}
+if(wb.middle){p.push('【常规规则 - 在角色行为中体现】');p.push(wb.middle);p.push('');}
+if(wb.after){p.push('【补充规则 - 输出时的额外要求】');p.push(wb.after);p.push('');}
+p.push('===== 执行要求 =====');
+p.push('1. 你仍然要完全保持上述角色身份、语气、性格、说话方式，不能脱离人设。');
+p.push('2. 在扮演角色的同时，必须严格遵守上面所有"行为规则"，特别是关于表达方式、避免用词、语言.push('3. 如果规则与角色设定有冲突，在不脱离角色的前提下优先遵守规则。');
+p.push('4. 不要提到"规则""世界书""prompt"等系统词汇，以角色本人身份自然回复。');
+return p.join('\n');
+}
+var of=window.fetch;
+window.fetch=function(){
+var args=arguments;
+try{
+var url=args[0];
+if(typeof url==='string'&&url.indexOf('/chat/completions')>=0&&args[1]&&args[1].body){
+var body=JSON.parse(args[1].body);
+if(body.messages&&body.messages[0]&&body.messages[0].role==='system'){
+var wb=buildWB(getCurrentCharId());
+if(wb.before||wb.middle||wb.after){
+body.messages[0].content=injectPrompt(body.messages[0].content,wb);
+args=[url,Object.assign({},args[1],{body:JSON.stringify(body)})];
+}
+}
+}
+}catch(e){}
+return of.apply(this,args);
+};
+function ready(fn){
+if(document.readyState!=='loading')setTimeout(fn,300);
+else document.addEventListener('DOMContentLoaded',function(){setTimeout(fn,300);});
+}
+ready(function(){
+var phone=document.querySelector('.phone-container');if(!phone)return;
+['worldBookPanel','wbEditPanel','wbv4Panel'].forEach(function(id){var el=document.getElementById(id);if(el)el.remove();});
+var style=document.createElement('style');
+style.textContent=
+'.wbv4{position:absolute;inset:0;z-index:245;background:#f5f5f7;transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;border-radius:30px;overflow:hidden}'+
+'body.fs-mode .wbv4{border-radius:0}'+
+'.wbv4.open{transform:translateX(0)}'+
+'.wbv4-nav{flex-shrink:0;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#f5f5f7;border-bottom:1px solid #e5e5e7;position:relative}'+
+'.wbv4-nav button{background:transparent;border:none;color:#07c160;font-size:15px;cursor:pointer;padding:6px 4px;font-family:inherit;font-weight:500;z-index:1}'+
+'.wbv4-nav .t{position:absolute;left:50%;transform:translateX(-50%);font-size:17px;font-weight:600;color:#1a1a1a}'+
+'.wbv4-nav .plus{font-size:26px;padding:0 10px;color:#07c160;font-weight:300}'+
+'.wbv4-body{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch}'+
+'.wbv4-body::-webkit-scrollbar{display:none}'+
+'.wbv4-card{background:#fff;border-radius:12px;padding:14px 16px;cursor:pointer;margin-bottom:10px}'+
+'.wbv4-card-t{font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:5px;word-break:break-word}'+
+'.wbv4-card-s{font-size:12px;color:#999}'+
+'.wbv4-row{display:flex;justify-content:space-between;align-items:center}'+
+'.wbv4-del{background:transparent;border:none;color:#fa5151;font-size:12px;cursor:pointer;padding:4px 6px;font-family:inherit}'+
+'.wbv4-empty{text-align:center;color:#b8b8b8;font-size:13px;padding:90px 20px}'+
+'.wbv4-entry{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;background:#fff;border-radius:12px;cursor:pointer;margin-bottom:8px}'+
+'.wbv4-entry-i{flex:1;min-width:0}'+
+'.wbv4-entry-t{font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:4px;word-break:break-word}'+
+'.wbv4-entry-k{font-size:11px;color:#999;margin-bottom:3px;word-break:break-word}'+
+'.wbv4-entry-c{font-size:12px;color:#bbb;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}'+
+'.wbv4-add-e{width:100%;padding:14px 0;background:#fff;border:2px dashed #e0e0e0;border-radius:12px;color:#999;font-size:14px;cursor:pointer;font-family:inherit}'+
+'.wbv4-edit{position:absolute;inset:0;background:#f5f5f7;z-index:247;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s}'+
+'.wbv4-edit.show{transform:translateX(0)}'+
+'.wbv4-edit-nav{flex-shrink:0;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#fff;border-bottom:1px solid #e5e5e7;position:relative}'+
+'.wbv4-edit-nav .c{background:transparent;border:none;color:#1a1a1a;font-size:15px;cursor:pointer;padding:6px 4px;font-family:inherit}'+
+'.wbv4-edit-nav .t{position:absolute;left:50%;transform:translateX(-50%);font-size:16px;font-weight:600;color:#1a1a1a}'+
+'.wbv4-edit-nav .s{background:#07c160;color:#fff;border:none;padding:7px 18px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit}'+
+'.wbv4-edit-body{flex:1;overflow-y:auto;padding:14px 14px 40px}'+
+'.wbv4-edit-body::-webkit-scrollbar{display:none}'+
+'.wbv4-field{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px}'+
+'.wbv4-lbl{font-size:13px;color:#888;margin-bottom:8px}'+
+'.wbv4-lbl-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}'+
+'.wbv4-lbl-row .h{font-size:11px;color:#bbb}'+
+'.wbv4-inp{width:100%;border:none;outline:none;font-size:15px;color:#1a1a1a;background:transparent;font-family:inherit;padding:4px 0}'+
+'.wbv4-inp::placeholder{color:#c0c0c0}'+
+'.wbv4-inp-sm{font-size:13px}'+
+'.wbv4-ta{width:100%;border:none;outline:none;font-size:14px;color:#1a1a1a;background:transparent;font-family:inherit;line-height:1.6;min-height:220px;resize:none;white-space:pre-wrap}'+
+'.wbv4-switch-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0}'+
+'.wbv4-switch-row .l{font-size:15px;color:#1a1a1a}'+
+'.wbv4-switch-row .s{font-size:11px;color:#999;margin-top:3px}'+
+'.wbv4-tabs{display:flex;background:#f5f5f5;border-radius:8px;padding:3px;margin-top:10px;width:fit-content;margin-left:auto}'+
+'.wbv4-tab{padding:6px 18px;border-radius:6px;font-size:13px;color:#666;cursor:pointer;background:transparent;border:none;font-family:inherit}'+
+'.wbv4-tab.active{background:#fff;color:#1a1a1a;font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.1)}'+
+'.wbv4-cat{display:inline-block;background:#1a1a1a;color:#fff;font-size:13px;padding:7px 16px;border-radius:18px}'+
+'.wbv4-mask-row{display:flex;gap:8px;flex-wrap:wrap}'+
+'.wbv4-mask{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid #e5e5e7;border-radius:20px;font-size:13px;color:#333;background:#fff;cursor:pointer;font-family:inherit}'+
+'.wbv4-mask.active{border-color:#07c160;background:#e8f8ef;color:#07c160}'+
+'.wbv4-mask-av{width:22px;height:22px;border-radius:50%;background:#4a90d9;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;font-weight:600}'+
+'.wbv4-mask-av img{width:100%;height:100%;object-fit:cover}'+
+'.wbv4-mask.global{background:#e8f8ef;border-color:#07c160;color:#07c160}'+
+'.wbv4-import-btn{background:#e8f8ef;color:#07c160;border:none;padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit}'+
+'.wbv4-del-btn{width:100%;padding:14px 0;background:#fff;border:none;border-radius:12px;color:#fa5151;font-size:15px;cursor:pointer;font-family:inherit;margin-top:6px}'+
+'.wbv4-num{width:100%;border:1px solid #eee;border-radius:8px;padding:9px 12px;font-size:14px;outline:none;background:#fafafa;font-family:inherit}'+
+'.wbv4-pick{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:260;display:flex;align-items:flex-end}'+
+'.wbv4-pick-s{width:100%;background:#f7f7f7;border-radius:18px 18px 0 0;padding:8px 12px 18px}'+
+'.wbv4-pick-b{display:block;width:100%;padding:16px 0;border:none;background:#fff;border-radius:12px;font-size:16px;color:#1a1a1a;font-weight:500;cursor:pointer;margin-bottom:8px;font-family:inherit}';
+document.head.appendChild(style);
+var panel=document.createElement('div');
+panel.className='wbv4';panel.id='wbv4Panel';
+panel.innerHTML='<div class="wbv4-nav"><button id="wbv4Back">返回</button><span class="t" id="wbv4Title">世界书</span><button class="plus" id="wbv4Add">＋</button></div><div class="wbv4-body"><div id="wbv4List"></div></div>';
+phone.appendChild(panel);
+var edit=document.createElement('div');
+edit.className='wbv4-edit';edit.id='wbv4Edit';
+edit.innerHTML='<div class="wbv4-edit-nav"><button class="c" id="wbv4ECancel">取消</button><span class="t">编辑条目</span><button class="s" id="wbv4ESave">保存</button></div><div class="wbv4-edit-body">'+
+'<div class="wbv4-field"><div class="wbv4-lbl">标题</div><input class="wbv4-inp" id="wbv4FTitle" placeholder="输入条目标题"></div>'+
+'<div class="wbv4-field"><div class="wbv4-lbl-row"><span class="wbv4-lbl">触发关键词</span><span class="h">当对话出现这些词时生效</span></div><input class="wbv4-inp wbv4-inp-sm" id="wbv4FKeywords" placeholder="例如：魔法, 法力"></div>'+
+'<div class="wbv4-field"><div class="wbv4-switch-row"><div><div class="l">属性设置</div><div class="s">控制生效范围</div></div><label class="wx-switch" style="transform:scale(.85)"><input type="checkbox" id="wbv4FEnabled" checked><span class="wx-slider"></span></label></div><div class="wbv4-tabs"><button class="wbv4-tab active" id="wbv4ScopeG">全局</button><button class="wbv4-tab" id="wbv4ScopeL">局部</button></div></div>'+
+'<div class="wbv4-field"><div class="wbv4-lbl">所属世界书</div><span class="wbv4-cat" id="wbv4FCat">默认分类</span></div>'+
+'<div class="wbv4-field"><div class="wbv4-lbl-row"><span class="wbv4-lbl">适用面具</span><span class="h">空=所有面具共享</span></div><div class="wbv4-mask-row" id="wbv4FMasks"></div></div>'+
+'<div class="wbv4-field"><div style="display:flex;gap:12px"><div style="flex:1"><div class="wbv4-lbl">读取深度</div><input type="number" id="wbv4FDepth" class="wbv4-num" value="100"><div style="font-size:11px;color:#bbb;margin-top:5px">越大越优先</div></div><div style="flex:1"><div class="wbv4-lbl">读取位置</div><select id="wbv4FPos" class="wbv4-num"><option value="before">人设前</option><option value="middle" selected>人设中</option><option value="after">人设后</option></select></div></div></div>'+
+'<div class="wbv4-field"><div style="display:flex;justify-content:flex-end;margin-bottom:6px"><button class="wbv4-import-btn" id="wbv4Import">导入文件（.docx/.txt）</button></div><div class="wbv4-lbl">内容设定</div><textarea class="wbv4-ta" id="wbv4FContent" placeholder="输入内容..."></textarea></div>'+
+'<button class="wbv4-del-btn" id="wbv4EDel">删除条目</button></div>';
+phone.appendChild(edit);
+var fileIn=document.createElement('input');fileIn.type='file';fileIn.accept='.docx,.json,.txt';fileIn.multiple=true;fileIn.style.display='none';document.body.appendChild(fileIn);
+var importIn=document.createElement('input');importIn.type='file';importIn.accept='.docx,.txt';importIn.style.display='none';document.body.appendChild(importIn);
+var state={bid:null,eid:null,scope:'global',masks:[]};
+var listEl=panel.querySelector('#wbv4List');
+function renderBooks(){
+var books=getBooks();listEl.innerHTML='';
+if(books.length===0){listEl.innerHTML='<div class="wbv4-empty">还没有世界书<br>点击右上角 ＋ 上传或新建</div>';return;}
+books.forEach(function(b){
+var c=document.createElement('div');c.className='wbv4-card';
+var r=document.createElement('div');r.className='wbv4-row';
+var l=document.createElement('div');l.style.cssText='flex:1;min-width:0';
+var t=document.createElement('div');t.className='wbv4-card-t';t.textContent=b.name||'未命名';
+var s=document.createElement('div');s.className='wbv4-card-s';s.textContent=(b.entries||[]).length+' 个条目';
+l.appendChild(t);l.appendChild(s);
+var d=document.createElement('button');d.className='wbv4-del';d.textContent='删除';
+d.addEventListener('click',function(e){e.stopPropagation();if(!confirm('删除整本？'))return;var a=getBooks();var i=a.findIndex(function(x){return x.id===b.id;});if(i>=0)a.splice(i,1);saveBooks(a);renderBooks();});
+r.appendChild(l);r.appendChild(d);c.appendChild(r);
+c.addEventListener('click',function(){state.bid=b.id;panel.querySelector('#wbv4Title').textContent=b.name||'未命名';renderEntries();});
+listEl.appendChild(c);
+});
+}
+function renderEntries(){
+var b=getBooks().find(function(x){return x.id===state.bid;});if(!b)return;
+listEl.innerHTML='';
+(b.entries||[]).forEach(function(e){
+var r=document.createElement('div');r.className='wbv4-entry';
+if(e.enabled===false)r.style.opacity='.5';
+var i=document.createElement('div');i.className='wbv4-entry-i';
+var t=document.createElement('div');t.className='wbv4-entry-t';t.textContent=e.title||'未命名条目';
+var k=document.createElement('div');k.className='wbv4-entry-k';
+var pl=e.position==='before'?'人设前':(e.position==='after'?'人设后':'人设中');
+k.textContent=(e.keywords?('关键词：'+e.keywords+' · '):'')+pl+' · 深度 '+(e.depth||100);
+var c=document.createElement('div');c.className='wbv4-entry-c';c.textContent=(e.content||'').slice(0,80);
+i.appendChild(t);i.appendChild(k);i.appendChild(c);
+r.appendChild(i);
+r.addEventListener('click',function(){openEdit(e.id);});
+listEl.appendChild(r);
+});
+var a=document.createElement('button');a.className='wbv4-add-e';a.textContent='＋ 添加条目';
+a.addEventListener('click',function(){openEdit(null);});
+listEl.appendChild(a);
+}
+function renderMasks(sel){
+var chars=getMasks();var mr=edit.querySelector('#wbv4FMasks');mr.innerHTML='';
+var shared=!sel||sel.length===0;
+var g=document.createElement('button');g.className='wbv4-mask'+(shared?' active global':'');
+g.innerHTML='<span class="wbv4-mask-av" style="background:#07c160">🌐</span><span>共享(所有面具)</span>';
+g.addEventListener('click',function(){state.masks=[];renderMasks([]);});
+mr.appendChild(g);
+chars.forEach(function(c){
+var on=sel&&sel.indexOf(c.id)>=0;
+var m=document.createElement('button');m.className='wbv4-mask'+(on?' active':'');
+m.innerHTML='<span class="wbv4-mask-av">'+(c.avatar?'<img src="'+c.avatar+'">':esc((c.name||'?').charAt(0)))+'</span><span>'+esc(c.name||'未命名')+'</span>';
+m.addEventListener('click',function(){
+var a=state.masks.slice();var i=a.indexOf(c.id);
+if(i>=0)a.splice(i,1);else a.push(c.id);
+state.masks=a;renderMasks(a);
+});
+mr.appendChild(m);
+});
+}
+function openEdit(eid){
+state.eid=eid;
+var b=getBooks().find(function(x){return x.id===state.bid;});if(!b)return;
+var e=eid?(b.entries||[]).find(function(x){return x.id===eid;}):null;
+var F=function(id){return edit.querySelector('#'+id);};
+if(e){
+F('wbv4FTitle').value=e.title||'';F('wbv4FKeywords').value=e.keywords||'';
+F('wbv4FEnabled').checked=e.enabled!==false;
+F('wbv4FCat').textContent=e.category||'默认分类';
+F('wbv4FContent').value=e.content||'';
+F('wbv4FDepth').value=e.depth||100;
+F('wbv4FPos').value=e.position||'middle';
+state.scope=e.scope||'global';
+state.masks=(e.masks||[]).slice();
+}else{
+F('wbv4FTitle').value='';F('wbv4FKeywords').value='';
+F('wbv4FEnabled').checked=true;
+F('wbv4FCat').textContent=b.name||'默认分类';
+F('wbv4FContent').value='';
+F('wbv4FDepth').value=100;F('wbv4FPos').value='middle';
+state.scope='global';state.masks=[];
+}
+updateScope();renderMasks(state.masks);
+edit.classList.add('show');
+setTimeout(function(){F('wbv4FTitle').focus();},200);
+}
+function updateScope(){
+var sg=edit.querySelector('#wbv4ScopeG');var sl=edit.querySelector('#wbv4ScopeL');
+sg.classList.toggle('active',state.scope!=='local');
+sl.classList.toggle('active',state.scope==='local');
+}
+edit.querySelector('#wbv4ScopeG').addEventListener('click',function(){state.scope='global';updateScope();});
+edit.querySelector('#wbv4ScopeL').addEventListener('click',function(){state.scope='local';updateScope();});
+edit.querySelector('#wbv4ECancel').addEventListener('click',function(){edit.classList.remove('show');});
+edit.querySelector('#wbv4ESave').addEventListener('click',function(){
+var bks=getBooks();var bi=bks.findIndex(function(x){return x.id===state.bid;});if(bi<0)return;
+var b=bks[bi];if(!b.entries)b.entries=[];
+var F=function(id){return edit.querySelector('#'+id);};
+var data={
+title:F('wbv4FTitle').value.trim()||'未命名条目',
+keywords:F('wbv4FKeywords').value.trim(),
+enabled:F('wbv4FEnabled').checked,
+scope:state.scope,
+category:F('wbv4FCat').textContent,
+masks:state.masks.slice(),
+content:F('wbv4FContent').value,
+depth:parseInt(F('wbv4FDepth').value,10)||100,
+position:F('wbv4FPos').value||'middle'
+};
+if(state.eid){
+var ei=b.entries.findIndex(function(x){return x.id===state.eid;});
+if(ei>=0)b.entries[ei]=Object.assign(b.entries[ei],data);
+}else{
+b.entries.push(Object.assign({id:uid('e')},data));
+}
+saveBooks(bks);edit.classList.remove('show');renderEntries();
+});
+edit.querySelector('#wbv4EDel').addEventListener('click',function(){
+if(!state.eid)return;
+if(!confirm('删除该条目？'))return;
+var bks=getBooks();var b=bks.find(function(x){return x.id===state.bid;});if(!b)return;
+b.entries=(b.entries||[]).filter(function(x){return x.id!==state.eid;});
+saveBooks(bks);edit.classList.remove('show');renderEntries();
+});
+edit.querySelector('#wbv4Import').addEventListener('click',function(){importIn.click();});
+importIn.addEventListener('change',function(e){
+var f=e.target.files[0];if(!f)return;
+var isDocx=/\.docx$/i.test(f.name);
+var r=new FileReader();
+r.onload=function(ev){
+if(isDocx&&window.mammoth){
+mammoth.extractRawText({arrayBuffer:ev.target.result}).then(function(res){edit.querySelector('#wbv4FContent').value=res.value||'';importIn.value='';}).catch(function(){importIn.value='';});
+}else{edit.querySelector('#wbv4FContent').value=String(ev.target.result||'');importIn.value='';}
+};
+if(isDocx)r.readAsArrayBuffer(f);else r.readAsText(f);
+});
+panel.querySelector('#wbv4Back').addEventListener('click',function(){
+if(state.bid){state.bid=null;panel.querySelector('#wbv4Title').textContent='世界书';renderBooks();}
+else panel.classList.remove('open');
+});
+panel.querySelector('#wbv4Add').addEventListener('click',function(){
+var m=document.createElement('div');m.className='wbv4-pick';
+m.innerHTML='<div class="wbv4-pick-s"><button class="wbv4-pick-b" id="wbv4Up">上传文件</button><button class="wbv4-pick-b" id="wbv4New">新建空白世界书</button><button class="wbv4-pick-b" id="wbv4Cancel" style="color:#666">取消</button></div>';
+phone.appendChild(m);
+m.addEventListener('click',function(e){if(e.target===m)m.remove();});
+m.querySelector('#wbv4Cancel').addEventListener('click',function(){m.remove();});
+m.querySelector('#wbv4Up').addEventListener('click',function(){m.remove();fileIn.click();});
+m.querySelector('#wbv4New').addEventListener('click',function(){
+m.remove();
+var n=prompt('输入世界书名称：','新世界书');if(!n)return;
+var a=getBooks();a.unshift({id:uid('wb'),name:n,entries:[]});saveBooks(a);renderBooks();
+});
+});
+fileIn.addEventListener('change',function(e){
+var files=Array.prototype.slice.call(e.target.files||[]);if(files.length===0)return;
+var p=files.length;
+files.forEach(function(f){
+var isDocx=/\.docx$/i.test(f.name);var isJson=/\.json$/i.test(f.name);
+var r=new FileReader();
+r.onload=function(ev){
+if(isDocx){
+if(window.mammoth){mammoth.extractRawText({arrayBuffer:ev.target.result}).then(function(res){addBook(f.name,res.value||'');done();}).catch(function(){addBook(f.name,'');done();});}
+else{addBook(f.name,'');done();}
+}else if(isJson){
+var content='',parsed=null;
+try{parsed=JSON.parse(ev.target.result);content=JSON.stringify(parsed,null,2);}catch(err){content=String(ev.target.result);}
+addBookJson(f.name,parsed,content);done();
+}else{addBook(f.name,String(ev.target.result||''));done();}
+};
+if(isDocx)r.readAsArrayBuffer(f);else r.readAsText(f);
+});
+function done(){p--;if(p===0){fileIn.value='';renderBooks();}}
+});
+function addBook(name,content){
+var a=getBooks();var d=name.replace(/\.(docx|json|txt)$/i,'');
+a.unshift({id:uid('wb'),name:d,entries:[{id:uid('e'),title:d,keywords:'',enabled:true,scope:'global',category:d,masks:[],content:content||'',depth:100,position:'middle'}]});
+saveBooks(a);
+}
+function addBookJson(name,parsed,content){
+var d=name.replace(/\.json$/i,'');var es=[];
+if(parsed&&typeof parsed==='object'&&parsed.entries&&typeof parsed.entries==='object'){
+Object.keys(parsed.entries).forEach(function(k){
+var e=parsed.entries[k];if(!e)return;
+es.push({id:uid('e'),title:e.comment||e.name||k,keywords:Array.isArray(e.key)?e.key.join(', '):(e.key||''),enabled:e.disable!==true,scope:e.constant?'global':'local',category:d,masks:[],content:Array.isArray(e.content)?e.content.join('\n'):(e.content||''),depth:e.depth||100,position:e.position||'middle'});
+});
+}
+if(es.length===0)es.push({id:uid('e'),title:d,keywords:'',enabled:true,scope:'global',category:d,masks:[],content:content||'',depth:100,position:'middle'});
+var a=getBooks();a.unshift({id:uid('wb'),name:d,entries:es});saveBooks(a);
+}
+// 找图标：先按文字"淘宝"，找不到用第 2 个
+var items=document.querySelectorAll('#page-2 .p2-app-grid .p2-app-item');
+var icon=null;
+for(var i=0;i<items.length;i++){
+var s=items[i].querySelector('span');
+if(s&&s.textContent.trim()==='淘宝'){icon=items[i];break;}
+}
+if(!icon&&items[1])icon=items[1];
+if(icon){
+var nb=icon.cloneNode(true);
+icon.parentNode.replaceChild(nb,icon);
+var ns=nb.querySelector('span');
+if(ns)ns.textContent='世界书';
+nb.addEventListener('click',function(e){
+e.stopPropagation();
+state.bid=null;
+panel.querySelector('#wbv4Title').textContent='世界书';
+renderBooks();
+panel.classList.add('open');
+});
+}
+renderBooks();
+});
+})();
+</script>
 </body>
 </html>
