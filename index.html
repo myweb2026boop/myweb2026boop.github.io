@@ -620,7 +620,6 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 .wbs-e-c{font-size:12px;color:#bbb;white-space:pre-wrap;max-height:40px;overflow:hidden}
 .wbs-add{width:100%;padding:14px;background:#fff;border:2px dashed #ddd;border-radius:12px;color:#999;cursor:pointer}
 .wbs-empty{text-align:center;color:#bbb;padding:80px 20px}
-/* 世界书条目 - 范围/绑定 面板 */
 .wbs-scope-tabs{display:flex;gap:6px;margin-top:8px}
 .wbs-scope-tab{flex:1;padding:8px 0;text-align:center;border:1px solid #e5e5e7;border-radius:8px;font-size:13px;color:#666;cursor:pointer;background:#fff}
 .wbs-scope-tab.active{background:#07c160;color:#fff;border-color:#07c160}
@@ -633,6 +632,11 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 .wbs-char-ck svg{width:12px;height:12px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;display:none}
 .wbs-char-ck.on{background:#07c160;border-color:#07c160}
 .wbs-char-ck.on svg{display:block}
+/* 顶部浮层通知 */
+.koiNotif{position:absolute;top:14px;left:50%;transform:translateX(-50%) translateY(-20px);background:rgba(30,30,30,.94);color:#fff;padding:12px 18px;border-radius:14px;font-size:13px;z-index:9999;max-width:86%;box-shadow:0 8px 24px rgba(0,0,0,.35);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none}
+.koiNotif.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.koiNotif .nt{font-weight:600;margin-bottom:4px}
+.koiNotif .nb{opacity:.85;font-size:12px;word-break:break-word}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
 </head>
@@ -810,7 +814,7 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 <div class="wx-me-item"><span class="wx-me-icon" style="background:#f7b500"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r=".6" fill="#fff" stroke="none"/><circle cx="15" cy="10" r=".6" fill="#fff" stroke="none"/><path d="M8 14c1 1.2 2.4 2 4 2s3-.8 4-2"/></svg></span><span class="wx-me-label">表情</span><span class="wx-me-arrow-right"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></div>
 </div>
 <div class="wx-me-gap"></div>
-<div class="wx-me-group"><div class="wx-me-item"><span class="wx-me-icon" style="background:#6c8ebf"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg></span><span class="wx-me-label">设置</span><span class="wx-me-arrow-right"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></div></div>
+<div class="wx-me-group"><div class="wx-me-item" id="wxMeSettingsEntry"><span class="wx-me-icon" style="background:#6c8ebf"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg></span><span class="wx-me-label">设置</span><span class="wx-me-arrow-right"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></div></div>
 <div class="wx-me-gap" style="height:30px"></div>
 </div>
 </div>
@@ -865,6 +869,7 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 <div class="wx-me-gap"></div>
 <div class="wx-me-group">
 <div class="wx-me-item" id="wxMoreProactive"><span class="wx-me-label">允许主动发消息</span><label class="wx-switch"><input type="checkbox" id="wxProactiveToggle"><span class="wx-slider"></span></label></div>
+<div class="wx-me-item" id="wxMoreAutoCount"><span class="wx-me-label">每次自动发几条</span><span class="wx-me-arrow-right"><span id="wxAutoCountVal" style="font-size:13px;color:#999;margin-right:6px">1 条</span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></div>
 <div class="wx-me-item" id="wxMorePin"><span class="wx-me-label">置顶聊天</span><label class="wx-switch"><input type="checkbox" id="wxPinToggle"><span class="wx-slider"></span></label></div>
 <div class="wx-me-item" id="wxMoreRemark"><span class="wx-me-label">设置备注</span><span class="wx-me-arrow-right"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></div>
 <div class="wx-me-item" id="wxMoreWorldbook"><span class="wx-me-label">绑定世界书</span><span class="wx-me-arrow-right"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></div>
@@ -1044,6 +1049,9 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 <input type="file" id="koiMp3Uploader" accept="audio/*,.mp3,.m4a,.wav,.ogg,.flac,.aac" multiple style="display:none">
 
 <script>
+/* ============================================================
+   主脚本
+   ============================================================ */
 window.addEventListener('DOMContentLoaded',function(){
 try{
 function setFS(on,p){document.body.classList.toggle('fs-mode',!!on);if(p){try{localStorage.setItem('fullscreen-mode',on?'1':'0')}catch(e){}}}
@@ -1063,7 +1071,6 @@ if(fileInput){fileInput.addEventListener('change',function(e){var f=e.target.fil
   localStorage.setItem(currentUploadKey,ev.target.result);
   if(currentUploadKey==='uploaded-img-0'){
     try{localStorage.setItem('wx-me-avatar',ev.target.result)}catch(er2){}
-    // ★ 让所有关注的角色都记住用户换了头像
     try{
       var added=JSON.parse(localStorage.getItem('wx-added-chars')||'[]');
       if(Array.isArray(added)){
@@ -1119,7 +1126,7 @@ var entry=$id('wechatEntry'),panel=$id('wechatPanel');if(!entry||!panel)return;
 var chatListEl=$id('wxChatList'),contactsListEl=$id('wxContactsList'),chatViewEl=$id('wxChatView'),msgListEl=$id('wxMsgList'),chatNameEl=$id('wxChatName'),backBtn=$id('wxBack'),inputEl=$id('wxInput'),voiceBtn=$id('wxVoiceBtn'),faceBtn=$id('wxFaceBtn'),plusBtn=$id('wxPlusBtn'),emojiPanel=$id('wxEmojiPanel'),plusPanel=$id('wxPlusPanel'),plusPages=$id('wxPlusPages'),plusDot0=$id('wxPlusDot0'),plusDot1=$id('wxPlusDot1');
 var walletView=$id('wxWalletView'),walletBack=$id('wxWalletBack'),walletEntry=$id('wxWalletEntry'),walletBalance=$id('wxWalletBalance'),walletEye=$id('wxWalletEye'),rechargeBtn=$id('wxRechargeBtn'),familyCardEntry=$id('wxFamilyCardEntry'),billEntry=$id('wxBillEntry'),billView=$id('wxBillView'),billBack=$id('wxBillBack'),billList=$id('wxBillList'),rechargeMask=$id('wxRechargeMask'),rechargeSheet=$id('wxRechargeSheet'),rechargeInput=$id('wxRechargeInput'),rechargeQuick=$id('wxRechargeQuick'),rechargeConfirm=$id('wxRechargeConfirm'),toastEl=$id('wxToast');
 var addBtn=$id('wxAddChatBtn'),charPicker=$id('wxCharPicker'),charPickerList=$id('wxCharPickerList'),charPickerClose=$id('wxCharPickerClose'),chatMoreBtn=$id('wxChatMoreBtn'),chatSettingsView=$id('wxChatSettingsView'),chatSettingsBack=$id('wxChatSettingsBack'),chatDetailAvatar=$id('wxChatDetailAvatar'),chatDetailName=$id('wxChatDetailName');
-var moreSearch=$id('wxMoreSearch'),moreProactive=$id('wxMoreProactive'),proactiveToggle=$id('wxProactiveToggle'),morePin=$id('wxMorePin'),pinToggle=$id('wxPinToggle'),moreRemark=$id('wxMoreRemark'),moreMyAvatar=$id('wxMoreMyAvatar'),moreBg=$id('wxMoreBg'),moreClear=$id('wxMoreClear'),moreDelete=$id('wxMoreDelete'),moreWorldbook=$id('wxMoreWorldbook');
+var moreSearch=$id('wxMoreSearch'),moreProactive=$id('wxMoreProactive'),proactiveToggle=$id('wxProactiveToggle'),morePin=$id('wxMorePin'),pinToggle=$id('wxPinToggle'),moreRemark=$id('wxMoreRemark'),moreMyAvatar=$id('wxMoreMyAvatar'),moreBg=$id('wxMoreBg'),moreClear=$id('wxMoreClear'),moreDelete=$id('wxMoreDelete'),moreWorldbook=$id('wxMoreWorldbook'),moreAutoCount=$id('wxMoreAutoCount'),autoCountVal=$id('wxAutoCountVal');
 var searchPanel=$id('wxSearchPanel'),searchInput=$id('wxSearchInput'),searchResults=$id('wxSearchResults'),searchClose=$id('wxSearchClose');
 var remarkMask=$id('wxRemarkMask'),remarkInput=$id('wxRemarkInput'),remarkCancel=$id('wxRemarkCancel'),remarkConfirm=$id('wxRemarkConfirm');
 var chatAvatarUploader=$id('wx-chat-avatar-uploader'),chatMyAvatarUploader=$id('wx-chat-my-avatar-uploader'),chatBgUploader=$id('wx-chat-bg-uploader');
@@ -1197,6 +1204,7 @@ function renderMsgs(){if(!activeChar)return;var h=getHist(activeChar.id);msgList
   else{row.appendChild(createMsgAv(m,activeChar));var bub=document.createElement('div');bub.className='wx-bubble';bub.textContent=m.content;row.appendChild(bub)}
   msgListEl.appendChild(row)});setTimeout(function(){msgListEl.scrollTop=msgListEl.scrollHeight},30)}
 window.__koiRenderMsgs=renderMsgs;
+window.__koiRenderChats=renderChats;
 function buildTC(m,idx){var card=document.createElement('div');card.className='wx-transfer-card';if(m.status==='accepted')card.classList.add('accepted');if(m.status==='rejected')card.classList.add('rejected');var dt;if(m.role==='user'){if(m.status==='pending')dt='你发起了一笔转账';else if(m.status==='accepted')dt='已被接收';else dt='已被退还'}else{if(m.status==='pending')dt='请收款';else if(m.status==='accepted')dt='已收款';else dt='已被退还'}var ft=(m.status==='pending')?'转账':'微信转账';var ic;if(m.status==='accepted'||m.status==='rejected')ic='<svg class="tick-icon" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';else ic='<svg viewBox="0 0 24 24"><path d="M4 8h13M13 4l4 4-4 4"/><path d="M20 16H7M11 12l-4 4 4 4"/></svg>';var bd=document.createElement('div');bd.className='wx-transfer-card-body';var iEl=document.createElement('div');iEl.className='wx-transfer-card-icon';iEl.innerHTML=ic;var inf=document.createElement('div');inf.className='wx-transfer-card-info';var am=document.createElement('div');am.className='wx-transfer-card-amount';am.textContent='¥'+parseFloat(m.amount).toFixed(2);var ds=document.createElement('div');ds.className='wx-transfer-card-desc';ds.textContent=dt;inf.appendChild(am);inf.appendChild(ds);bd.appendChild(iEl);bd.appendChild(inf);card.appendChild(bd);var ft2=document.createElement('div');ft2.className='wx-transfer-card-footer';ft2.textContent=ft;card.appendChild(ft2);card.addEventListener('click',function(){if(m.role==='assistant'&&m.status==='pending'){pendingAcceptTarget={charId:activeChar.id,msgIndex:idx,type:'transfer'};wxAcceptText.textContent='接受来自 '+getDN(activeChar)+' 的转账 ¥'+parseFloat(m.amount).toFixed(2)+' 吗？';wxAcceptMask.classList.add('show')}});return card}
 function buildFC(m,idx){var card=document.createElement('div');card.className='wx-family-card';if(m.status==='accepted')card.classList.add('accepted');if(m.status==='rejected')card.classList.add('rejected');var c=document.createElement('div');c.className='wx-family-card-content';var ic=document.createElement('div');ic.className='wx-family-card-icon';ic.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M12 16.5s-1.5-1.2-1.5-2.2c0-.7.6-1.3 1.3-1.3.5 0 .9.3 1.1.7.2-.4.6-.7 1.1-.7.7 0 1.3.6 1.3 1.3 0 1-1.4 2.2-1.4 2.2z" fill="#fff" stroke="none"/></svg>';var tw=document.createElement('div');tw.className='wx-family-card-text';var ti=document.createElement('div');ti.className='wx-family-card-title';ti.textContent='送你一张亲属卡';var st=document.createElement('div');st.className='wx-family-card-subtitle';if(m.status==='pending')st.textContent='额度'+parseFloat(m.limit).toFixed(2)+'元，待领取';else if(m.status==='accepted')st.textContent='额度'+parseFloat(m.limit).toFixed(2)+'元，已领取';else st.textContent='额度'+parseFloat(m.limit).toFixed(2)+'元，已退还';tw.appendChild(ti);tw.appendChild(st);c.appendChild(ic);c.appendChild(tw);card.appendChild(c);var ft=document.createElement('div');ft.className='wx-family-card-footer';ft.textContent='亲属卡';card.appendChild(ft);card.addEventListener('click',function(){if(m.role==='assistant'&&m.status==='pending'){pendingAcceptTarget={charId:activeChar.id,msgIndex:idx,type:'familyCard'};wxAcceptText.textContent='接受来自 '+getDN(activeChar)+' 的亲属卡（每月额度 ¥'+parseFloat(m.limit).toFixed(2)+'）吗？';wxAcceptMask.classList.add('show')}});return card}
 function sendMsg(){var t=inputEl.value.trim();if(!t||!activeChar)return false;inputEl.value='';var h=getHist(activeChar.id);h.push({role:'user',type:'text',content:t,time:Date.now()});saveHist(activeChar.id,h);renderMsgs();renderChats();return true}
@@ -1268,26 +1276,38 @@ function renderCP(){charPickerList.innerHTML='';var all=getCC();var ids=getAdded
 if(addBtn)addBtn.addEventListener('click',function(){renderCP();charPicker.classList.add('show')});
 if(charPickerClose)charPickerClose.addEventListener('click',function(){charPicker.classList.remove('show')});
 if(charPicker)charPicker.addEventListener('click',function(e){if(e.target===charPicker)charPicker.classList.remove('show')});
-if(chatMoreBtn)chatMoreBtn.addEventListener('click',function(e){e.stopPropagation();if(!activeChar)return;closeAllPanels();var aU=getDA(activeChar);chatDetailAvatar.innerHTML='';if(aU){var img=document.createElement('img');img.src=aU;chatDetailAvatar.appendChild(img)}else{chatDetailAvatar.textContent=getDN(activeChar).charAt(0);chatDetailAvatar.style.background='#4a90d9';chatDetailAvatar.style.color='#fff'}chatDetailName.textContent=getDN(activeChar);proactiveToggle.checked=localStorage.getItem('wx-chat-proactive-'+activeChar.id)==='1';pinToggle.checked=localStorage.getItem('wx-chat-pin-'+activeChar.id)==='1';chatSettingsView.classList.add('active')});
+if(chatMoreBtn)chatMoreBtn.addEventListener('click',function(e){e.stopPropagation();if(!activeChar)return;closeAllPanels();var aU=getDA(activeChar);chatDetailAvatar.innerHTML='';if(aU){var img=document.createElement('img');img.src=aU;chatDetailAvatar.appendChild(img)}else{chatDetailAvatar.textContent=getDN(activeChar).charAt(0);chatDetailAvatar.style.background='#4a90d9';chatDetailAvatar.style.color='#fff'}chatDetailName.textContent=getDN(activeChar);proactiveToggle.checked=localStorage.getItem('wx-chat-proactive-'+activeChar.id)==='1';pinToggle.checked=localStorage.getItem('wx-chat-pin-'+activeChar.id)==='1';
+  if(autoCountVal){var ac=parseInt(localStorage.getItem('wx-auto-count-'+activeChar.id)||'1',10);if(isNaN(ac))ac=1;autoCountVal.textContent=ac+' 条'}
+  chatSettingsView.classList.add('active')});
 if(chatSettingsBack)chatSettingsBack.addEventListener('click',function(){chatSettingsView.classList.remove('active')});
 if(chatDetailAvatar)chatDetailAvatar.addEventListener('click',function(){if(!activeChar)return;chatAvatarUploader.click()});
 if(chatAvatarUploader)chatAvatarUploader.addEventListener('change',function(e){var f=e.target.files[0];if(!f||!activeChar)return;var tid=activeChar.id;var r=new FileReader();r.onload=function(ev){try{localStorage.setItem('wx-chat-avatar-'+tid,ev.target.result)}catch(err){}chatDetailAvatar.innerHTML='';var img=document.createElement('img');img.src=ev.target.result;chatDetailAvatar.appendChild(img);renderMsgs();renderChats();renderContacts();showToast('头像已更换');chatAvatarUploader.value=''};r.readAsDataURL(f)});
 if(moreMyAvatar)moreMyAvatar.addEventListener('click',function(){if(!activeChar)return;chatMyAvatarUploader.click()});
 if(chatMyAvatarUploader)chatMyAvatarUploader.addEventListener('change',function(e){var f=e.target.files[0];if(!f||!activeChar)return;var tid=activeChar.id;var r=new FileReader();r.onload=function(ev){try{localStorage.setItem('wx-chat-my-avatar-'+tid,ev.target.result)}catch(err){}if(activeChar&&activeChar.id===tid)renderMsgs();showToast('我的头像已更换');chatMyAvatarUploader.value=''};r.readAsDataURL(f)});
 if(proactiveToggle)proactiveToggle.addEventListener('change',function(){if(!activeChar)return;if(proactiveToggle.checked){localStorage.setItem('wx-chat-proactive-'+activeChar.id,'1');showToast('已允许主动发消息')}else{localStorage.removeItem('wx-chat-proactive-'+activeChar.id);showToast('已关闭主动发消息')}});
+if(moreAutoCount)moreAutoCount.addEventListener('click',function(){
+  if(!activeChar)return;
+  var cur=parseInt(localStorage.getItem('wx-auto-count-'+activeChar.id)||'1',10);
+  if(isNaN(cur))cur=1;
+  var input=prompt('每次自动发几条（1-5）：',String(cur));
+  if(input===null)return;
+  var n=parseInt(input,10);
+  if(isNaN(n)||n<1)n=1;
+  if(n>5)n=5;
+  localStorage.setItem('wx-auto-count-'+activeChar.id,String(n));
+  if(autoCountVal)autoCountVal.textContent=n+' 条';
+  showToast('已设置：'+n+' 条');
+});
 if(pinToggle)pinToggle.addEventListener('change',function(){if(!activeChar)return;if(pinToggle.checked){localStorage.setItem('wx-chat-pin-'+activeChar.id,'1');showToast('已置顶')}else{localStorage.removeItem('wx-chat-pin-'+activeChar.id);showToast('已取消置顶')}renderChats()});
 if(moreRemark)moreRemark.addEventListener('click',function(){if(!activeChar)return;remarkInput.value=localStorage.getItem('wx-chat-remark-'+activeChar.id)||'';remarkMask.classList.add('show');setTimeout(function(){remarkInput.focus()},200)});
 if(remarkCancel)remarkCancel.addEventListener('click',function(){remarkMask.classList.remove('show')});
 if(remarkConfirm)remarkConfirm.addEventListener('click',function(){if(!activeChar)return;var v=remarkInput.value.trim();if(v){try{localStorage.setItem('wx-chat-remark-'+activeChar.id,v)}catch(e){}}else{localStorage.removeItem('wx-chat-remark-'+activeChar.id)}chatNameEl.textContent=getDN(activeChar);chatDetailName.textContent=getDN(activeChar);renderChats();renderContacts();remarkMask.classList.remove('show');showToast('备注已更新')});
 if(moreBg)moreBg.addEventListener('click',function(){if(!activeChar)return;chatBgUploader.click()});
 if(chatBgUploader)chatBgUploader.addEventListener('change',function(e){var f=e.target.files[0];if(!f||!activeChar)return;var tid=activeChar.id;var r=new FileReader();r.onload=function(ev){try{localStorage.setItem('wx-chat-bg-'+tid,ev.target.result)}catch(err){}applyBg(tid);showToast('聊天背景已更新');chatBgUploader.value=''};r.readAsDataURL(f)});
-
-/* ★ 绑定世界书：打开世界书面板并显示当前角色可用的世界书勾选 */
 if(moreWorldbook)moreWorldbook.addEventListener('click',function(){
   if(!activeChar)return;
   if(window.koiOpenWorldbookBind)window.koiOpenWorldbookBind(activeChar.id);
 });
-
 if(moreSearch)moreSearch.addEventListener('click',function(){if(!activeChar)return;searchInput.value='';renderSearch('');searchPanel.classList.add('show');setTimeout(function(){searchInput.focus()},300)});
 if(searchClose)searchClose.addEventListener('click',function(){searchPanel.classList.remove('show')});
 if(searchInput)searchInput.addEventListener('input',function(){renderSearch(searchInput.value)});
@@ -1295,7 +1315,7 @@ function renderSearch(kw){if(!activeChar)return;searchResults.innerHTML='';var h
 if(moreClear)moreClear.addEventListener('click',function(){if(!activeChar)return;if(!confirm('确定清空与 '+getDN(activeChar)+' 的所有聊天记录吗？'))return;localStorage.removeItem('ai-chat-wx-'+activeChar.id);renderMsgs();renderChats();showToast('聊天记录已清空')});
 if(moreDelete)moreDelete.addEventListener('click',function(){if(!activeChar)return;deleteText.textContent='是否确认删除联系人「'+getDN(activeChar)+'」？';deleteMask.classList.add('show')});
 if(deleteCancel)deleteCancel.addEventListener('click',function(){deleteMask.classList.remove('show')});
-if(deleteConfirm)deleteConfirm.addEventListener('click',function(){if(!activeChar)return;var tid=activeChar.id;saveAdded(getAdded().filter(function(x){return x!==tid}));localStorage.removeItem('ai-chat-wx-'+tid);localStorage.removeItem('wx-chat-remark-'+tid);localStorage.removeItem('wx-chat-avatar-'+tid);localStorage.removeItem('wx-chat-my-avatar-'+tid);localStorage.removeItem('wx-chat-bg-'+tid);localStorage.removeItem('wx-chat-proactive-'+tid);localStorage.removeItem('wx-chat-pin-'+tid);deleteMask.classList.remove('show');chatSettingsView.classList.remove('active');chatViewEl.classList.remove('active');activeChar=null;renderChats();renderContacts();showToast('已删除')});
+if(deleteConfirm)deleteConfirm.addEventListener('click',function(){if(!activeChar)return;var tid=activeChar.id;saveAdded(getAdded().filter(function(x){return x!==tid}));localStorage.removeItem('ai-chat-wx-'+tid);localStorage.removeItem('wx-chat-remark-'+tid);localStorage.removeItem('wx-chat-avatar-'+tid);localStorage.removeItem('wx-chat-my-avatar-'+tid);localStorage.removeItem('wx-chat-bg-'+tid);localStorage.removeItem('wx-chat-proactive-'+tid);localStorage.removeItem('wx-chat-pin-'+tid);localStorage.removeItem('wx-auto-count-'+tid);localStorage.removeItem('wx-auto-last-'+tid);deleteMask.classList.remove('show');chatSettingsView.classList.remove('active');chatViewEl.classList.remove('active');activeChar=null;renderChats();renderContacts();showToast('已删除')});
 var tabs=$all('.wx-tab');
 var pMap={chat:$id('wxPageChat'),contacts:$id('wxPageContacts'),discover:$id('wxPageDiscover'),me:$id('wxPageMe')};
 tabs.forEach(function(tab){tab.addEventListener('click',function(){var k=tab.dataset.tab;tabs.forEach(function(t){t.classList.remove('active')});tab.classList.add('active');Object.keys(pMap).forEach(function(kk){if(pMap[kk])pMap[kk].classList.remove('active')});if(pMap[k])pMap[k].classList.add('active');chatViewEl.classList.remove('active');chatSettingsView.classList.remove('active');walletView.classList.remove('active');billView.classList.remove('active');wxFamilyView.classList.remove('active');searchPanel.classList.remove('show');remarkMask.classList.remove('show');deleteMask.classList.remove('show');closeAllPanels();activeChar=null;if(k==='contacts')renderContacts()})});
@@ -1384,6 +1404,29 @@ function meAv(){return localStorage.getItem('uploaded-img-0')||localStorage.getI
 function getArr(){return lj('wx-moments',[])}
 function saveArr(a){ls('wx-moments',a)}
 
+/* ============ 消息弹窗（页面内 + 系统级） ============ */
+function showNotification(title,body){
+  try{
+    var c=document.querySelector('.phone-container')||document.body;
+    var existing=c.querySelector('.koiNotif');
+    if(existing)existing.remove();
+    var el=document.createElement('div');
+    el.className='koiNotif';
+    el.innerHTML='<div class="nt">'+String(title||'').replace(/</g,'&lt;')+'</div><div class="nb">'+String(body||'').replace(/</g,'&lt;')+'</div>';
+    c.appendChild(el);
+    requestAnimationFrame(function(){el.classList.add('show')});
+    setTimeout(function(){el.classList.remove('show');setTimeout(function(){el.remove()},300)},3500);
+  }catch(e){}
+  try{
+    if('Notification' in window && Notification.permission==='granted'){
+      var n=new Notification(title,{body:body,silent:false});
+      n.onclick=function(){try{window.focus()}catch(e){};n.close()};
+      setTimeout(function(){try{n.close()}catch(e){}},8000);
+    }
+  }catch(e){}
+}
+window.koiShowNotification=showNotification;
+
 /* ============ QQ音乐 ============ */
 (function qmInit(){
 var P=document.querySelector('.phone-container');
@@ -1392,7 +1435,6 @@ var qm=document.createElement('div');qm.className='koiQm';qm.id='koiQm';
 qm.innerHTML='<div class="koiQmNav"><button id="koiQmBack">返回</button><span class="t">QQ音乐</span><span style="width:50px"></span></div><div class="koiQmBody"><div class="koiQmDisc" id="koiQmDisc"><svg viewBox="0 0 24 24" style="width:54px;height:54px;stroke:#3a3a3a;fill:none;stroke-width:1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></div><div class="koiQmT" id="koiQmT">未选择音乐</div><div class="koiQmS" id="koiQmS">点击下方上传 mp3 文件</div><div class="koiQmProg"><span id="koiQmCur">0:00</span><input type="range" id="koiQmSlider" min="0" max="1000" value="0"><span id="koiQmDur">0:00</span></div><div class="koiQmCtrl"><button id="koiQmPrev"><svg viewBox="0 0 24 24"><polygon points="19,20 9,12 19,4" fill="currentColor" stroke="none"/><line x1="5" y1="19" x2="5" y2="5"/></svg></button><button class="pl" id="koiQmPlay"><svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20" fill="currentColor" stroke="none"/></svg></button><button id="koiQmNext"><svg viewBox="0 0 24 24"><polygon points="5,4 15,12 5,20" fill="currentColor" stroke="none"/><line x1="19" y1="5" x2="19" y2="19"/></svg></button></div><button class="koiQmUp" id="koiQmUp">＋ 上传 mp3</button><div style="font-size:11px;color:#888;margin-bottom:8px;text-align:center">播放列表</div><div class="koiQmL" id="koiQmL"></div></div>';
 P.appendChild(qm);
 var audio=document.createElement('audio');audio.id='koiAudio';audio.style.display='none';audio.preload='metadata';document.body.appendChild(audio);
-/* 使用页面中已存在的 input */
 var input=$id('koiMp3Uploader');
 var playlist=[];var curIdx=-1;
 function fmt(t){if(!isFinite(t)||t<0)t=0;var m=Math.floor(t/60),s=Math.floor(t%60);return m+':'+String(s).padStart(2,'0')}
@@ -1408,14 +1450,78 @@ audio.addEventListener('ended',function(){if(playlist.length>1)playIdx((curIdx+1
 audio.addEventListener('play',update);audio.addEventListener('pause',update);
 $id('koiQmSlider').addEventListener('input',function(){if(audio.duration&&isFinite(audio.duration))audio.currentTime=($id('koiQmSlider').value/1000)*audio.duration});
 $id('koiQmUp').addEventListener('click',function(){input.click()});
-input.addEventListener('change',function(e){var fs=Array.prototype.slice.call(e.target.files||[]);if(!fs.length)return;fs.forEach(function(f){
-  var url=URL.createObjectURL(f);
-  playlist.push({name:f.name.replace(/\.[^.]+$/,''),url:url});
-});input.value='';renderL();if(curIdx<0&&playlist.length)playIdx(0)});
+input.addEventListener('change',function(e){var fs=Array.prototype.slice.call(e.target.files||[]);if(!fs.length)return;fs.forEach(function(f){var url=URL.createObjectURL(f);playlist.push({name:f.name.replace(/\.[^.]+$/,''),url:url})});input.value='';renderL();if(curIdx<0&&playlist.length)playIdx(0)});
 $id('koiQmBack').addEventListener('click',function(){qm.classList.remove('open')});
 var qmEntry=document.getElementById('qqmusicEntry');
 if(qmEntry){qmEntry.addEventListener('click',function(e){e.stopPropagation();qm.classList.add('open');renderL();update()})}
 renderL();update();
+})();
+
+/* ============ 微信设置面板 ============ */
+(function(){
+function $id(i){return document.getElementById(i)}
+function openSettingsPanel(){
+  var P=document.querySelector('.phone-container');
+  if(!P)return;
+  if(document.getElementById('wxSettingsPanel'))return;
+  var panel=document.createElement('div');
+  panel.className='wbs';panel.id='wxSettingsPanel';panel.style.zIndex='255';
+  var popOn=localStorage.getItem('wx-popup-notify')==='1';
+  panel.innerHTML=
+    '<div class="wbs-n"><button id="wxsBack">返回</button><span class="t">设置</span><span style="width:40px"></span></div>'+
+    '<div class="wbs-b">'+
+      '<div style="background:#fff;border-radius:12px;padding:0;margin-bottom:12px;overflow:hidden">'+
+        '<div style="display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid #f5f5f5">'+
+          '<div style="flex:1"><div style="font-size:15px;color:#1a1a1a">消息弹窗</div>'+
+          '<div style="font-size:11px;color:#999;margin-top:4px;line-height:1.5">开启后，有新消息时显示通知。添加到主屏幕（PWA）后可支持锁屏与后台通知。</div></div>'+
+          '<label class="wx-switch" style="flex-shrink:0"><input type="checkbox" id="wxPopupToggle"'+(popOn?' checked':'')+'><span class="wx-slider"></span></label>'+
+        '</div>'+
+        '<div style="padding:12px 16px;font-size:12px;color:#888;line-height:1.6" id="wxNotifyStatus"></div>'+
+      '</div>'+
+      '<div style="background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:12px;font-size:12px;color:#999;line-height:1.6">'+
+        '提示：<br>'+
+        '· 浏览器标签页打开时，只能显示页面内浮层通知<br>'+
+        '· 想要锁屏/后台通知，请把本页面「添加到主屏幕」，用 PWA 方式打开<br>'+
+        '· iOS 需要 16.4 及以上系统'+
+      '</div>'+
+    '</div>';
+  P.appendChild(panel);
+
+  function updStatus(){
+    var s=document.getElementById('wxNotifyStatus');
+    var perm='unknown';
+    try{if('Notification' in window)perm=Notification.permission}catch(e){}
+    if(perm==='granted')s.innerHTML='系统通知权限：<b style="color:#07c160">已授予</b>';
+    else if(perm==='denied')s.innerHTML='系统通知权限：<b style="color:#fa5151">已拒绝</b>（请在浏览器设置里手动允许）';
+    else if(perm==='unsupported')s.innerHTML='当前浏览器不支持系统通知';
+    else s.innerHTML='系统通知权限：未授予（开启弹窗后会自动请求）';
+  }
+  updStatus();
+
+  var tg=document.getElementById('wxPopupToggle');
+  tg.addEventListener('change',async function(){
+    if(tg.checked){
+      try{
+        if('Notification' in window && Notification.permission!=='granted'){
+          await Notification.requestPermission();
+        }
+      }catch(e){}
+      localStorage.setItem('wx-popup-notify','1');
+      updStatus();
+    } else {
+      localStorage.removeItem('wx-popup-notify');
+      updStatus();
+    }
+  });
+
+  document.getElementById('wxsBack').addEventListener('click',function(){
+    panel.remove();
+  });
+}
+setTimeout(function(){
+  var e=document.getElementById('wxMeSettingsEntry');
+  if(e){e.addEventListener('click',function(ev){ev.stopPropagation();openSettingsPanel()})}
+},800);
 })();
 
 /* ============ 朋友圈数据层 ============ */
@@ -1811,6 +1917,103 @@ async function checkImageToMoment(charId){
   }catch(e){console.warn('[koi] 图片发朋友圈判断失败',e)}
 }
 
+/* ============ 自动发消息 ============ */
+async function autoSendCheck(){
+  var cfg=getApiCfg();
+  if(!cfg.apiUrl||!cfg.apiKey||!cfg.model)return;
+  var cs=addedIds().map(function(id){return chars().find(function(c){return c.id===id})}).filter(Boolean);
+  if(!cs.length)return;
+
+  for(var i=0;i<cs.length;i++){
+    var c=cs[i];
+    if(localStorage.getItem('wx-chat-proactive-'+c.id)!=='1')continue;
+    var last=parseFloat(localStorage.getItem('wx-auto-last-'+c.id)||'0');
+    if(Date.now()-last<15*60*1000)continue;
+    if(Math.random()>0.35)continue;
+
+    var h=lj('ai-chat-wx-'+c.id,[]);
+    if(!Array.isArray(h))h=[];
+
+    var ctx=[];
+    var recent=h.slice(-10);
+    recent.forEach(function(m){
+      if(m.role==='system')return;
+      if(m.type==='image'){ctx.push((m.role==='user'?'用户':'我')+'：［图片］');return}
+      if(m.type==='transfer'){ctx.push((m.role==='user'?'用户':'我')+'：［转账］');return}
+      if(m.type==='familyCard'){ctx.push((m.role==='user'?'用户':'我')+'：［亲属卡］');return}
+      if(m.content)ctx.push((m.role==='user'?'用户':'我')+'：'+m.content);
+    });
+    var ctxText=ctx.join('\n')||'（还没有聊过）';
+
+    var lastMsgTime=0;
+    for(var j=h.length-1;j>=0;j--){if(h[j].role!=='system'&&h[j].time){lastMsgTime=h[j].time;break}}
+    var minsSince=lastMsgTime?Math.round((Date.now()-lastMsgTime)/60000):999;
+
+    var cnt=parseInt(localStorage.getItem('wx-auto-count-'+c.id)||'1',10);
+    if(isNaN(cnt)||cnt<1)cnt=1;
+    if(cnt>5)cnt=5;
+
+    var now=new Date();
+    var timeStr=now.toLocaleString('zh-CN');
+
+    try{
+      var sys='你正在扮演一个角色，请严格遵守以下人设，不可OOC。\n\n'+
+        '【你的名字】'+(c.name||'未命名')+'\n'+
+        (c.setting?('【你的设定】'+c.setting+'\n'):'')+
+        (c.relation?('【你与用户的关系】'+c.relation+'\n'):'')+
+        '\n【用户名字】'+getMyName()+'\n'+
+        '\n【当前时间】'+timeStr+'\n'+
+        '\n【上次互动距现在】'+minsSince+' 分钟\n'+
+        '\n【最近的聊天上下文】\n'+ctxText+'\n'+
+        '\n【任务】现在没有人给用户发消息，是你自己主动想找用户聊天。\n'+
+        '请根据你的性格、与用户的关系、当前时间、以及最近聊天的氛围，判断：\n'+
+        '1. 现在是否适合主动给用户发消息？（例如：高冷角色很少主动；亲近角色会主动关心；深夜/工作时间通常不发）\n'+
+        '2. 如果要发，你会发几条？（本次用户设置了大约 '+cnt+' 条，你可以根据情况少发或多发 1 条）\n'+
+        '3. 每条消息的具体内容是什么？内容要符合你的人设语气，也要跟前文有延续感。\n\n'+
+        '【输出格式】只输出 JSON：\n'+
+        '{"send":true/false,"reason":"判断理由","messages":["第一条","第二条",...]}\n'+
+        '如果不发，messages 为空数组。不要输出任何其他内容。';
+
+      var body={model:cfg.model,messages:[{role:'system',content:sys},{role:'user',content:'请决定。'}],temperature:cfg.temperature,max_tokens:400};
+      var resp=await fetch(cfg.apiUrl+'/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.apiKey},body:JSON.stringify(body)});
+      if(!resp.ok)continue;
+      var data=await resp.json();
+      var reply=(data&&data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)||'';
+      var m=reply.match(/\{[\s\S]*\}/);
+      if(!m)continue;
+      var r;
+      try{r=JSON.parse(m[0])}catch(e){continue}
+      if(!r.send||!Array.isArray(r.messages)||!r.messages.length)continue;
+
+      var msgs=r.messages.filter(function(x){return x&&String(x).trim()}).slice(0,6);
+      for(var k=0;k<msgs.length;k++){
+        var h2=lj('ai-chat-wx-'+c.id,[]);
+        if(!Array.isArray(h2))h2=[];
+        h2.push({role:'assistant',type:'text',content:String(msgs[k]),time:Date.now()});
+        ls('ai-chat-wx-'+c.id,h2.slice(-100));
+        if(localStorage.getItem('wx-popup-notify')==='1'){
+          showNotification(c.name||'新消息',String(msgs[k]).slice(0,50));
+        }
+        if(k<msgs.length-1)await new Promise(function(res){setTimeout(res,1200+Math.random()*1500)});
+      }
+
+      localStorage.setItem('wx-auto-last-'+c.id,String(Date.now()));
+
+      try{
+        var cn=document.getElementById('wxChatName');
+        var curName=localStorage.getItem('wx-chat-remark-'+c.id)||c.name||'';
+        if(cn&&(cn.textContent||'').trim()===curName){
+          if(window.__koiRenderMsgs)window.__koiRenderMsgs();
+        }
+        if(window.__koiRenderChats)window.__koiRenderChats();
+      }catch(e){}
+    }catch(e){console.warn('[koi] 自动发消息失败',c.id,e)}
+  }
+}
+setInterval(autoSendCheck,3*60*1000);
+setTimeout(autoSendCheck,60*1000);
+window.koiAutoSendCheck=autoSendCheck;
+
 /* ============ 记忆注入 ============ */
 var _f=window.fetch;
 window.fetch=function(){
@@ -1832,13 +2035,12 @@ if(typeof url==='string'&&url.indexOf('/chat/completions')>=0&&args[1]&&args[1].
       }
       if(curChar){
         var mem=getMomentsMemoryText(curChar.id);
-        if(mem){sys+='\n\n【你最近在朋友圈的动态（属于你本人的记忆，聊天时可以自然提起，是否提起、怎样提起取决于人设）】\n'+mem+'\n'}
+        if(mem){sys+='\n\n【你最近在朋友圈的动态】\n'+mem+'\n'}
         var userPosts=getArr().filter(function(m){return m.authorId==='me'||!m.authorId}).slice(0,5);
         if(userPosts.length){
           var upl=userPosts.map(function(m){return '- '+getMyName()+'发了朋友圈：「'+(m.text||'（图片）')+'」'}).join('\n');
           sys+='\n【用户最近的朋友圈】\n'+upl+'\n';
         }
-        // ★ 用户换过头像的记忆
         try{
           var avArr=JSON.parse(localStorage.getItem('wx-avatar-memory-'+curChar.id)||'[]');
           if(Array.isArray(avArr)&&avArr.length){
@@ -1859,7 +2061,7 @@ if(typeof url==='string'&&url.indexOf('/chat/completions')>=0&&args[1]&&args[1].
 return _f.apply(this,args);
 };
 
-/* ============ 世界书绑定接口（暴露给聊天详情用） ============ */
+/* ============ 世界书绑定接口 ============ */
 window.koiOpenWorldbookBind=function(charId){
   if(!window.__koiWbsBind)return;
   window.__koiWbsBind(charId);
@@ -2005,22 +2207,19 @@ setTimeout(function(){updateMomentsDot()},2000);
 
 <script>
 /* ============================================================
-   世界书（含全局/局部 + 聊天详情绑定）
+   世界书（全局/局部 + 聊天详情绑定）
    ============================================================ */
 (function(){
 if(window.__wbsLoaded)return;window.__wbsLoaded=true;
-
 function initWBS(){
 var P=document.querySelector('.phone-container');
 if(!P||document.getElementById('wbSimple'))return;
 
-// 面板
 var panel=document.createElement('div');
 panel.className='wbs';panel.id='wbSimple';
 panel.innerHTML='<div class="wbs-n"><button id="wbsBack">返回</button><span class="t" id="wbsTitle">世界书</span><button id="wbsAdd" style="font-size:24px;font-weight:300">＋</button></div><div class="wbs-b" id="wbsBody"></div>';
 P.appendChild(panel);
 
-// 编辑面板
 var editP=document.createElement('div');
 editP.className='wbs';editP.id='wbSimpleEdit';editP.style.zIndex='251';
 editP.innerHTML='<div class="wbs-n"><button id="wbsEditC">取消</button><span class="t">编辑条目</span><button id="wbsEditS" style="background:#07c160;color:#fff;padding:6px 14px;border-radius:8px">保存</button></div><div class="wbs-b">'+
@@ -2034,7 +2233,6 @@ editP.innerHTML='<div class="wbs-n"><button id="wbsEditC">取消</button><span c
 '</div>';
 P.appendChild(editP);
 
-// 绑定面板（聊天详情用）
 var bindP=document.createElement('div');
 bindP.className='wbs';bindP.id='wbBindPanel';bindP.style.zIndex='252';
 bindP.innerHTML='<div class="wbs-n"><button id="wbsBindBack">返回</button><span class="t">绑定世界书</span><span style="width:40px"></span></div><div class="wbs-b" id="wbsBindBody"></div>';
@@ -2047,6 +2245,8 @@ function saveBooks(a){try{localStorage.setItem('world-books',JSON.stringify(a))}
 function uid(p){return p+'_'+Date.now()+'_'+Math.floor(Math.random()*999)}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function getCharsList(){try{var v=localStorage.getItem('contact-chars');if(v){var r=JSON.parse(v);if(Array.isArray(r))return r}}catch(e){}return[]}
+function lj2(k,d){try{var v=localStorage.getItem(k);if(v){var r=JSON.parse(v);if(r!=null)return r}}catch(e){}return d}
+function ls2(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 
 var st={bid:null,eid:null,scope:'global',masks:[]};
 
@@ -2181,11 +2381,9 @@ var a=getBooks();a.unshift({id:uid('wb'),name:d,entries:es});saveBooks(a);
 }
 renderBooks();
 
-// 入口
 var wbEntry=document.getElementById('worldbookEntry');
 if(wbEntry){wbEntry.addEventListener('click',function(e){e.stopPropagation();renderBooks();panel.classList.add('open')})}
 
-// 绑定面板
 var bindCharId=null;
 window.__koiWbsBind=function(charId){
   bindCharId=charId;
@@ -2197,7 +2395,6 @@ window.__koiWbsBind=function(charId){
 };
 document.getElementById('wbsBindBack').addEventListener('click',function(){
   bindP.classList.remove('open');
-  // 回到世界书主页
   renderBooks();
 });
 function renderBindList(){
@@ -2227,10 +2424,7 @@ function renderBindList(){
     L.appendChild(row);
   });
 }
-function lj2(k,d){try{var v=localStorage.getItem(k);if(v){var r=JSON.parse(v);if(r!=null)return r}}catch(e){}return d}
-function ls2(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 
-/* ============ 世界书注入 ============ */
 function getWB(charId){
 var books=getBooks();
 var bound=[];
@@ -2240,14 +2434,12 @@ if(charId){
 }
 var B=[],M=[],A=[];
 books.forEach(function(b){
-  // 如果角色指定了绑定，只用绑定的；否则用全部
   if(charId&&bound.length){
     if(bound.indexOf(b.id)<0)return;
   }
   (b.entries||[]).forEach(function(e){
     if(e.enabled===false)return;
     var tx=(e.content||'').trim();if(!tx)return;
-    // 全局/局部判断
     if(e.scope==='local'){
       if(!charId)return;
       var masks=e.masks||[];
