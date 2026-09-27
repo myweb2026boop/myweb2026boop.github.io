@@ -1661,5 +1661,111 @@ return _f.apply(this,args);
 
 },1500);
 </script>
+
+<script>
+setTimeout(function(){
+var entry=document.getElementById('wxMomentsEntry');
+var view=document.getElementById('wxMomentsView');
+if(!entry||!view)return;
+var nb=entry.cloneNode(true);
+entry.parentNode.replaceChild(nb,entry);
+nb.addEventListener('click',function(e){
+e.stopPropagation();
+// 同步头像名字
+try{
+var N=document.getElementById('wxMomentsMeName');
+var A=document.getElementById('wxMomentsMeAvatar');
+if(N)N.textContent=localStorage.getItem('wx-me-name')||'Koi Buono';
+if(A){A.innerHTML='';var av=localStorage.getItem('wx-me-avatar')||'';if(av){var im=document.createElement('img');im.src=av;A.appendChild(im)}else A.textContent=(localStorage.getItem('wx-me-name')||'K').charAt(0)}
+}catch(err){}
+// 打开朋友圈视图
+view.classList.add('active');
+// 渲染列表
+try{
+var L=document.getElementById('wxMomentsList');
+if(L&&typeof renderMom==='function'){}
+}catch(err){}
+// 手动渲染
+try{
+var L2=document.getElementById('wxMomentsList');
+if(L2){
+var arr=[];try{arr=JSON.parse(localStorage.getItem('wx-moments')||'[]')}catch(err2){}
+if(!Array.isArray(arr))arr=[];
+L2.innerHTML='';
+arr.forEach(function(m){
+var item=document.createElement('div');
+item.className='wx-moment-item';
+item.style.cssText='flex-wrap:wrap;position:relative;padding-right:52px';
+var date=document.createElement('div');
+date.className='wx-moment-date';
+date.innerHTML='<div class="wx-moment-day">'+(m.day||'1')+'</div><div class="wx-moment-month">'+(m.month||'')+'</div>';
+item.appendChild(date);
+var an=m.authorName||'我';
+var aa=m.authorAvatar||'';
+var ar=document.createElement('div');
+ar.style.cssText='flex-basis:100%;display:flex;align-items:center;gap:6px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid #f5f5f5';
+ar.innerHTML='<div style="width:24px;height:24px;border-radius:50%;background:#07c160;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;overflow:hidden;font-weight:600">'+(aa?'<img src="'+aa+'" style="width:100%;height:100%;object-fit:cover">':an.charAt(0))+'</div><span style="font-size:13px;color:#576b95;font-weight:500">'+an+'</span>';
+item.appendChild(ar);
+var imgs=(m.images&&m.images.length)?m.images:(m.image?[m.image]:[]);
+if(imgs.length===1){
+var row=document.createElement('div');
+row.style.cssText='flex-basis:100%;display:flex;gap:10px;align-items:flex-start;margin-top:6px';
+var ib=document.createElement('div');
+ib.style.cssText='width:110px;height:110px;flex-shrink:0;overflow:hidden;background:#f0f0f0';
+var im=document.createElement('img');
+im.style.cssText='width:100%;height:100%;object-fit:cover;display:block';
+im.src=imgs[0];ib.appendChild(im);
+var tx=document.createElement('div');
+tx.style.cssText='flex:1;font-size:15px;color:#1a1a1a;line-height:1.5;padding-top:6px;word-break:break-word;min-width:0';
+tx.textContent=m.text||'';
+row.appendChild(ib);row.appendChild(tx);
+item.appendChild(row);
+}else if(imgs.length>1){
+if(m.text){
+var r2=document.createElement('div');r2.style.cssText='flex-basis:100%;margin-top:6px';
+var t2=document.createElement('div');t2.style.cssText='font-size:15px;color:#1a1a1a;line-height:1.5;word-break:break-word';
+t2.textContent=m.text;r2.appendChild(t2);item.appendChild(r2);
+}
+var grid=document.createElement('div');
+grid.style.cssText='flex-basis:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:8px;padding-left:66px';
+imgs.forEach(function(s){var im2=document.createElement('img');im2.style.cssText='width:100%;aspect-ratio:1;object-fit:cover;display:block';im2.src=s;grid.appendChild(im2)});
+item.appendChild(grid);
+}else{
+var r3=document.createElement('div');r3.style.cssText='flex-basis:100%;margin-top:6px';
+var t3=document.createElement('div');t3.style.cssText='font-size:15px;color:#1a1a1a;line-height:1.5;word-break:break-word';
+t3.textContent=m.text||'';r3.appendChild(t3);item.appendChild(r3);
+}
+var parts=[];
+if(m.visibleName&&m.visibleName!=='公开')parts.push(m.visibleName);
+if(m.at&&m.at.length)parts.push('@'+m.at.map(function(a){return a.name}).join(' '));
+if(parts.length){
+var ex=document.createElement('div');
+ex.style.cssText='flex-basis:100%;font-size:12px;color:#576b95;margin-top:6px;padding-left:34px';
+ex.textContent=parts.join(' · ');
+item.appendChild(ex);
+}
+if(m.authorId==='me'||!m.authorId){
+var d=document.createElement('button');
+d.style.cssText='position:absolute;right:12px;top:18px;background:transparent;border:none;color:#999;cursor:pointer;padding:4px 8px;font-size:12px';
+d.textContent='删除';
+d.addEventListener('click',function(ev){
+ev.stopPropagation();
+if(!confirm('删除这条朋友圈？'))return;
+var a2=[];try{a2=JSON.parse(localStorage.getItem('wx-moments')||'[]')}catch(err3){}
+if(!Array.isArray(a2))a2=[];
+var i2=a2.findIndex(function(x){return x.id===m.id});
+if(i2>=0)a2.splice(i2,1);
+try{localStorage.setItem('wx-moments',JSON.stringify(a2))}catch(err3){}
+nb.click();
+});
+item.appendChild(d);
+}
+L2.appendChild(item);
+});
+}
+}catch(err){}
+});
+},2000);
+</script>
 </body>
 </html>
