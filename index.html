@@ -1450,5 +1450,22 @@ inp.addEventListener('change',function(ev){var f=ev.target.files[0];if(!f)return
 setTimeout(backupInit,500);
 })();
 </script>
+
+<script>
+setTimeout(function(){
+var items=document.querySelectorAll('#page-2 .p2-app-grid .p2-app-item');
+var taobao=items[1];
+if(!taobao)return;
+var nb=taobao.cloneNode(true);
+taobao.parentNode.replaceChild(nb,taobao);
+var nm=nb.querySelector('span');
+if(nm)nm.textContent='世界书';
+nb.addEventListener('click',function(e){
+e.stopPropagation();
+var p=document.getElementById('koiWbPanel');
+if(p){p.classList.add('open')}
+});
+},1000);
+</script>
 </body>
 </html>
