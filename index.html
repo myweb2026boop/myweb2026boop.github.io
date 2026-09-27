@@ -1452,20 +1452,214 @@ setTimeout(backupInit,500);
 </script>
 
 <script>
+// ========== 朋友圈菜单修复 ==========
+(function(){
+var css=document.createElement('style');
+css.textContent='.koiM{display:none!important}.koiM.show{display:flex!important}.koiMomE{z-index:1200!important}.koiPick{z-index:1201!important}';
+document.head.appendChild(css);
 setTimeout(function(){
+var modeEl=document.querySelector('.koiM');
+if(!modeEl)return;
+modeEl.querySelectorAll('.koiM-b').forEach(function(b){
+b.addEventListener('click',function(){
+modeEl.classList.remove('show');
+modeEl.style.display='none';
+},true);
+});
+},1500);
+})();
+
+// ========== 世界书精简独立版 ==========
+setTimeout(function(){
+var P=document.querySelector('.phone-container');
+if(!P||document.getElementById('wbSimple'))return;
+
+var S=document.createElement('style');
+S.textContent='.wbs{position:absolute;inset:0;z-index:250;background:#f5f5f7;transform:translateX(100%);transition:transform .3s;display:flex;flex-direction:column;border-radius:30px;overflow:hidden}body.fs-mode .wbs{border-radius:0}.wbs.open{transform:translateX(0)}.wbs-n{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid #e5e5e7;position:relative;flex-shrink:0}.wbs-n button{background:transparent;border:none;color:#07c160;font-size:15px;cursor:pointer;padding:6px 4px}.wbs-n .t{position:absolute;left:50%;transform:translateX(-50%);font-size:17px;font-weight:600}.wbs-b{flex:1;overflow-y:auto;padding:14px}.wbs-b::-webkit-scrollbar{display:none}.wbs-c{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer}.wbs-c-t{font-size:15px;font-weight:600;margin-bottom:4px}.wbs-c-s{font-size:12px;color:#999}.wbs-del{float:right;background:transparent;border:none;color:#fa5151;font-size:12px;cursor:pointer}.wbs-e{background:#fff;border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer}.wbs-e-t{font-size:14px;font-weight:600;margin-bottom:4px}.wbs-e-c{font-size:12px;color:#bbb;white-space:pre-wrap;max-height:40px;overflow:hidden}.wbs-add{width:100%;padding:14px;background:#fff;border:2px dashed #ddd;border-radius:12px;color:#999;cursor:pointer}.wbs-empty{text-align:center;color:#bbb;padding:80px 20px}';
+document.head.appendChild(S);
+
+var panel=document.createElement('div');
+panel.className='wbs';panel.id='wbSimple';
+panel.innerHTML='<div class="wbs-n"><button id="wbsBack">返回</button><span class="t" id="wbsTitle">世界书</span><button id="wbsAdd" style="font-size:24px;font-weight:300">＋</button></div><div class="wbs-b" id="wbsBody"></div>';
+P.appendChild(panel);
+
+var editP=document.createElement('div');
+editP.className='wbs';editP.id='wbSimpleEdit';editP.style.zIndex='251';
+editP.innerHTML='<div class="wbs-n"><button id="wbsEditC">取消</button><span class="t">编辑条目</span><button id="wbsEditS" style="background:#07c160;color:#fff;padding:6px 14px;border-radius:8px">保存</button></div><div class="wbs-b">'+
+'<div style="background:#fff;border-radius:12px;padding:16px;margin-bottom:12px"><div style="font-size:13px;color:#888;margin-bottom:8px">标题</div><input id="wbsFT" style="width:100%;border:none;outline:none;font-size:15px" placeholder="条目名"></div>'+
+'<div style="background:#fff;border-radius:12px;padding:16px;margin-bottom:12px"><div style="font-size:13px;color:#888;margin-bottom:8px">读取深度</div><input type="number" id="wbsFD" value="100" style="width:100%;border:none;outline:none;font-size:15px"><div style="font-size:11px;color:#bbb;margin-top:4px">越大越靠前</div></div>'+
+'<div style="background:#fff;border-radius:12px;padding:16px;margin-bottom:12px"><div style="font-size:13px;color:#888;margin-bottom:8px">读取位置</div><select id="wbsFP" style="width:100%;border:none;outline:none;font-size:15px;background:transparent"><option value="before">人设前</option><option value="middle" selected>人设中</option><option value="after">人设后</option></select></div>'+
+'<div style="background:#fff;border-radius:12px;padding:16px;margin-bottom:12px"><div style="font-size:13px;color:#888;margin-bottom:8px">内容</div><textarea id="wbsFC" style="width:100%;border:none;outline:none;font-size:14px;min-height:240px;font-family:inherit;line-height:1.6;resize:none" placeholder="世界书内容..."></textarea></div>'+
+'<button id="wbsEditDel" style="width:100%;padding:14px;background:#fff;border:none;border-radius:12px;color:#fa5151;font-size:15px;cursor:pointer">删除条目</button>'+
+'</div>';
+P.appendChild(editP);
+
+var fileIn=document.createElement('input');fileIn.type='file';fileIn.accept='.docx,.json,.txt';fileIn.multiple=true;fileIn.style.display='none';document.body.appendChild(fileIn);
+
+function getBooks(){try{var v=localStorage.getItem('world-books');if(v){var r=JSON.parse(v);if(Array.isArray(r))return r}}catch(e){}return[]}
+function saveBooks(a){try{localStorage.setItem('world-books',JSON.stringify(a))}catch(e){}}
+function uid(p){return p+'_'+Date.now()+'_'+Math.floor(Math.random()*999)}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+var st={bid:null,eid:null};
+function renderBooks(){
+var L=document.getElementById('wbsBody');L.innerHTML='';
+var books=getBooks();
+if(!books.length){L.innerHTML='<div class="wbs-empty">还没有世界书<br>点右上角 ＋ 上传或新建</div>';return}
+books.forEach(function(b){
+var c=document.createElement('div');c.className='wbs-c';
+var d=document.createElement('button');d.className='wbs-del';d.textContent='删除';
+d.addEventListener('click',function(e){e.stopPropagation();if(!confirm('删除整本？'))return;var a=getBooks();var i=a.findIndex(function(x){return x.id===b.id});if(i>=0)a.splice(i,1);saveBooks(a);renderBooks()});
+c.innerHTML='<div class="wbs-c-t">'+esc(b.name||'未命名')+'</div><div class="wbs-c-s">'+((b.entries||[]).length)+' 个条目</div>';
+c.appendChild(d);
+c.addEventListener('click',function(){st.bid=b.id;document.getElementById('wbsTitle').textContent=b.name||'未命名';renderEntries()});
+L.appendChild(c);
+});
+}
+function renderEntries(){
+var L=document.getElementById('wbsBody');L.innerHTML='';
+var b=getBooks().find(function(x){return x.id===st.bid});if(!b)return;
+(b.entries||[]).forEach(function(e){
+var el=document.createElement('div');el.className='wbs-e';
+var pos=e.position==='before'?'人设前':(e.position==='after'?'人设后':'人设中');
+el.innerHTML='<div class="wbs-e-t">'+esc(e.title||'未命名')+'</div><div style="font-size:11px;color:#999;margin-bottom:4px">'+pos+' · 深度 '+(e.depth||100)+'</div><div class="wbs-e-c">'+esc((e.content||'').slice(0,100))+'</div>';
+el.addEventListener('click',function(){openEdit(e.id)});
+L.appendChild(el);
+});
+var a=document.createElement('button');a.className='wbs-add';a.textContent='＋ 添加条目';
+a.addEventListener('click',function(){openEdit(null)});
+L.appendChild(a);
+}
+function openEdit(eid){
+st.eid=eid;
+var b=getBooks().find(function(x){return x.id===st.bid});if(!b)return;
+var e=eid?(b.entries||[]).find(function(x){return x.id===eid}):null;
+document.getElementById('wbsFT').value=e?e.title||'':'';
+document.getElementById('wbsFD').value=e?e.depth||100:100;
+document.getElementById('wbsFP').value=e?e.position||'middle':'middle';
+document.getElementById('wbsFC').value=e?e.content||'':'';
+editP.classList.add('open');
+}
+document.getElementById('wbsEditC').addEventListener('click',function(){editP.classList.remove('open')});
+document.getElementById('wbsEditS').addEventListener('click',function(){
+var bks=getBooks();var bi=bks.findIndex(function(x){return x.id===st.bid});if(bi<0)return;
+var b=bks[bi];if(!b.entries)b.entries=[];
+var data={title:document.getElementById('wbsFT').value.trim()||'未命名',depth:parseInt(document.getElementById('wbsFD').value,10)||100,position:document.getElementById('wbsFP').value||'middle',content:document.getElementById('wbsFC').value,enabled:true,scope:'global',masks:[]};
+if(st.eid){var ei=b.entries.findIndex(function(x){return x.id===st.eid});if(ei>=0)b.entries[ei]=Object.assign(b.entries[ei],data)}
+else b.entries.push(Object.assign({id:uid('e')},data));
+saveBooks(bks);editP.classList.remove('open');renderEntries();
+});
+document.getElementById('wbsEditDel').addEventListener('click',function(){
+if(!st.eid)return;if(!confirm('删除该条目？'))return;
+var bks=getBooks();var b=bks.find(function(x){return x.id===st.bid});if(!b)return;
+b.entries=(b.entries||[]).filter(function(x){return x.id!==st.eid});
+saveBooks(bks);editP.classList.remove('open');renderEntries();
+});
+document.getElementById('wbsBack').addEventListener('click',function(){
+if(st.bid){st.bid=null;document.getElementById('wbsTitle').textContent='世界书';renderBooks()}
+else panel.classList.remove('open');
+});
+document.getElementById('wbsAdd').addEventListener('click',function(){
+var m=document.createElement('div');
+m.style.cssText='position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:260;display:flex;align-items:flex-end';
+m.innerHTML='<div style="width:100%;background:#f7f7f7;border-radius:18px 18px 0 0;padding:8px 12px 18px"><button id="wbsUp" style="display:block;width:100%;padding:16px;border:none;background:#fff;border-radius:12px;font-size:16px;margin-bottom:8px;cursor:pointer">上传文件</button><button id="wbsNew" style="display:block;width:100%;padding:16px;border:none;background:#fff;border-radius:12px;font-size:16px;margin-bottom:8px;cursor:pointer">新建空白</button><button id="wbsCc" style="display:block;width:100%;padding:16px;border:none;background:#fff;border-radius:12px;font-size:16px;color:#666;cursor:pointer">取消</button></div>';
+P.appendChild(m);
+m.addEventListener('click',function(e){if(e.target===m)m.remove()});
+m.querySelector('#wbsCc').addEventListener('click',function(){m.remove()});
+m.querySelector('#wbsUp').addEventListener('click',function(){m.remove();fileIn.click()});
+m.querySelector('#wbsNew').addEventListener('click',function(){m.remove();var n=prompt('世界书名称：','新世界书');if(!n)return;var a=getBooks();a.unshift({id:uid('wb'),name:n,entries:[]});saveBooks(a);renderBooks()});
+});
+fileIn.addEventListener('change',function(e){
+var fs=Array.prototype.slice.call(e.target.files||[]);if(!fs.length)return;
+var pending=fs.length;
+fs.forEach(function(f){
+var isD=/\.docx$/i.test(f.name);var isJ=/\.json$/i.test(f.name);
+var r=new FileReader();
+r.onload=function(ev){
+try{
+if(isD){
+if(window.mammoth){
+mammoth.extractRawText({arrayBuffer:ev.target.result}).then(function(res){addBook(f.name,res.value||'');done()}).catch(function(){addBook(f.name,'');done()});
+}else{addBook(f.name,'');done()}
+}else if(isJ){
+var parsed=null;try{parsed=JSON.parse(ev.target.result)}catch(e){}
+addBookJson(f.name,parsed);done();
+}else{addBook(f.name,String(ev.target.result||''));done()}
+}catch(e){done()}
+};
+if(isD)r.readAsArrayBuffer(f);else r.readAsText(f);
+});
+function done(){pending--;if(!pending){fileIn.value='';renderBooks()}}
+});
+
+function addBook(name,content){
+var a=getBooks();var d=name.replace(/\.(docx|json|txt)$/i,'');
+a.unshift({id:uid('wb'),name:d,entries:[{id:uid('e'),title:d,keywords:'',enabled:true,scope:'global',masks:[],content:content||'',depth:100,position:'middle'}]});
+saveBooks(a);
+}
+function addBookJson(name,parsed){
+var d=name.replace(/\.json$/i,'');var es=[];
+if(parsed&&parsed.entries){
+Object.keys(parsed.entries).forEach(function(k){
+var e=parsed.entries[k];if(!e)return;
+es.push({id:uid('e'),title:e.comment||e.name||k,keywords:Array.isArray(e.key)?e.key.join(', '):(e.key||''),enabled:e.disable!==true,scope:e.constant?'global':'local',masks:[],content:Array.isArray(e.content)?e.content.join('\n'):(e.content||''),depth:e.depth||100,position:e.position||'middle'});
+});
+}
+if(!es.length)es.push({id:uid('e'),title:d,content:JSON.stringify(parsed,null,2),depth:100,position:'middle',enabled:true,scope:'global',masks:[]});
+var a=getBooks();a.unshift({id:uid('wb'),name:d,entries:es});saveBooks(a);
+}
+
+renderBooks();
+
+// 绑定淘宝图标
 var items=document.querySelectorAll('#page-2 .p2-app-grid .p2-app-item');
-var taobao=items[1];
-if(!taobao)return;
-var nb=taobao.cloneNode(true);
-taobao.parentNode.replaceChild(nb,taobao);
+if(items[1]){
+var nb=items[1].cloneNode(true);
+items[1].parentNode.replaceChild(nb,items[1]);
 var nm=nb.querySelector('span');
 if(nm)nm.textContent='世界书';
-nb.addEventListener('click',function(e){
-e.stopPropagation();
-var p=document.getElementById('koiWbPanel');
-if(p){p.classList.add('open')}
-});
-},1000);
+nb.addEventListener('click',function(e){e.stopPropagation();renderBooks();panel.classList.add('open')});
+}
+
+// 注入 AI
+function getWB(){
+var books=getBooks();var B=[],M=[],A=[];
+books.forEach(function(b){(b.entries||[]).forEach(function(e){
+if(e.enabled===false)return;
+var tx=(e.content||'').trim();if(!tx)return;
+var d=parseInt(e.depth,10)||100;var pos=e.position||'middle';
+var o={t:tx,d:d};
+if(pos==='before')B.push(o);else if(pos==='after')A.push(o);else M.push(o);
+})});
+function s(a,b){return b.d-a.d}B.sort(s);M.sort(s);A.sort(s);
+return{before:B.map(function(x){return x.t}).join('\n'),middle:M.map(function(x){return x.t}).join('\n'),after:A.map(function(x){return x.t}).join('\n')};
+}
+var _f=window.fetch;
+window.fetch=function(){
+var args=arguments;
+try{
+var url=args[0];
+if(typeof url==='string'&&url.indexOf('/chat/completions')>=0&&args[1]&&args[1].body){
+var b=JSON.parse(args[1].body);
+if(b.messages&&b.messages[0]&&b.messages[0].role==='system'){
+var wb=getWB();
+if(wb.before||wb.middle||wb.after){
+var orig=b.messages[0].content;
+var p=['===== 角色设定（你的身份）=====',orig,'','===== 行为规则（必须严格遵守）====='];
+if(wb.before){p.push('【重要规则】',wb.before,'')}
+if(wb.middle){p.push('【常规规则】',wb.middle,'')}
+if(wb.after){p.push('【补充规则】',wb.after,'')}
+p.push('===== 执行要求 =====','1.完全保持角色身份、语气、性格。','2.严格遵守上面所有"行为规则"。','3.不脱离角色的前提下优先遵守规则。','4.不要提到"规则""世界书"等词汇。');
+b.messages[0].content=p.join('\n');
+args=[url,Object.assign({},args[1],{body:JSON.stringify(b)})];
+}
+}
+}
+}catch(e){}
+return _f.apply(this,args);
+};
+
+},1500);
 </script>
 </body>
 </html>
