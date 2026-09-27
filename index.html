@@ -1029,9 +1029,6 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 <input type="file" id="ct-docx-uploader" accept=".docx,.doc,.txt,.md" style="display:none">
 
 <script>
-/* ============================================================
-   主脚本
-   ============================================================ */
 window.addEventListener('DOMContentLoaded',function(){
 try{
 function setFS(on,p){document.body.classList.toggle('fs-mode',!!on);if(p){try{localStorage.setItem('fullscreen-mode',on?'1':'0')}catch(e){}}}
@@ -1184,18 +1181,12 @@ async function triggerAI(){if(!activeChar)return;var h=getHist(activeChar.id);if
   if(window.koiCheckImageToMoment)setTimeout(function(){window.koiCheckImageToMoment(cid)},2000);
 }catch(err){var te=document.getElementById('wxTyping');if(te)te.remove();showToast('请求失败：'+(err.message||'未知错误'),2500);var h3=getHist(cid);h3.push({role:'assistant',type:'text',content:'（请求失败，请检查API App中的配置）',time:Date.now()});saveHist(cid,h3);if(activeChar&&activeChar.id===cid)renderMsgs();renderChats()}}
 function checkGift(cid){var h=getHist(cid);var lastU=null;for(var i=h.length-1;i>=0;i--){if(h[i].role==='user'){lastU=h[i];break}}if(!lastU)return;var t=(lastU.content||'').trim();if(!t)return;var wF=/亲属卡|亲情卡|送我.*卡|给你.*卡|给张卡/.test(t);var wT=/转账|转钱|给我钱|发我钱|打钱|发红包|给你钱|送你钱/.test(t);var lm=h[h.length-1];if(lm&&(lm.type==='transfer'||lm.type==='familyCard'))return;if(wF){setTimeout(function(){var h2=getHist(cid);var ls=[200,500,1000,2000];var l=ls[Math.floor(Math.random()*ls.length)];h2.push({role:'assistant',type:'familyCard',limit:l,note:'给你一张亲属卡',status:'pending',time:Date.now()});saveHist(cid,h2);if(activeChar&&activeChar.id===cid)renderMsgs();renderChats()},1000)}else if(wT){setTimeout(function(){var h2=getHist(cid);var amt=+(Math.random()*88+8).toFixed(2);h2.push({role:'assistant',type:'transfer',amount:amt,note:'给你',status:'pending',time:Date.now()});saveHist(cid,h2);if(activeChar&&activeChar.id===cid)renderMsgs();renderChats()},1000)}}
-
-/* ★ 修改：回车只发消息，不触发 AI */
 if(inputEl)inputEl.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();sendMsg()}});
-/* ★ 语音键：发送 + 触发 AI */
 if(voiceBtn)voiceBtn.addEventListener('click',function(){sendMsg();triggerAI()});
-
 if(faceBtn)faceBtn.addEventListener('click',function(){var we=emojiPanel.classList.contains('show');closeAllPanels();if(!we)emojiPanel.classList.add('show')});
 if(plusBtn)plusBtn.addEventListener('click',function(){var wp=plusPanel.classList.contains('show');closeAllPanels();if(!wp){plusPanel.classList.add('show');plusPages.scrollLeft=0;plusDot0.classList.add('active');plusDot1.classList.remove('active')}});
 if(plusPages)plusPages.addEventListener('scroll',function(){var w=plusPages.clientWidth;var p=Math.round(plusPages.scrollLeft/w);if(p===0){plusDot0.classList.add('active');plusDot1.classList.remove('active')}else{plusDot1.classList.add('active');plusDot0.classList.remove('active')}});
 if(inputEl)inputEl.addEventListener('focus',closeAllPanels);
-
-/* ★ 照片按钮：发图，但不自动触发 AI */
 $all('.wx-plus-item').forEach(function(it){
   if(it.id==='wxPlusTransfer'||it.id==='wxPlusFamilyCard')return;
   it.addEventListener('click',function(){
@@ -1213,7 +1204,6 @@ $all('.wx-plus-item').forEach(function(it){
           saveHist(activeChar.id,h);
           renderMsgs();renderChats();
           closeAllPanels();
-          /* 不再自动触发 AI，由用户手动点语音键 */
         };
         r.readAsDataURL(f);
       });
@@ -1223,7 +1213,6 @@ $all('.wx-plus-item').forEach(function(it){
     }
   });
 });
-
 function refreshTFR(){if(!activeChar){wxTransferFamilyRow.classList.remove('show');return}var c=findRecv(activeChar.id);if(c){var rem=Math.max(0,c.limit-(c.used||0));wxTransferFamilyRow.classList.add('show');wxTransferFamilyBalance.textContent='可用额度 ¥'+rem.toFixed(2);wxTransferUseFamily.checked=false}else{wxTransferFamilyRow.classList.remove('show');wxTransferUseFamily.checked=false}}
 function openTFS(){if(!activeChar)return;closeAllPanels();wxTransferToName.textContent=getDN(activeChar);wxTransferAmount.value='';wxTransferNote.value='';refreshTFR();wxTransferMask.classList.add('show');wxTransferSheet.classList.add('show');setTimeout(function(){wxTransferAmount.focus()},320)}
 function closeTFS(){wxTransferMask.classList.remove('show');wxTransferSheet.classList.remove('show');wxTransferAmount.blur()}
@@ -1338,7 +1327,7 @@ backBtn.addEventListener('click',function(){panel.classList.remove('open')});
 
 <script>
 /* ============================================================
-   扩展脚本：QQ音乐 + 朋友圈 + AI互动 + 图片处理 + 记忆注入 + 备份
+   扩展脚本
    ============================================================ */
 (function(){
 if(window.__koiX)return;window.__koiX=true;
@@ -1392,7 +1381,7 @@ function pushNotification(n){var a=getNotifications();a.unshift(n);saveNotificat
 function updateMomentsDot(){var dot=document.getElementById('wxMomentsDot');if(!dot)return;var ns=getNotifications();var unread=ns.filter(function(n){return !n.read}).length;dot.style.display=unread>0?'block':'none'}
 function getMyName(){return localStorage.getItem('wx-me-name')||'Koi Buono'}
 
-/* ============ 朋友圈评论输入框 ============ */
+/* ============ 评论输入框 ============ */
 var momentCommentTarget=null;
 function initMomentCommentBar(){
 var bar=document.getElementById('wxMomentCommentInput');if(!bar)return;
@@ -1416,7 +1405,6 @@ var item=document.createElement('div');item.className='wx-moment-item';item.setA
 var date=document.createElement('div');date.className='wx-moment-date';date.innerHTML='<div class="wx-moment-day">'+(m.day||'1')+'</div><div class="wx-moment-month">'+(m.month||'')+'</div>';item.appendChild(date);
 var content=document.createElement('div');content.style.cssText='flex:1;display:flex;flex-direction:column;min-width:0';
 var an=m.authorName||'我';
-/* ★ 用户自己发的朋友圈，头像实时从主页头像读取 */
 var aa=(m.authorId==='me'||!m.authorId)?meAv():(m.authorAvatar||'');
 var ar=document.createElement('div');ar.className='koiMomA';
 ar.innerHTML='<div class="koiMomAAv">'+(aa?'<img src="'+aa+'">':an.charAt(0))+'</div><span class="koiMomAN">'+an+'</span>';
@@ -1668,7 +1656,7 @@ cs.forEach(function(c){
 });
 }
 
-/* ============ 用户发图后，char 判断是否发朋友圈 ============ */
+/* ============ 用户发图后，char 综合上下文判断是否发朋友圈 ============ */
 function currentCharIdByName(){
 var el=document.getElementById('wxChatName');if(!el)return null;
 var n=(el.textContent||'').trim();
@@ -1701,23 +1689,52 @@ async function checkImageToMoment(charId){
   var cfg=getApiCfg();
   if(!cfg.apiUrl||!cfg.apiKey||!cfg.model)return;
   try{
-    var sys=buildCharPrompt(c)+'\n用户刚刚给你发了一张图片。\n请你判断：你会把这张图片发到朋友圈吗？（作为你自己发的朋友圈）\n规则：\n1. 根据你的性格、与用户的关系、当前氛围决定。\n2. 高冷/孤僻/不玩朋友圈的角色通常不发。\n3. 活泼/爱分享/文艺的角色可以发。\n4. 如果要发，写一条符合人设的朋友圈文案（0-80 字）。如果文案里想要 @ 用户，直接写"@'+getMyName()+'"。\n5. 只回复 JSON：{"post":true/false,"caption":"文案内容，不发则空字符串"}\n不要输出其他内容。';
+    // 取出最近的聊天上下文（图片前后各几条），让 AI 综合判断
+    var ctx=[];
+    for(var j=Math.max(0,h.length-8);j<h.length;j++){
+      var m=h[j];
+      if(!m||m.role==='system')continue;
+      if(m.type==='image'){ctx.push((m.role==='user'?'用户':'我')+'：［发了一张图片］');continue}
+      if(m.type==='transfer'){ctx.push((m.role==='user'?'用户':'我')+'：［转账 ¥'+parseFloat(m.amount||0).toFixed(2)+'］');continue}
+      if(m.type==='familyCard'){ctx.push((m.role==='user'?'用户':'我')+'：［亲属卡］');continue}
+      if(m.content)ctx.push((m.role==='user'?'用户':'我')+'：'+m.content);
+    }
+    var ctxText=ctx.join('\n');
+
+    var sys=buildCharPrompt(c)+
+      '\n【当前聊天上下文】\n'+ctxText+'\n'+
+      '\n【任务】用户刚刚发了一张图片给你。请根据以下三个因素综合判断，决定要不要把这张图片发到自己的朋友圈：\n'+
+      '1. 你的性格人设——高冷/孤僻/低调/不玩朋友圈的角色几乎不发；活泼/爱分享/文艺/话痨的角色才可能发。\n'+
+      '2. 当前聊天上下文——如果气氛适合分享、话题契合、或者你有强烈的表达欲，才可能发；普通日常、随手一拍的图通常不需要发朋友圈。\n'+
+      '3. 这张图对你的意义——只有当你觉得这张图「值得留作公开动态」时才发，不能每张都发。\n\n'+
+      '【重要原则】\n'+
+      '- 大部分情况下你只需要在聊天里回应这张图，不发朋友圈。\n'+
+      '- 只有在少数真正契合人设与情境的时候才发。\n'+
+      '- 如果决定发，文案要符合人设语气；可以决定是否 @ 用户（用 @'+getMyName()+' 的格式）。\n\n'+
+      '【输出格式】只输出 JSON：\n'+
+      '{"post":true/false,"reason":"一句话说明你的判断理由","caption":"如果要发，这条朋友圈的文案；不发则空字符串"}\n'+
+      '不要输出任何其他内容。';
+
     var msgs=[{role:'system',content:sys}];
-    var contentArr=[{type:'text',text:'这是用户发给我的图片'+(lastImg.text?('，配文：'+lastImg.text):'')}];
+    var contentArr=[{type:'text',text:'用户发来的图片'+(lastImg.text?('，配文：'+lastImg.text):'')}];
     contentArr.push({type:'image_url',image_url:{url:lastImg.image}});
     msgs.push({role:'user',content:contentArr});
-    var body={model:cfg.model,messages:msgs,temperature:cfg.temperature,max_tokens:250};
+    var body={model:cfg.model,messages:msgs,temperature:cfg.temperature,max_tokens:280};
     var resp=await fetch(cfg.apiUrl+'/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.apiKey},body:JSON.stringify(body)});
     if(!resp.ok)throw new Error('HTTP '+resp.status);
     var data=await resp.json();
     var reply=(data&&data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)||'';
     var mm=reply.match(/\{[\s\S]*\}/);
-    if(!mm)return;
-    var r=JSON.parse(mm[0]);
+    // 标记已处理，避免重复
     processed.push(imgKey);
     ls(pk,processed.slice(-30));
+    if(!mm)return;
+    var r;
+    try{r=JSON.parse(mm[0])}catch(e){return}
     if(!r.post)return;
-    var caption=(r.caption||'').trim()||'';
+
+    // ========= 决定发朋友圈 =========
+    var caption=(r.caption||'').trim();
     var now=new Date();
     var mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     var arr=getArr();
@@ -1725,22 +1742,33 @@ async function checkImageToMoment(charId){
     var atUser=/@/.test(caption);
     var at=[];
     if(atUser)at.push({id:'me',name:getMyName()});
-    arr.unshift({id:postId,day:String(now.getDate()),month:mo[now.getMonth()],text:caption,image:lastImg.image,images:[lastImg.image],authorId:c.id,authorName:c.name||'未命名',authorAvatar:c.avatar||'',visible:'public',visibleName:'公开',at:at,likes:[],comments:[],time:now.getTime(),aiGenerated:true,fromUserImage:true});
+    arr.unshift({
+      id:postId,
+      day:String(now.getDate()),
+      month:mo[now.getMonth()],
+      text:caption,
+      image:lastImg.image,
+      images:[lastImg.image],
+      authorId:c.id,
+      authorName:c.name||'未命名',
+      authorAvatar:c.avatar||'',
+      visible:'public',visibleName:'公开',
+      at:at,likes:[],comments:[],
+      time:now.getTime(),
+      aiGenerated:true,
+      fromUserImage:true,
+      postReason:r.reason||''
+    });
     saveArr(arr);
     appendMomentsMemory(c.id,{type:'post',text:caption||'（发了用户发来的图片）',at:at,time:now.getTime()});
     if(atUser)pushNotification({type:'at',fromId:c.id,fromName:c.name,postId:postId,text:caption,time:now.getTime(),read:false});
     updateMomentsDot();
-    var h2=lj('ai-chat-wx-'+charId,[]);
-    if(!Array.isArray(h2))h2=[];
-    h2.push({role:'assistant',type:'text',content:'（我把这张图发到朋友圈了）',time:Date.now()});
-    ls('ai-chat-wx-'+charId,h2.slice(-100));
-    var cn=document.getElementById('wxChatName');
-    if(cn&&(cn.textContent||'').trim()===getDN2(c)&&window.__koiRenderMsgs)window.__koiRenderMsgs();
+
     if(document.getElementById('wxMomentsView')&&document.getElementById('wxMomentsView').classList.contains('active'))renderMomentsList();
   }catch(e){console.warn('[koi] 图片发朋友圈判断失败',e)}
 }
 
-/* ============ 朋友圈记忆注入（覆写 fetch） ============ */
+/* ============ 朋友圈记忆注入 ============ */
 var _f=window.fetch;
 window.fetch=function(){
 var args=arguments;
