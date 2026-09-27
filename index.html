@@ -15,7 +15,7 @@ button{touch-action:manipulation}
 .phone-container{width:375px;height:812px;background:#fcfcfc;position:relative;overflow:hidden;border-radius:30px;box-shadow:0 10px 30px rgba(0,0,0,.5);display:flex;flex-direction:column;background-image:radial-gradient(#e0e0e0 1.2px,transparent 1.2px);background-size:14px 14px}
 body.fs-mode{background:#fcfcfc;position:fixed;inset:0;overflow:hidden;display:block;min-height:0}
 body.fs-mode .phone-container{position:absolute;inset:0;width:auto;height:auto;border-radius:0;box-shadow:none}
-body.fs-mode .beautify-panel,body.fs-mode .wechat-panel,body.fs-mode .contact-panel,body.fs-mode .settings-panel,body.fs-mode .koiP,body.fs-mode .koiQm,body.fs-mode .wbs{border-radius:0}
+body.fs-mode .beautify-panel,body.fs-mode .wechat-panel,body.fs-mode .contact-panel,body.fs-mode .settings-panel,body.fs-mode .koiQm,body.fs-mode .wbs{border-radius:0}
 .wallpaper-layer{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;background-repeat:no-repeat;pointer-events:none}
 .blob{position:absolute;background:#f0f0f0;border-radius:50%;filter:blur(20px);z-index:0;opacity:.6;pointer-events:none}
 .blob-1{width:150px;height:150px;top:50px;left:-50px}.blob-2{width:200px;height:200px;top:400px;right:-80px}.blob-3{width:120px;height:120px;bottom:100px;left:20px}
@@ -97,7 +97,6 @@ body.fs-mode .beautify-panel,body.fs-mode .wechat-panel,body.fs-mode .contact-pa
 .bottom-dock{position:absolute;bottom:15px;left:0;width:100%;display:flex;justify-content:space-around;padding:0 15px;z-index:10;pointer-events:none}
 .dock-item{pointer-events:auto;width:55px;height:55px;background:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.05);border:1px solid #f5f5f5;overflow:hidden;cursor:pointer}
 .dock-item img{width:100%;height:100%;object-fit:cover}
-/* Beautify Panel */
 .beautify-panel{position:absolute;inset:0;z-index:200;background:#fcfcfc;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);border-radius:30px;overflow:hidden}
 .beautify-panel.open{transform:translateX(0)}
 .bp-header{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:18px 16px 12px;border-bottom:1px solid #f0f0f0}
@@ -124,7 +123,6 @@ body.fs-mode .beautify-panel,body.fs-mode .wechat-panel,body.fs-mode .contact-pa
 .bp-fs-text{flex:1;min-width:0}
 .bp-fs-label{font-size:13.5px;color:#222;font-weight:600}
 .bp-fs-desc{font-size:11px;color:#aaa;margin-top:4px;line-height:1.45}
-/* WeChat Panel */
 .wechat-panel{position:absolute;inset:0;z-index:210;background:#ededed;border-radius:30px;overflow:hidden;transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1)}
 .wechat-panel.open{transform:translateX(0)}
 .wx-view{position:absolute;inset:0;display:flex;flex-direction:column;background:#ededed}
@@ -181,7 +179,7 @@ body.fs-mode .beautify-panel,body.fs-mode .wechat-panel,body.fs-mode .contact-pa
 .wx-discover-icon svg{width:22px;height:22px;stroke:#555;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .wx-discover-name{flex:1;font-size:16px;color:#1a1a1a}
 .wx-discover-arrow{color:#c8c8c8;font-size:18px}
-.wx-moments-dot{width:8px;height:8px;background:#fa5151;border-radius:50%;margin-left:6px;flex-shrink:0}
+.wx-moments-dot{width:8px;height:8px;background:#fa5151;border-radius:50%;margin-left:6px;flex-shrink:0;display:none}
 .wx-empty-chat,.wx-contacts-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 20px;color:#b8b8b8;font-size:13px;text-align:center;gap:12px}
 .wx-empty-chat svg,.wx-contacts-empty svg{width:44px;height:44px;stroke:#c8c8c8;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;opacity:.7}
 .wx-me-nav{background:#1c1c1c;border-bottom-color:#1c1c1c}
@@ -404,7 +402,6 @@ body.fs-mode .beautify-panel,body.fs-mode .wechat-panel,body.fs-mode .contact-pa
 .wx-family-empty{text-align:center;padding:80px 20px;color:#b8b8b8;font-size:13px;display:none}
 .wx-family-empty.show{display:block}
 .wx-family-empty svg{width:48px;height:48px;stroke:#c8c8c8;fill:none;stroke-width:1.4;margin-bottom:12px}
-/* Moments */
 .wx-moments-view{transform:translateX(100%);z-index:7;transition:transform .28s;position:absolute;inset:0;display:flex;flex-direction:column;background:#fff}
 .wx-moments-view.active{transform:translateX(0)}
 .wx-moments-body{flex:1;overflow-y:auto;background:#fff;-webkit-overflow-scrolling:touch}
@@ -446,9 +443,6 @@ body.fs-mode .beautify-panel,body.fs-mode .wechat-panel,body.fs-mode .contact-pa
 .wx-moment-comment-input input{flex:1;border:1px solid #e5e5e5;border-radius:6px;padding:8px 12px;font-size:14px;outline:none;background:#fff}
 .wx-moment-comment-input button{padding:8px 16px;border:none;border-radius:6px;background:#07c160;color:#fff;font-size:14px;cursor:pointer;font-weight:500}
 .wx-moment-comment-input button.cancel{background:#f0f0f0;color:#666}
-.wx-moment-notice{position:absolute;top:60px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.82);color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;z-index:999;opacity:0;pointer-events:none;transition:opacity .3s;max-width:80%;text-align:center;line-height:1.5}
-.wx-moment-notice.show{opacity:1}
-/* Contact Panel */
 .contact-panel{position:absolute;inset:0;z-index:220;background:#f5f5f7;border-radius:30px;overflow:hidden;transform:translateX(100%);transition:transform .32s;display:flex;flex-direction:column}
 .contact-panel.open{transform:translateX(0)}
 .ct-header{flex-shrink:0;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#f5f5f7;border-bottom:1px solid #e5e5e7;position:relative}
@@ -496,7 +490,6 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 .ct-confirm-delete{color:#fa5151;font-weight:600}
 .ct-toast{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);background:rgba(0,0,0,.78);color:#fff;padding:11px 20px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:700;text-align:center}
 .ct-toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
-/* Settings */
 .settings-panel{position:absolute;inset:0;z-index:230;background:#f5f5f7;border-radius:30px;overflow:hidden;transform:translateX(100%);transition:transform .32s;display:flex;flex-direction:column}
 .settings-panel.open{transform:translateX(0)}
 .st-header{flex-shrink:0;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#f5f5f7;border-bottom:1px solid #e5e5e7;position:relative}
@@ -531,88 +524,11 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 .st-preset-load{background:#07c160;color:#fff}
 .st-preset-del{background:#f0f0f0;color:#fa5151}
 .st-preset-empty{text-align:center;color:#bbb;font-size:12px;padding:12px}
-/* ==== 扩展浮层 CSS ==== */
-.koiP{position:absolute;inset:0;z-index:245;background:#f5f5f7;transform:translateX(100%);transition:transform .3s;display:flex;flex-direction:column;border-radius:30px;overflow:hidden}
-.koiP.open{transform:translateX(0)}
-.koiNav{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#f5f5f7;border-bottom:1px solid #e5e5e7;position:relative;flex-shrink:0}
-.koiNav button{background:transparent;border:none;color:#07c160;font-size:15px;cursor:pointer;padding:6px 4px;font-family:inherit;font-weight:500;z-index:1}
-.koiNav .t{position:absolute;left:50%;transform:translateX(-50%);font-size:17px;font-weight:600;color:#1a1a1a}
-.koiNav .add{font-size:26px;font-weight:300;padding:0 10px}
-.koiBody{flex:1;overflow-y:auto;padding:14px}
-.koiBody::-webkit-scrollbar{display:none}
-.koiEmpty{text-align:center;color:#b8b8b8;font-size:13px;padding:90px 20px}
-.koiC{background:#fff;border-radius:12px;padding:14px 16px;cursor:pointer;margin-bottom:10px}
-.koiC-t{font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:5px;word-break:break-word}
-.koiC-s{font-size:12px;color:#999}
-.koiC-row{display:flex;justify-content:space-between;align-items:center}
-.koiC-del{background:transparent;border:none;color:#fa5151;font-size:12px;cursor:pointer;padding:4px 6px;font-family:inherit}
-.koiE{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;background:#fff;border-radius:12px;cursor:pointer;margin-bottom:8px}
-.koiE-i{flex:1;min-width:0}
-.koiE-t{font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:4px;word-break:break-word}
-.koiE-k{font-size:11px;color:#999;margin-bottom:3px}
-.koiE-c{font-size:12px;color:#bbb;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.koiE-off{opacity:.5}
-.koiAdd{width:100%;padding:14px 0;background:#fff;border:2px dashed #e0e0e0;border-radius:12px;color:#999;font-size:14px;cursor:pointer;font-family:inherit}
+/* ========== 扩展浮层 ========== */
 .koiM{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:1200;display:none;align-items:flex-end}
 .koiM.show{display:flex}
 .koiM-s{width:100%;background:#f7f7f7;border-radius:18px 18px 0 0;padding:8px 12px 18px}
 .koiM-b{display:block;width:100%;padding:16px 0;border:none;background:#fff;border-radius:12px;font-size:16px;color:#1a1a1a;font-weight:500;cursor:pointer;margin-bottom:8px;font-family:inherit}
-.koiEdit{position:absolute;inset:0;background:#f5f5f7;z-index:247;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s}
-.koiEdit.show{transform:translateX(0)}
-.koiENav{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#fff;border-bottom:1px solid #e5e5e7;position:relative;flex-shrink:0}
-.koiENav .c{background:transparent;border:none;color:#1a1a1a;font-size:15px;cursor:pointer;padding:6px 4px;font-family:inherit}
-.koiENav .t{position:absolute;left:50%;transform:translateX(-50%);font-size:16px;font-weight:600;color:#1a1a1a}
-.koiENav .s{background:#07c160;color:#fff;border:none;padding:7px 18px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit}
-.koiEBody{flex:1;overflow-y:auto;padding:14px 14px 40px}
-.koiEBody::-webkit-scrollbar{display:none}
-.koiF{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px}
-.koiFL{font-size:13px;color:#888;margin-bottom:8px}
-.koiFLR{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.koiFLR .h{font-size:11px;color:#bbb}
-.koiIn{width:100%;border:none;outline:none;font-size:15px;color:#1a1a1a;background:transparent;font-family:inherit;padding:4px 0}
-.koiIn::placeholder{color:#c0c0c0}
-.koiInS{font-size:13px}
-.koiTa{width:100%;border:none;outline:none;font-size:14px;color:#1a1a1a;background:transparent;font-family:inherit;line-height:1.6;min-height:220px;resize:none;white-space:pre-wrap}
-.koiSw{display:flex;justify-content:space-between;align-items:center;padding:4px 0}
-.koiSw .l{font-size:15px;color:#1a1a1a}
-.koiSw .s{font-size:11px;color:#999;margin-top:3px}
-.koiTabs{display:flex;background:#f5f5f5;border-radius:8px;padding:3px;margin-top:10px;width:fit-content;margin-left:auto}
-.koiTab{padding:6px 18px;border-radius:6px;font-size:13px;color:#666;cursor:pointer;background:transparent;border:none;font-family:inherit}
-.koiTab.active{background:#fff;color:#1a1a1a;font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.1)}
-.koiCat{display:inline-block;background:#1a1a1a;color:#fff;font-size:13px;padding:7px 16px;border-radius:18px}
-.koiMR{display:flex;gap:8px;flex-wrap:wrap}
-.koiMk{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid #e5e5e7;border-radius:20px;font-size:13px;color:#333;background:#fff;cursor:pointer;font-family:inherit}
-.koiMk.active{border-color:#07c160;background:#e8f8ef;color:#07c160}
-.koiMk-av{width:22px;height:22px;border-radius:50%;background:#4a90d9;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;font-weight:600}
-.koiMk-av img{width:100%;height:100%;object-fit:cover}
-.koiImp{background:#e8f8ef;color:#07c160;border:none;padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit}
-.koiDel{width:100%;padding:14px 0;background:#fff;border:none;border-radius:12px;color:#fa5151;font-size:15px;cursor:pointer;font-family:inherit;margin-top:6px}
-.koiNum{width:100%;border:1px solid #eee;border-radius:8px;padding:9px 12px;font-size:14px;outline:none;background:#fafafa;font-family:inherit}
-.koiQm{position:absolute;inset:0;z-index:243;background:linear-gradient(180deg,#3a3a3a 0%,#1a1a1a 100%);color:#fff;transform:translateX(100%);transition:transform .32s;display:flex;flex-direction:column;border-radius:30px;overflow:hidden}
-.koiQm.open{transform:translateX(0)}
-.koiQmNav{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;flex-shrink:0}
-.koiQmNav button{background:transparent;border:none;color:#fff;font-size:15px;cursor:pointer;padding:6px 4px;font-family:inherit}
-.koiQmNav .t{font-size:16px;font-weight:600}
-.koiQmBody{flex:1;display:flex;flex-direction:column;padding:0 22px 20px;overflow-y:auto}
-.koiQmBody::-webkit-scrollbar{display:none}
-.koiQmDisc{width:200px;height:200px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#4a4a4a,#0f0f0f);margin:14px auto 22px;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center}
-.koiQmDisc.play{animation:koiSpin 8s linear infinite}
-@keyframes koiSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-.koiQmT{text-align:center;font-size:16px;font-weight:600;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 10px}
-.koiQmS{text-align:center;font-size:11px;color:#888;margin-bottom:20px}
-.koiQmProg{display:flex;align-items:center;gap:10px;font-size:10px;color:#888;margin-bottom:18px}
-.koiQmProg input{flex:1;-webkit-appearance:none;height:3px;background:#444;border-radius:2px;outline:none}
-.koiQmProg input::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:#fff}
-.koiQmCtrl{display:flex;justify-content:center;align-items:center;gap:28px;margin-bottom:22px}
-.koiQmCtrl button{background:transparent;border:none;color:#fff;cursor:pointer;padding:0}
-.koiQmCtrl .pl{width:60px;height:60px;border-radius:50%;background:#fff;color:#1a1a1a}
-.koiQmCtrl svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.koiQmUp{flex:1;padding:11px 0;border:none;border-radius:10px;background:rgba(255,255,255,.14);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;margin-bottom:16px}
-.koiQmL{display:flex;flex-direction:column;gap:2px;padding-bottom:8px}
-.koiQmLi{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:#ddd}
-.koiQmLi.active{background:rgba(49,194,124,.18);color:#31c27c}
-.koiQmLi .n{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.koiQmLi .d{padding:4px 8px;color:#888;font-size:12px;border:none;background:transparent;cursor:pointer;font-family:inherit}
 .koiMomE{position:absolute;inset:0;background:#fff;z-index:1200;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s}
 .koiMomE.show{transform:translateX(0)}
 .koiMomNav{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#ededed;border-bottom:1px solid #d9d9d9;flex-shrink:0}
@@ -663,6 +579,32 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 .koiMomIms{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:8px}
 .koiMomIms img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
 .koiMomTxt{font-size:15px;color:#1a1a1a;line-height:1.5;padding-top:6px;word-break:break-word;min-width:0;min-height:24px}
+.koiQm{position:absolute;inset:0;z-index:243;background:linear-gradient(180deg,#3a3a3a 0%,#1a1a1a 100%);color:#fff;transform:translateX(100%);transition:transform .32s;display:flex;flex-direction:column;border-radius:30px;overflow:hidden}
+.koiQm.open{transform:translateX(0)}
+.koiQmNav{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;flex-shrink:0}
+.koiQmNav button{background:transparent;border:none;color:#fff;font-size:15px;cursor:pointer;padding:6px 4px;font-family:inherit}
+.koiQmNav .t{font-size:16px;font-weight:600}
+.koiQmBody{flex:1;display:flex;flex-direction:column;padding:0 22px 20px;overflow-y:auto}
+.koiQmBody::-webkit-scrollbar{display:none}
+.koiQmDisc{width:180px;height:180px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#4a4a4a,#0f0f0f);margin:14px auto 22px;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center}
+.koiQmDisc.play{animation:koiSpin 8s linear infinite}
+@keyframes koiSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.koiQmT{text-align:center;font-size:16px;font-weight:600;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 10px}
+.koiQmS{text-align:center;font-size:11px;color:#888;margin-bottom:20px}
+.koiQmProg{display:flex;align-items:center;gap:10px;font-size:10px;color:#888;margin-bottom:18px}
+.koiQmProg input{flex:1;-webkit-appearance:none;height:3px;background:#444;border-radius:2px;outline:none}
+.koiQmProg input::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:#fff}
+.koiQmCtrl{display:flex;justify-content:center;align-items:center;gap:28px;margin-bottom:22px}
+.koiQmCtrl button{background:transparent;border:none;color:#fff;cursor:pointer;padding:0}
+.koiQmCtrl .pl{width:60px;height:60px;border-radius:50%;background:#fff;color:#1a1a1a}
+.koiQmCtrl svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* ★ 修复：MP3上传按钮不拉伸、自适应居中 */
+.koiQmUp{padding:10px 30px;border:none;border-radius:10px;background:rgba(255,255,255,.16);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;margin:0 auto 16px;display:inline-block;align-self:center;min-width:160px}
+.koiQmL{display:flex;flex-direction:column;gap:2px;padding-bottom:8px}
+.koiQmLi{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:#ddd}
+.koiQmLi.active{background:rgba(49,194,124,.18);color:#31c27c}
+.koiQmLi .n{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.koiQmLi .d{padding:4px 8px;color:#888;font-size:12px;border:none;background:transparent;cursor:pointer;font-family:inherit}
 .wbs{position:absolute;inset:0;z-index:250;background:#f5f5f7;transform:translateX(100%);transition:transform .3s;display:flex;flex-direction:column;border-radius:30px;overflow:hidden}
 .wbs.open{transform:translateX(0)}
 .wbs-n{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid #e5e5e7;position:relative;flex-shrink:0}
@@ -824,7 +766,7 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 <div class="wx-nav"><button class="wx-home-back" data-wx-exit><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg><span>返回</span></button><span class="wx-nav-title">发现</span></div>
 <div class="wx-discover-list">
 <div class="wx-me-gap"></div>
-<div class="wx-discover-item" id="wxMomentsEntry"><span class="wx-discover-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg></span><span class="wx-discover-name">朋友圈</span><span class="wx-moments-dot" id="wxMomentsDot" style="display:none"></span><span class="wx-discover-arrow">›</span></div>
+<div class="wx-discover-item" id="wxMomentsEntry"><span class="wx-discover-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg></span><span class="wx-discover-name">朋友圈</span><span class="wx-moments-dot" id="wxMomentsDot"></span><span class="wx-discover-arrow">›</span></div>
 <div class="wx-me-gap"></div>
 <div class="wx-discover-item"><span class="wx-discover-icon"><svg viewBox="0 0 24 24"><path d="M3 8V5a2 2 0 0 1 2-2h3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3M3 12h18"/></svg></span><span class="wx-discover-name">扫一扫</span><span class="wx-discover-arrow">›</span></div>
 <div class="wx-discover-item"><span class="wx-discover-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span><span class="wx-discover-name">搜一搜</span><span class="wx-discover-arrow">›</span></div>
@@ -956,7 +898,7 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 </div>
 
 <div class="wx-view wx-family-view" id="wxFamilyView">
-<div class="wx-nav"><button class="wx-nav-back" id="wxFamilyBack"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button><span class="wx-nav-title">亲属卡</span><span class="wx-nav-right"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><circle cx="19" cy="12" r="1.2" fill="currentColor"/></svg></span></div>
+<div class="wx-nav"><button class="wx-nav-back" id="wxFamilyBack"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button><span class="wx-nav-title">亲属卡</span></div>
 <div class="wx-family-body">
 <div class="wx-family-section" id="wxFamilyReceivedSection" style="display:none"><div class="wx-family-section-title">我收到的亲属卡</div><div id="wxFamilyReceivedList"></div></div>
 <div class="wx-family-section" id="wxFamilyGivenSection" style="display:none"><div class="wx-family-section-title">我赠送的亲属卡</div><div id="wxFamilyGivenList"></div></div>
@@ -1019,7 +961,6 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 <button class="cancel" id="wxMomentCommentCancel">取消</button>
 <button id="wxMomentCommentSend">发送</button>
 </div>
-<div class="wx-moment-notice" id="wxMomentNotice"></div>
 </div>
 
 <div class="contact-panel" id="contactPanel">
@@ -1089,11 +1030,14 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 <input type="file" id="ct-docx-uploader" accept=".docx,.doc,.txt,.md" style="display:none">
 
 <script>
+/* ============================================================
+   主脚本：桌面、微信、联系人、API、美化App
+   ============================================================ */
 window.addEventListener('DOMContentLoaded',function(){
 try{
 function setFS(on,p){document.body.classList.toggle('fs-mode',!!on);if(p){try{localStorage.setItem('fullscreen-mode',on?'1':'0')}catch(e){}}}
 try{if(localStorage.getItem('fullscreen-mode')==='1')document.body.classList.add('fs-mode')}catch(e){}
-(function(){var s=window.navigator.standalone===true||(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||(window.matchMedia&&window.matchMedia('(display-mode: fullscreen)').matches);if(s){document.body.classList.add('fs-mode');document.documentElement.style.height='100%';document.body.style.height='100%'}})();
+(function(){var s=window.navigator.standalone===true||(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches);if(s){document.body.classList.add('fs-mode');document.documentElement.style.height='100%';document.body.style.height='100%'}})();
 function $id(i){return document.getElementById(i)}
 function $all(s){return document.querySelectorAll(s)}
 function getAI(){return{apiUrl:(localStorage.getItem('ai-api-url')||'').replace(/\/+$/,''),apiKey:localStorage.getItem('ai-api-key')||'',model:localStorage.getItem('ai-model')||'',temperature:parseFloat(localStorage.getItem('ai-temperature')||'1')}}
@@ -1102,31 +1046,11 @@ $all('[data-editable="true"]').forEach(function(el,index){var key='editable-text
 var uploadTriggers=$all('[data-upload="true"]');
 var fileInput=$id('file-uploader');
 var currentTarget=null,currentUploadKey=null;
-function renderImage(c,url){
-  var img=c.querySelector('img');
-  if(!img){
-    img=document.createElement('img');
-    img.className='uploaded-img';
-    var ph=c.querySelector('.placeholder-img');
-    if(ph)ph.remove();
-    c.insertBefore(img,c.firstChild);
-  }
-  img.src=url;
-}
+function renderImage(c,url){var img=c.querySelector('img');if(!img){img=document.createElement('img');img.className='uploaded-img';var ph=c.querySelector('.placeholder-img');if(ph)ph.remove();c.insertBefore(img,c.firstChild)}img.src=url}
 uploadTriggers.forEach(function(t,i){var key='uploaded-img-'+i;var saved=localStorage.getItem(key);if(saved)renderImage(t,saved);t.addEventListener('click',function(e){e.stopPropagation();currentTarget=t;currentUploadKey=key;fileInput.click()})});
-if(fileInput){fileInput.addEventListener('change',function(e){var f=e.target.files[0];if(!f||!currentTarget)return;var r=new FileReader();r.onload=function(ev){
-  renderImage(currentTarget,ev.target.result);
-  try{
-    localStorage.setItem(currentUploadKey,ev.target.result);
-    if(currentUploadKey==='uploaded-img-0'){
-      try{localStorage.setItem('wx-me-avatar',ev.target.result)}catch(err2){}
-      try{window.dispatchEvent(new Event('koi-avatar-change'))}catch(err2){}
-    }
-  }catch(e){}
-  fileInput.value='';
-};r.readAsDataURL(f)})}
+if(fileInput){fileInput.addEventListener('change',function(e){var f=e.target.files[0];if(!f||!currentTarget)return;var r=new FileReader();r.onload=function(ev){renderImage(currentTarget,ev.target.result);try{localStorage.setItem(currentUploadKey,ev.target.result);if(currentUploadKey==='uploaded-img-0'){try{localStorage.setItem('wx-me-avatar',ev.target.result)}catch(er2){}try{window.dispatchEvent(new Event('koi-avatar-change'))}catch(er2){}}}catch(e){}fileInput.value=''};r.readAsDataURL(f)})}
 
-// 美化App
+/* ===== 美化App ===== */
 (function(){
 var panel=$id('beautifyPanel'),entry=$id('beautifyEntry'),back=$id('bpBack'),listEl=$id('bpAppList'),previewEl=$id('bpWallpaperPreview'),wallpaperLayer=$id('wallpaperLayer'),pickWp=$id('bpPickWallpaper'),resetWp=$id('bpResetWallpaper'),iconUp=$id('bp-icon-uploader'),wpUp=$id('bp-wallpaper-uploader'),fsToggle=$id('bpFullscreenToggle');
 if(!panel||!entry)return;
@@ -1158,7 +1082,7 @@ entry.addEventListener('click',function(){panel.classList.add('open')});
 back.addEventListener('click',function(){panel.classList.remove('open')});
 })();
 
-// 微信
+/* ===== 微信 ===== */
 (function(){
 var entry=$id('wechatEntry'),panel=$id('wechatPanel');if(!entry||!panel)return;
 var chatListEl=$id('wxChatList'),contactsListEl=$id('wxContactsList'),chatViewEl=$id('wxChatView'),msgListEl=$id('wxMsgList'),chatNameEl=$id('wxChatName'),backBtn=$id('wxBack'),inputEl=$id('wxInput'),voiceBtn=$id('wxVoiceBtn'),faceBtn=$id('wxFaceBtn'),plusBtn=$id('wxPlusBtn'),emojiPanel=$id('wxEmojiPanel'),plusPanel=$id('wxPlusPanel'),plusPages=$id('wxPlusPages'),plusDot0=$id('wxPlusDot0'),plusDot1=$id('wxPlusDot1');
@@ -1297,7 +1221,7 @@ bindDbl(meId,'wx-me-id');bindDbl(meName,'wx-me-name');
 renderChats();renderContacts();
 })();
 
-// 联系人
+/* ===== 联系人 ===== */
 (function(){
 var entry=$id('contactEntry'),panel=$id('contactPanel');if(!entry||!panel)return;
 var backBtn=$id('ctBack'),addBtn=$id('ctAddBtn'),uploadBtn=$id('ctUploadBtn'),listView=$id('ctListView'),editView=$id('ctEditView'),listEl=$id('ctList'),emptyEl=$id('ctEmpty'),titleEl=$id('ctTitle'),avatarUp=$id('ctAvatarUploader'),nameInput=$id('ctNameInput'),settingInput=$id('ctSettingInput'),relationInput=$id('ctRelationInput'),saveBtn=$id('ctSaveBtn'),deleteBtn=$id('ctDeleteBtn'),confirmMask=$id('ctConfirmMask'),confirmCancel=$id('ctConfirmCancel'),confirmDelete=$id('ctConfirmDelete'),avatarFile=$id('ct-avatar-uploader'),docxInput=$id('ct-docx-uploader'),toastEl=$id('ctToast');
@@ -1325,7 +1249,7 @@ if(backBtn)backBtn.addEventListener('click',function(){if(editView.classList.con
 entry.addEventListener('click',function(){loadC();renderList();showList();panel.classList.add('open')});
 })();
 
-// 设置
+/* ===== 设置 ===== */
 (function(){
 var entry=$id('settingsEntry'),panel=$id('settingsPanel');if(!entry||!panel)return;
 var backBtn=$id('stBack'),apiUrlInput=$id('stApiUrl'),apiKeyInput=$id('stApiKey'),fetchBtn=$id('stFetchModelsBtn'),testBtn=$id('stTestModelBtn'),modelSelect=$id('stModelSelect'),tempSlider=$id('stTempSlider'),tempValue=$id('stTempValue'),saveBtn=$id('stSaveBtn'),presetNameInput=$id('stPresetName'),savePresetBtn=$id('stSavePresetBtn'),presetListEl=$id('stPresetList');
@@ -1351,7 +1275,9 @@ backBtn.addEventListener('click',function(){panel.classList.remove('open')});
 </script>
 
 <script>
-/* ============ 扩展功能：QQ音乐 + 世界书 + AI朋友圈 + 备份 ============ */
+/* ============================================================
+   扩展脚本：QQ音乐 + 朋友圈（完整）+ AI + 世界书注入 + 备份
+   ============================================================ */
 (function(){
 if(window.__koiX)return;window.__koiX=true;
 function $id(i){return document.getElementById(i)}
@@ -1365,7 +1291,7 @@ function meAv(){return localStorage.getItem('uploaded-img-0')||localStorage.getI
 function getArr(){return lj('wx-moments',[])}
 function saveArr(a){ls('wx-moments',a)}
 
-/* ================= QQ音乐 ================= */
+/* ============ QQ音乐 ============ */
 (function qmInit(){
 var P=document.querySelector('.phone-container');
 if(!P)return;
@@ -1395,7 +1321,7 @@ if(qmEntry){qmEntry.addEventListener('click',function(e){e.stopPropagation();qm.
 renderL();update();
 })();
 
-/* ================= 朋友圈数据层 ================= */
+/* ============ 朋友圈数据层 ============ */
 function getMomentByKey(key){var a=getArr();for(var i=0;i<a.length;i++)if(a[i].id===key)return a[i];return null}
 function updateMoment(key,fn){var a=getArr();for(var i=0;i<a.length;i++){if(a[i].id===key){fn(a[i]);break}}saveArr(a)}
 function getNotifications(){return lj('wx-moments-notifications',[])}
@@ -1404,7 +1330,7 @@ function pushNotification(n){var a=getNotifications();a.unshift(n);saveNotificat
 function updateMomentsDot(){var dot=document.getElementById('wxMomentsDot');if(!dot)return;var ns=getNotifications();var unread=ns.filter(function(n){return !n.read}).length;dot.style.display=unread>0?'block':'none'}
 function getMyName(){return localStorage.getItem('wx-me-name')||'Koi Buono'}
 
-/* ================= 朋友圈评论输入框 ================= */
+/* ============ 朋友圈：评论输入框 ============ */
 var momentCommentTarget=null;
 function initMomentCommentBar(){
 var bar=document.getElementById('wxMomentCommentInput');if(!bar)return;
@@ -1413,29 +1339,23 @@ document.getElementById('wxMomentCommentSend').addEventListener('click',function
   var txt=document.getElementById('wxMomentCommentText').value.trim();
   if(!txt||!momentCommentTarget){return}
   var key=momentCommentTarget;
-  updateMoment(key,function(m){
-    if(!m.comments)m.comments=[];
-    m.comments.push({id:'c_'+Date.now(),authorId:'me',authorName:getMyName(),text:txt,time:Date.now()});
-  });
+  updateMoment(key,function(m){if(!m.comments)m.comments=[];m.comments.push({id:'c_'+Date.now(),authorId:'me',authorName:getMyName(),text:txt,time:Date.now()})});
   document.getElementById('wxMomentCommentText').value='';
-  bar.classList.remove('show');
-  momentCommentTarget=null;
+  bar.classList.remove('show');momentCommentTarget=null;
   renderMomentsList();
   setTimeout(function(){triggerCharReplyToComment(key,txt)},800);
 });
 document.getElementById('wxMomentCommentText').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();document.getElementById('wxMomentCommentSend').click()}});
 }
 
-/* ================= 渲染单条朋友圈 ================= */
+/* ============ 渲染单条朋友圈 ============ */
 function renderOneMoment(m){
 var item=document.createElement('div');item.className='wx-moment-item';item.setAttribute('data-key',m.id);
-var date=document.createElement('div');date.className='wx-moment-date';
-date.innerHTML='<div class="wx-moment-day">'+(m.day||'1')+'</div><div class="wx-moment-month">'+(m.month||'')+'</div>';
-item.appendChild(date);
+var date=document.createElement('div');date.className='wx-moment-date';date.innerHTML='<div class="wx-moment-day">'+(m.day||'1')+'</div><div class="wx-moment-month">'+(m.month||'')+'</div>';item.appendChild(date);
 var content=document.createElement('div');content.style.cssText='flex:1;display:flex;flex-direction:column;min-width:0';
 var an=m.authorName||'我';var aa=m.authorAvatar||'';
 var ar=document.createElement('div');ar.className='koiMomA';
-ar.innerHTML='<div class="koiMomAAv">'+(aa?'<img src="'+aa+'">':(an.charAt(0)))+'</div><span class="koiMomAN">'+an+'</span>';
+ar.innerHTML='<div class="koiMomAAv">'+(aa?'<img src="'+aa+'">':an.charAt(0))+'</div><span class="koiMomAN">'+an+'</span>';
 content.appendChild(ar);
 var imgs=m.images&&m.images.length?m.images:(m.image?[m.image]:[]);
 if(imgs.length===1){
@@ -1446,12 +1366,8 @@ var tx=document.createElement('div');tx.className='koiMomTxt';tx.textContent=m.t
 row.appendChild(ib);row.appendChild(tx);content.appendChild(row);
 }else if(imgs.length>1){
 if(m.text){var t2=document.createElement('div');t2.className='koiMomTxt';t2.textContent=m.text;content.appendChild(t2)}
-var grid=document.createElement('div');grid.className='koiMomIms';
-imgs.forEach(function(s){var im2=document.createElement('img');im2.src=s;grid.appendChild(im2)});
-content.appendChild(grid);
-}else{
-var t3=document.createElement('div');t3.className='koiMomTxt';t3.textContent=m.text||'';content.appendChild(t3);
-}
+var grid=document.createElement('div');grid.className='koiMomIms';imgs.forEach(function(s){var im2=document.createElement('img');im2.src=s;grid.appendChild(im2)});content.appendChild(grid);
+}else{var t3=document.createElement('div');t3.className='koiMomTxt';t3.textContent=m.text||'';content.appendChild(t3)}
 var parts=[];
 if(m.visibleName&&m.visibleName!=='公开')parts.push(m.visibleName);
 if(m.at&&m.at.length)parts.push('@'+m.at.map(function(a){return a.name}).join(' '));
@@ -1460,15 +1376,12 @@ var actions=document.createElement('div');actions.className='wx-moment-actions';
 var isLiked=(m.likes||[]).some(function(l){return l.id==='me'});
 var likeBtn=document.createElement('button');likeBtn.className='wx-moment-action-btn'+(isLiked?' liked':'');
 likeBtn.innerHTML='<svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg><span>'+(isLiked?'已赞':'赞')+'</span>';
-likeBtn.addEventListener('click',function(e){e.stopPropagation();toggleLike(m.id)});
-actions.appendChild(likeBtn);
+likeBtn.addEventListener('click',function(e){e.stopPropagation();toggleLike(m.id)});actions.appendChild(likeBtn);
 var cmtBtn=document.createElement('button');cmtBtn.className='wx-moment-action-btn';
 cmtBtn.innerHTML='<svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span>评论</span>';
-cmtBtn.addEventListener('click',function(e){e.stopPropagation();openCommentBar(m.id)});
-actions.appendChild(cmtBtn);
+cmtBtn.addEventListener('click',function(e){e.stopPropagation();openCommentBar(m.id)});actions.appendChild(cmtBtn);
 content.appendChild(actions);
-var likes=(m.likes||[]);
-var comments=(m.comments||[]);
+var likes=(m.likes||[]);var comments=(m.comments||[]);
 if(likes.length||comments.length){
 var social=document.createElement('div');social.className='wx-moment-social';
 if(likes.length){
@@ -1479,11 +1392,7 @@ social.appendChild(lk);
 }
 if(comments.length){
 var cm=document.createElement('div');cm.className='wx-moment-comments';
-comments.forEach(function(c){
-var line=document.createElement('div');line.className='wx-moment-comment';
-line.innerHTML='<span class="cm-name">'+(c.authorName||'')+'</span>：'+(c.text||'');
-cm.appendChild(line);
-});
+comments.forEach(function(c){var line=document.createElement('div');line.className='wx-moment-comment';line.innerHTML='<span class="cm-name">'+(c.authorName||'')+'</span>：'+(c.text||'');cm.appendChild(line)});
 social.appendChild(cm);
 }
 content.appendChild(social);
@@ -1520,7 +1429,7 @@ var bar=document.getElementById('wxMomentCommentInput');
 if(bar){bar.classList.add('show');setTimeout(function(){document.getElementById('wxMomentCommentText').focus()},100)}
 }
 
-/* ================= AI 调用 ================= */
+/* ============ AI 调用 ============ */
 function getApiCfg(){return{apiUrl:(localStorage.getItem('ai-api-url')||'').replace(/\/+$/,''),apiKey:localStorage.getItem('ai-api-key')||'',model:localStorage.getItem('ai-model')||'',temperature:parseFloat(localStorage.getItem('ai-temperature')||'1')}}
 async function callAI(messages,maxTokens){
 var cfg=getApiCfg();
@@ -1557,7 +1466,7 @@ return !!r.post;
 }
 async function charGenerateMoment(char){
 try{
-var sys=buildCharPrompt(char)+'\n现在你要发一条朋友圈。\n要求：\n1. 内容必须符合人设的语气、用词、性格。\n2. 长度 20-120 字，可以是一句话或几句话。\n3. 可以是情绪、日常、感悟、吐槽等。\n4. 是否 @ 用户由你决定，如果要 @，用"@'+getMyName()+'"的格式。\n5. 只输出 JSON：{"text":"朋友圈内容","at_user":true/false}\n不要输出其他内容。';
+var sys=buildCharPrompt(char)+'\n现在你要发一条朋友圈。\n要求：\n1. 内容必须符合人设的语气、用词、性格。\n2. 长度 20-120 字。\n3. 可以是情绪、日常、感悟、吐槽等。\n4. 是否 @ 用户由你决定，如果要 @，用"@'+getMyName()+'"的格式。\n5. 只输出 JSON：{"text":"朋友圈内容","at_user":true/false}\n不要输出其他内容。';
 var reply=await callAI([{role:'system',content:sys},{role:'user',content:'请发一条朋友圈。'}],200);
 var m=reply.match(/\{[\s\S]*\}/);
 if(!m)return null;
@@ -1575,24 +1484,14 @@ var at=[];
 if(content.atUser)at.push({id:'me',name:getMyName()});
 var arr=getArr();
 var postId='m_'+Date.now()+'_'+Math.floor(Math.random()*999);
-arr.unshift({
-  id:postId,
-  day:String(now.getDate()),
-  month:mo[now.getMonth()],
-  text:content.text,
-  image:'',images:[],
-  authorId:char.id,
-  authorName:char.name||'未命名',
-  authorAvatar:char.avatar||'',
-  visible:'public',visibleName:'公开',
-  at:at,likes:[],comments:[],
-  time:now.getTime(),aiGenerated:true
-});
+arr.unshift({id:postId,day:String(now.getDate()),month:mo[now.getMonth()],text:content.text,image:'',images:[],authorId:char.id,authorName:char.name||'未命名',authorAvatar:char.avatar||'',visible:'public',visibleName:'公开',at:at,likes:[],comments:[],time:now.getTime(),aiGenerated:true});
 saveArr(arr);
 localStorage.setItem('wx-moments-last-post-'+char.id,String(now.getTime()));
 appendMomentsMemory(char.id,{type:'post',text:content.text,at:at,time:now.getTime()});
 if(content.atUser)pushNotification({type:'at',fromId:char.id,fromName:char.name,postId:postId,text:content.text,time:now.getTime(),read:false});
 updateMomentsDot();
+// 如果当前正在看朋友圈，刷新列表
+if(document.getElementById('wxMomentsView')&&document.getElementById('wxMomentsView').classList.contains('active'))renderMomentsList();
 return true;
 }
 async function charCommentUserMoment(char,post){
@@ -1631,15 +1530,12 @@ var cs=addedIds().map(function(id){return chars().find(function(c){return c.id==
 cs.forEach(function(c){
   if(Math.random()<0.5)return;
   setTimeout(function(){
-    updateMoment(momentId,function(mm){
-      if(!mm.likes)mm.likes=[];
-      if(!mm.likes.some(function(l){return l.id===c.id}))mm.likes.push({id:c.id,name:c.name||'未命名'});
-    });
+    updateMoment(momentId,function(mm){if(!mm.likes)mm.likes=[];if(!mm.likes.some(function(l){return l.id===c.id}))mm.likes.push({id:c.id,name:c.name||'未命名'})});
     pushNotification({type:'like',fromId:c.id,fromName:c.name,postId:momentId,time:Date.now(),read:false});
     renderMomentsList();
   },800+Math.random()*1500);
 });
-} else {
+}else{
 var c=chars().find(function(x){return x.id===m.authorId});
 if(!c)return;
 try{
@@ -1647,10 +1543,7 @@ try{
   var reply=await callAI([{role:'system',content:sys},{role:'user',content:'回复'}],60);
   var txt=(reply||'').trim().replace(/^["'「『]|["'」』]$/g,'');
   if(!txt)return;
-  updateMoment(momentId,function(mm){
-    if(!mm.comments)mm.comments=[];
-    mm.comments.push({id:'c_'+Date.now(),authorId:c.id,authorName:c.name,text:txt,time:Date.now()});
-  });
+  updateMoment(momentId,function(mm){if(!mm.comments)mm.comments=[];mm.comments.push({id:'c_'+Date.now(),authorId:c.id,authorName:c.name,text:txt,time:Date.now()})});
   renderMomentsList();
 }catch(e){}
 }
@@ -1667,16 +1560,13 @@ for(var i=0;i<cs.length;i++){
     var reply=await callAI([{role:'system',content:sys},{role:'user',content:'回复'}],60);
     var txt=(reply||'').trim().replace(/^["'「『]|["'」』]$/g,'');
     if(!txt)continue;
-    updateMoment(momentId,function(mm){
-      if(!mm.comments)mm.comments=[];
-      mm.comments.push({id:'c_'+Date.now()+'_'+i,authorId:c.id,authorName:c.name,text:txt,time:Date.now()});
-    });
+    updateMoment(momentId,function(mm){if(!mm.comments)mm.comments=[];mm.comments.push({id:'c_'+Date.now()+'_'+i,authorId:c.id,authorName:c.name,text:txt,time:Date.now()})});
     pushNotification({type:'comment',fromId:c.id,fromName:c.name,postId:momentId,text:txt,time:Date.now(),read:false});
     renderMomentsList();
   }catch(e){}
   break;
 }
-} else {
+}else{
 var c=chars().find(function(x){return x.id===m.authorId});
 if(!c)return;
 try{
@@ -1684,10 +1574,7 @@ try{
   var reply=await callAI([{role:'system',content:sys},{role:'user',content:'回复'}],60);
   var txt=(reply||'').trim().replace(/^["'「『]|["'」』]$/g,'');
   if(!txt)return;
-  updateMoment(momentId,function(mm){
-    if(!mm.comments)mm.comments=[];
-    mm.comments.push({id:'c_'+Date.now(),authorId:c.id,authorName:c.name,text:txt,time:Date.now()});
-  });
+  updateMoment(momentId,function(mm){if(!mm.comments)mm.comments=[];mm.comments.push({id:'c_'+Date.now(),authorId:c.id,authorName:c.name,text:txt,time:Date.now()})});
   renderMomentsList();
 }catch(e){}
 }
@@ -1697,32 +1584,24 @@ var cs=addedIds().map(function(id){return chars().find(function(c){return c.id==
 cs.forEach(function(c){
 if(Math.random()<0.6){
   setTimeout(function(){
-    updateMoment(post.id,function(mm){
-      if(!mm.likes)mm.likes=[];
-      if(!mm.likes.some(function(l){return l.id===c.id}))mm.likes.push({id:c.id,name:c.name||'未命名'});
-    });
+    updateMoment(post.id,function(mm){if(!mm.likes)mm.likes=[];if(!mm.likes.some(function(l){return l.id===c.id}))mm.likes.push({id:c.id,name:c.name||'未命名'})});
     pushNotification({type:'like',fromId:c.id,fromName:c.name,postId:post.id,time:Date.now(),read:false});
-    renderMomentsList();
-    updateMomentsDot();
+    renderMomentsList();updateMomentsDot();
   },1500+Math.random()*2000);
 }
 if(Math.random()<0.35){
   setTimeout(async function(){
     var txt=await charCommentUserMoment(c,post);
     if(!txt)return;
-    updateMoment(post.id,function(mm){
-      if(!mm.comments)mm.comments=[];
-      mm.comments.push({id:'c_'+Date.now(),authorId:c.id,authorName:c.name,text:txt,time:Date.now()});
-    });
+    updateMoment(post.id,function(mm){if(!mm.comments)mm.comments=[];mm.comments.push({id:'c_'+Date.now(),authorId:c.id,authorName:c.name,text:txt,time:Date.now()})});
     pushNotification({type:'comment',fromId:c.id,fromName:c.name,postId:post.id,text:txt,time:Date.now(),read:false});
-    renderMomentsList();
-    updateMomentsDot();
+    renderMomentsList();updateMomentsDot();
   },2500+Math.random()*3000);
 }
 });
 }
 
-/* ================= 朋友圈记忆注入（覆写 fetch） ================= */
+/* ============ 朋友圈记忆注入（覆写 fetch） ============ */
 var _f=window.fetch;
 window.fetch=function(){
 var args=arguments;
@@ -1757,17 +1636,12 @@ if(typeof url==='string'&&url.indexOf('/chat/completions')>=0&&args[1]&&args[1].
 return _f.apply(this,args);
 };
 
-/* ================= 朋友圈 UI 初始化 ================= */
+/* ============ 打开朋友圈视图 ============ */
 function openMomentsView(silent){
 var view=document.getElementById('wxMomentsView');if(!view)return;
 var N=document.getElementById('wxMomentsMeName'),A=document.getElementById('wxMomentsMeAvatar');
 if(N)N.textContent=getMyName();
-if(A){
-  A.innerHTML='';
-  var av=meAv();
-  if(av){var im=document.createElement('img');im.src=av;A.appendChild(im)}
-  else A.textContent=getMyName().charAt(0);
-}
+if(A){A.innerHTML='';var av=meAv();if(av){var im=document.createElement('img');im.src=av;A.appendChild(im)}else A.textContent=getMyName().charAt(0)}
 var cover=document.getElementById('wxMomentsCover');
 if(cover){var sc=localStorage.getItem('wx-moments-cover');if(sc){cover.style.backgroundImage='url("'+sc+'")';cover.style.backgroundSize='cover';cover.style.backgroundPosition='center'}}
 renderMomentsList();
@@ -1775,15 +1649,168 @@ var ns=getNotifications();ns.forEach(function(n){n.read=true});saveNotifications
 if(!silent)view.classList.add('active');
 }
 
+/* ============ 朋友圈：完整初始化（含发布流程） ============ */
 function momInit(){
 initMomentCommentBar();
 renderMomentsList();
+
+var wechatPanel=document.getElementById('wechatPanel');
+if(!wechatPanel)return;
+
+// ===== 1. 状态 =====
+var state={images:[],visible:'public',visName:'公开',list:[],at:[],mode:'text'};
+
+// ===== 2. 模式选择菜单（点击 + 弹出） =====
+var modeEl=document.createElement('div');modeEl.className='koiM';modeEl.id='koiMomMode';
+modeEl.innerHTML='<div class="koiM-s"><button class="koiM-b" data-m="text">发纯文字</button><button class="koiM-b" data-m="image">发图文</button><button class="koiM-b" data-m="cancel" style="color:#666">取消</button></div>';
+wechatPanel.appendChild(modeEl);
+modeEl.addEventListener('click',function(e){if(e.target===modeEl)modeEl.classList.remove('show')});
+
+// ===== 3. 编辑器 =====
+var ed=document.createElement('div');ed.className='koiMomE';ed.id='koiMomE';
+ed.innerHTML='<div class="koiMomNav"><button id="koiMomC">取消</button><span class="t">发表</span><button class="pub" id="koiMomPub" disabled>发表</button></div><div class="koiMomBody"><textarea class="koiMomTa" id="koiMomTa" placeholder="这一刻的想法..."></textarea><div class="koiMomImgs" id="koiMomImgs"></div></div><div class="koiMomBar"><div class="koiMomBarItem" id="koiMomVis"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="3"/></svg><span id="koiMomVlab">公开</span></div><div class="koiMomBarItem" id="koiMomAt"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></svg><span id="koiMomAlab">提醒谁看</span></div></div>';
+wechatPanel.appendChild(ed);
+
+var imgPicker=document.createElement('input');imgPicker.type='file';imgPicker.accept='image/*';imgPicker.multiple=true;imgPicker.style.display='none';document.body.appendChild(imgPicker);
+var ta=document.getElementById('koiMomTa'),pubBtn=document.getElementById('koiMomPub'),vlab=document.getElementById('koiMomVlab'),alab=document.getElementById('koiMomAlab'),imgsEl=document.getElementById('koiMomImgs');
+
+function renderImgs(){
+imgsEl.innerHTML='';
+if(state.mode!=='image')return;
+state.images.forEach(function(src,i){
+  var box=document.createElement('div');box.className='koiMomImg';
+  var im=document.createElement('img');im.src=src;box.appendChild(im);
+  var d=document.createElement('button');d.className='koiMomImgDel';d.textContent='×';
+  d.addEventListener('click',function(e){e.stopPropagation();state.images.splice(i,1);renderImgs();updPub()});
+  box.appendChild(d);imgsEl.appendChild(box);
+});
+if(state.images.length<9){
+  var a=document.createElement('div');a.className='koiMomImg koiMomImgAdd';a.textContent='＋';
+  a.addEventListener('click',function(){imgPicker.click()});
+  imgsEl.appendChild(a);
+}
+}
+imgPicker.addEventListener('change',function(e){
+var fs=Array.prototype.slice.call(e.target.files||[]).slice(0,9-state.images.length);
+fs.forEach(function(f){var r=new FileReader();r.onload=function(ev){state.images.push(ev.target.result);renderImgs();updPub()};r.readAsDataURL(f)});
+imgPicker.value='';
+});
+function updPub(){var ht=ta.value.trim().length>0;var hi=state.mode==='image'&&state.images.length>0;pubBtn.disabled=!(ht||hi)}
+ta.addEventListener('input',updPub);
+
+// ===== 4. 可见范围面板 =====
+var vis=document.createElement('div');vis.className='koiPick';vis.id='koiMomVisPanel';
+vis.innerHTML='<div class="koiPickNav"><button id="koiVisBack">取消</button><span class="t">谁可以看</span><span style="width:44px"></span></div><div class="koiPickBody" id="koiVisBody"></div>';
+wechatPanel.appendChild(vis);
+function renderVis(){
+var b=vis.querySelector('#koiVisBody');b.innerHTML='';
+[{v:'public',n:'公开',d:'所有人可见'},{v:'private',n:'私密',d:'仅自己可见'},{v:'partial',n:'部分可见',d:'选中的朋友可见'},{v:'exclude',n:'不给谁看',d:'选中的朋友不可见'}].forEach(function(o){
+  var r=document.createElement('div');r.className='koiRadio'+(o.v===state.visible?' selected':'');
+  r.innerHTML='<div class="koiRadioM"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div><div><div class="koiRadioN">'+o.n+'</div><div class="koiRadioD">'+o.d+'</div></div>';
+  r.addEventListener('click',function(){
+    if(o.v==='public'||o.v==='private'){state.visible=o.v;state.visName=o.n;state.list=[];vlab.textContent=state.visName;vis.classList.remove('show')}
+    else{state.visible=o.v;state.visName=o.n;vis.classList.remove('show');openPersons(o.v)}
+  });
+  b.appendChild(r);
+});
+}
+vis.querySelector('#koiVisBack').addEventListener('click',function(){vis.classList.remove('show')});
+
+// ===== 5. 部分可见的人员选择 =====
+var pp=document.createElement('div');pp.className='koiPick';pp.id='koiMomPersonPanel';
+pp.innerHTML='<div class="koiPickNav"><button id="koiPerBack">返回</button><span class="t" id="koiPerTitle">选择联系人</span><button class="done" id="koiPerDone">完成</button></div><div class="koiPickBody" id="koiPerBody"></div>';
+wechatPanel.appendChild(pp);
+var tempList=[];
+function openPersons(m){tempList=state.list.slice();pp.querySelector('#koiPerTitle').textContent=(m==='partial')?'部分可见':'不给谁看';renderPersons();pp.classList.add('show')}
+function renderPersons(){
+var b=pp.querySelector('#koiPerBody');b.innerHTML='';
+var cs=chars();
+if(!cs.length){b.innerHTML='<div style="text-align:center;color:#bbb;padding:40px">暂无联系人</div>';return}
+cs.forEach(function(c){
+  var sel=tempList.some(function(x){return x.id===c.id});
+  var p=document.createElement('div');p.className='koiPson';
+  var av=document.createElement('div');av.className='koiPsonAv';
+  if(c.avatar){var im=document.createElement('img');im.src=c.avatar;av.appendChild(im)}else av.textContent=(c.name||'?').charAt(0);
+  var nm=document.createElement('div');nm.className='koiPsonN';nm.textContent=c.name||'未命名';
+  var ck=document.createElement('div');ck.className='koiPsonCk'+(sel?' selected':'');ck.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';
+  p.appendChild(av);p.appendChild(nm);p.appendChild(ck);
+  p.addEventListener('click',function(){var i=tempList.findIndex(function(x){return x.id===c.id});if(i>=0)tempList.splice(i,1);else tempList.push({id:c.id,name:c.name});renderPersons()});
+  b.appendChild(p);
+});
+}
+pp.querySelector('#koiPerBack').addEventListener('click',function(){pp.classList.remove('show')});
+pp.querySelector('#koiPerDone').addEventListener('click',function(){state.list=tempList.slice();vlab.textContent=state.visName+(state.list.length?'('+state.list.length+'人)':'');pp.classList.remove('show')});
+
+// ===== 6. @ 提醒面板 =====
+var at=document.createElement('div');at.className='koiPick';at.id='koiMomAtPanel';
+at.innerHTML='<div class="koiPickNav"><button id="koiAtBack">取消</button><span class="t">提醒谁看</span><button class="done" id="koiAtDone">完成</button></div><div class="koiPickBody" id="koiAtBody"></div>';
+wechatPanel.appendChild(at);
+var tempAt=[];
+function renderAt(){
+var b=at.querySelector('#koiAtBody');b.innerHTML='';
+var cs=chars();
+if(!cs.length){b.innerHTML='<div style="text-align:center;color:#bbb;padding:40px">暂无联系人</div>';return}
+cs.forEach(function(c){
+  var sel=tempAt.some(function(x){return x.id===c.id});
+  var p=document.createElement('div');p.className='koiPson';
+  var av=document.createElement('div');av.className='koiPsonAv';
+  if(c.avatar){var im=document.createElement('img');im.src=c.avatar;av.appendChild(im)}else av.textContent=(c.name||'?').charAt(0);
+  var nm=document.createElement('div');nm.className='koiPsonN';nm.textContent=c.name||'未命名';
+  var ck=document.createElement('div');ck.className='koiPsonCk'+(sel?' selected':'');ck.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';
+  p.appendChild(av);p.appendChild(nm);p.appendChild(ck);
+  p.addEventListener('click',function(){var i=tempAt.findIndex(function(x){return x.id===c.id});if(i>=0)tempAt.splice(i,1);else tempAt.push({id:c.id,name:c.name});renderAt()});
+  b.appendChild(p);
+});
+}
+at.querySelector('#koiAtBack').addEventListener('click',function(){at.classList.remove('show')});
+at.querySelector('#koiAtDone').addEventListener('click',function(){state.at=tempAt.slice();alab.textContent=state.at.length?'提醒 '+state.at.length+' 人':'提醒谁看';at.classList.remove('show')});
+
+// ===== 7. 绑定 UI 事件 =====
+document.getElementById('koiMomVis').addEventListener('click',function(){renderVis();vis.classList.add('show')});
+document.getElementById('koiMomAt').addEventListener('click',function(){tempAt=state.at.slice();renderAt();at.classList.add('show')});
+
+function openEditor(m){
+state.mode=m;state.images=[];state.visible='public';state.visName='公开';state.list=[];state.at=[];
+ta.value='';vlab.textContent='公开';alab.textContent='提醒谁看';
+ed.querySelector('.t').textContent=m==='image'?'发表图文':'发表文字';
+renderImgs();updPub();ed.classList.add('show');
+setTimeout(function(){ta.focus()},300);
+}
+document.getElementById('koiMomC').addEventListener('click',function(){ed.classList.remove('show')});
+modeEl.querySelectorAll('.koiM-b').forEach(function(b){
+  b.addEventListener('click',function(){
+    var m=b.getAttribute('data-m');
+    modeEl.classList.remove('show');
+    if(m==='text'||m==='image')setTimeout(function(){openEditor(m)},200);
+  });
+});
+
+// ===== 8. 发表 =====
+pubBtn.addEventListener('click',function(){
+var text=ta.value.trim();
+var imgs=(state.mode==='image')?state.images.slice():[];
+if(!text&&!imgs.length)return;
+var arr=getArr();
+var now=new Date();
+var mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var post={id:'m_'+Date.now(),day:String(now.getDate()),month:mo[now.getMonth()],text:text,image:imgs[0]||'',images:imgs,authorId:'me',authorName:getMyName(),authorAvatar:meAv(),visible:state.visible,visibleName:state.visName,at:state.at.slice(),likes:[],comments:[],time:now.getTime()};
+arr.unshift(post);
+saveArr(arr);
+ed.classList.remove('show');
+renderMomentsList();
+// 通知 char 回应
+setTimeout(function(){onUserPostMoment(post)},500);
+});
+
+// ===== 9. 朋友圈入口 =====
 var entry=document.getElementById('wxMomentsEntry');
 if(entry){
   var nb=entry.cloneNode(true);
   entry.parentNode.replaceChild(nb,entry);
   nb.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();openMomentsView()});
 }
+
+// ===== 10. 封面 =====
 var cover=document.getElementById('wxMomentsCover');
 var coverUp=document.getElementById('wx-moments-cover-uploader');
 if(cover&&coverUp){
@@ -1799,28 +1826,40 @@ if(cover&&coverUp){
     r.readAsDataURL(f);
   });
 }
+
+// ===== 11. 返回 =====
 var backBtn=document.getElementById('wxMomentsBack');
 if(backBtn){backBtn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();document.getElementById('wxMomentsView').classList.remove('active')})}
+
+// ===== 12. + 按钮（关键修复） =====
+var addBtn=document.getElementById('wxMomentsAddBtn');
+if(addBtn){
+  addBtn.addEventListener('click',function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    modeEl.classList.add('show');
+  },true);
+}
+
+// ===== 13. 头像联动 =====
 window.addEventListener('koi-avatar-change',function(){openMomentsView(true)});
 }
 
-/* ================= 定时器：char 主动发朋友圈 ================= */
+/* ============ 定时器：char 主动发朋友圈 ============ */
 function tickCharMoments(){
 var cs=addedIds().map(function(id){return chars().find(function(c){return c.id===id})}).filter(Boolean);
 if(!cs.length)return;
 var c=cs[Math.floor(Math.random()*cs.length)];
-charShouldPost(c).then(function(yes){
-  if(yes)charPostMoment(c);
-}).catch(function(){});
+charShouldPost(c).then(function(yes){if(yes)charPostMoment(c)}).catch(function(){});
 }
 setInterval(tickCharMoments,8*60*1000);
-setTimeout(tickCharMoments,30*1000);
+setTimeout(tickCharMoments,20*1000);
 
 window.koiCharPostMoment=charPostMoment;
 window.koiOnUserPostMoment=onUserPostMoment;
 window.koiTriggerCharMoments=tickCharMoments;
 
-/* ================= 全部数据备份 ================= */
+/* ============ 全部数据备份 ============ */
 function backupInit(){
 var bpBody=document.querySelector('.bp-body');if(!bpBody)return;
 if($id('koiFullExport'))return;
@@ -1829,7 +1868,7 @@ var row=document.createElement('div');row.className='bp-btn-row';
 var e=document.createElement('button');e.className='bp-btn';e.id='koiFullExport';e.textContent='导出全部数据';
 var i2=document.createElement('button');i2.className='bp-btn bp-btn-ghost';i2.id='koiFullImport';i2.textContent='导入全部数据';
 row.appendChild(e);row.appendChild(i2);
-var tip=document.createElement('div');tip.className='bp-tip';tip.textContent='包含朋友圈、联系人、聊天记录、钱包、账单、AI 配置、壁纸美化、世界书、朋友圈记忆等全部数据。导入会覆盖当前数据并刷新页面。';
+var tip=document.createElement('div');tip.className='bp-tip';tip.textContent='包含朋友圈、联系人、聊天记录、钱包、账单、API 配置、壁纸美化、世界书、朋友圈记忆等全部数据。导入会覆盖当前数据并刷新页面。';
 bpBody.appendChild(t);bpBody.appendChild(row);bpBody.appendChild(tip);
 var inp=document.createElement('input');inp.type='file';inp.accept='.json,application/json';inp.style.display='none';document.body.appendChild(inp);
 e.addEventListener('click',function(){
@@ -1867,40 +1906,8 @@ backupInit();
 setTimeout(backupInit,300);
 setTimeout(backupInit,1000);
 
-/* 朋友圈菜单点击 bug 修复 */
-var modeEl=document.querySelector('.koiM');
-if(modeEl){
-  modeEl.querySelectorAll('.koiM-b').forEach(function(b){
-    b.addEventListener('click',function(){modeEl.classList.remove('show')},true);
-  });
-}
-// 修复：发帖成功后通知 char
-var pub=document.getElementById('koiMomPub');
-if(pub && !pub._koiNotified){
-  pub._koiNotified=true;
-  pub.addEventListener('click',function(){
-    setTimeout(function(){
-      var arr=[];
-      try{arr=JSON.parse(localStorage.getItem('wx-moments')||'[]')}catch(e){}
-      if(!Array.isArray(arr)||!arr.length)return;
-      var latest=arr[0];
-      if(!latest)return;
-      if(latest.authorId!=='me'&&latest.authorId)return;
-      if(window.koiOnUserPostMoment)window.koiOnUserPostMoment(latest);
-    },300);
-  },true);
-}
 // 初始化红点
-setTimeout(function(){
-  var dot=document.getElementById('wxMomentsDot');
-  if(dot){
-    try{
-      var ns=JSON.parse(localStorage.getItem('wx-moments-notifications')||'[]');
-      var unread=ns.filter(function(n){return !n.read}).length;
-      dot.style.display=unread>0?'block':'none';
-    }catch(e){}
-  }
-},2000);
+setTimeout(function(){updateMomentsDot()},2000);
 })();
 </script>
 
@@ -1908,16 +1915,13 @@ setTimeout(function(){
 /* ============ 世界书 ============ */
 (function(){
 if(window.__wbsLoaded)return;window.__wbsLoaded=true;
-
 function initWBS(){
 var P=document.querySelector('.phone-container');
 if(!P||document.getElementById('wbSimple'))return;
-
 var panel=document.createElement('div');
 panel.className='wbs';panel.id='wbSimple';
 panel.innerHTML='<div class="wbs-n"><button id="wbsBack">返回</button><span class="t" id="wbsTitle">世界书</span><button id="wbsAdd" style="font-size:24px;font-weight:300">＋</button></div><div class="wbs-b" id="wbsBody"></div>';
 P.appendChild(panel);
-
 var editP=document.createElement('div');
 editP.className='wbs';editP.id='wbSimpleEdit';editP.style.zIndex='251';
 editP.innerHTML='<div class="wbs-n"><button id="wbsEditC">取消</button><span class="t">编辑条目</span><button id="wbsEditS" style="background:#07c160;color:#fff;padding:6px 14px;border-radius:8px">保存</button></div><div class="wbs-b">'+
@@ -1928,14 +1932,11 @@ editP.innerHTML='<div class="wbs-n"><button id="wbsEditC">取消</button><span c
 '<button id="wbsEditDel" style="width:100%;padding:14px;background:#fff;border:none;border-radius:12px;color:#fa5151;font-size:15px;cursor:pointer">删除条目</button>'+
 '</div>';
 P.appendChild(editP);
-
 var fileIn=document.createElement('input');fileIn.type='file';fileIn.accept='.docx,.json,.txt';fileIn.multiple=true;fileIn.style.display='none';document.body.appendChild(fileIn);
-
 function getBooks(){try{var v=localStorage.getItem('world-books');if(v){var r=JSON.parse(v);if(Array.isArray(r))return r}}catch(e){}return[]}
 function saveBooks(a){try{localStorage.setItem('world-books',JSON.stringify(a))}catch(e){}}
 function uid(p){return p+'_'+Date.now()+'_'+Math.floor(Math.random()*999)}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-
 var st={bid:null,eid:null};
 function renderBooks(){
 var L=document.getElementById('wbsBody');L.innerHTML='';
@@ -2012,13 +2013,9 @@ var isD=/\.docx$/i.test(f.name);var isJ=/\.json$/i.test(f.name);
 var r=new FileReader();
 r.onload=function(ev){
 try{
-if(isD){
-if(window.mammoth){mammoth.extractRawText({arrayBuffer:ev.target.result}).then(function(res){addBook(f.name,res.value||'');done()}).catch(function(){addBook(f.name,'');done()})}
-else{addBook(f.name,'');done()}
-}else if(isJ){
-var parsed=null;try{parsed=JSON.parse(ev.target.result)}catch(e){}
-addBookJson(f.name,parsed);done();
-}else{addBook(f.name,String(ev.target.result||''));done()}
+if(isD){if(window.mammoth){mammoth.extractRawText({arrayBuffer:ev.target.result}).then(function(res){addBook(f.name,res.value||'');done()}).catch(function(){addBook(f.name,'');done()})}else{addBook(f.name,'');done()}}
+else if(isJ){var parsed=null;try{parsed=JSON.parse(ev.target.result)}catch(e){}addBookJson(f.name,parsed);done()}
+else{addBook(f.name,String(ev.target.result||''));done()}
 }catch(e){done()}
 };
 if(isD)r.readAsArrayBuffer(f);else r.readAsText(f);
@@ -2032,22 +2029,13 @@ saveBooks(a);
 }
 function addBookJson(name,parsed){
 var d=name.replace(/\.json$/i,'');var es=[];
-if(parsed&&parsed.entries){
-Object.keys(parsed.entries).forEach(function(k){
-var e=parsed.entries[k];if(!e)return;
-es.push({id:uid('e'),title:e.comment||e.name||k,keywords:Array.isArray(e.key)?e.key.join(', '):(e.key||''),enabled:e.disable!==true,scope:e.constant?'global':'local',masks:[],content:Array.isArray(e.content)?e.content.join('\n'):(e.content||''),depth:e.depth||100,position:e.position||'middle'});
-});
-}
+if(parsed&&parsed.entries){Object.keys(parsed.entries).forEach(function(k){var e=parsed.entries[k];if(!e)return;es.push({id:uid('e'),title:e.comment||e.name||k,keywords:Array.isArray(e.key)?e.key.join(', '):(e.key||''),enabled:e.disable!==true,scope:e.constant?'global':'local',masks:[],content:Array.isArray(e.content)?e.content.join('\n'):(e.content||''),depth:e.depth||100,position:e.position||'middle'})})}
 if(!es.length)es.push({id:uid('e'),title:d,content:JSON.stringify(parsed,null,2),depth:100,position:'middle',enabled:true,scope:'global',masks:[]});
 var a=getBooks();a.unshift({id:uid('wb'),name:d,entries:es});saveBooks(a);
 }
 renderBooks();
-
-// 世界书入口
 var wbEntry=document.getElementById('worldbookEntry');
 if(wbEntry){wbEntry.addEventListener('click',function(e){e.stopPropagation();renderBooks();panel.classList.add('open')})}
-
-// 世界书注入
 function getWB(){
 var books=getBooks();var B=[],M=[],A=[];
 books.forEach(function(b){(b.entries||[]).forEach(function(e){
