@@ -21,69 +21,120 @@ body.fs-mode .beautify-panel,body.fs-mode .wechat-panel,body.fs-mode .contact-pa
 .blob-1{width:150px;height:150px;top:50px;left:-50px}.blob-2{width:200px;height:200px;top:400px;right:-80px}.blob-3{width:120px;height:120px;bottom:100px;left:20px}
 .pages-wrapper{flex:1;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;position:relative;z-index:1;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .pages-wrapper::-webkit-scrollbar{display:none}
-.page{width:100%;height:100%;flex-shrink:0;scroll-snap-align:start;overflow-y:auto;overflow-x:hidden;padding-top:30px;padding-bottom:40px;position:relative;-webkit-overflow-scrolling:touch}
+.page{width:100%;height:100%;flex-shrink:0;scroll-snap-align:start;overflow-y:auto;overflow-x:hidden;padding-top:20px;padding-bottom:60px;position:relative;-webkit-overflow-scrolling:touch}
 .page::-webkit-scrollbar{display:none}
 
-/* ====== 顶部验证码 UI ====== */
-.captcha-container { padding: 0 20px; margin-bottom: 30px; }
-.captcha-header { display: flex; align-items: center; gap: 8px; color: #4a7bb7; font-size: 16px; font-weight: 500; padding: 15px 0; letter-spacing: 0.5px; }
+/* ===== 顶部验证码 UI ===== */
+.captcha-wrapper { padding: 0 20px; margin-bottom: 20px; }
+.captcha-header { display: flex; align-items: center; gap: 8px; color: #4a7bb7; font-size: 15px; font-weight: 500; margin-bottom: 15px; }
 .captcha-divider { color: #b0c4de; font-weight: 300; }
-.captcha-box { width: 100%; height: 160px; border: 1px solid #e0e0e0; border-radius: 12px; background: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.02); cursor: pointer; overflow: hidden; position: relative; }
+.captcha-box { width: 100%; height: 150px; border: 1px solid #e0e0e0; border-radius: 12px; background: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.02); cursor: pointer; overflow: hidden; position: relative; }
 .captcha-box img { width: 100%; height: 100%; object-fit: contain; display: block; }
-.captcha-input { margin-top: 15px; height: 50px; border: 1px solid #e0e0e0; border-radius: 12px; background: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+.captcha-input { margin-top: 15px; height: 52px; border: 1px solid #e0e0e0; border-radius: 12px; background: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
 .captcha-text { color: #999; font-size: 15px; }
 .captcha-enter-icon { color: #999; display: flex; align-items: center; }
 .captcha-enter-icon svg { width: 20px; height: 20px; }
 
-/* ====== 桌面主体布局（左侧4个App，右侧灯泡小组件） ====== */
-.section-title{text-align:center;font-size:14px;color:#666;font-weight:500;margin:10px 0 20px}
-.main-widgets-layout { display: flex; gap: 15px; padding: 0 20px; }
-.left-apps { flex: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.right-widget { flex: 1; display: flex; justify-content: center; align-items: flex-start; }
-
-.p2-app-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-.p2-app-icon { width: 60px; height: 60px; border-radius: 16px; background: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,.04); margin-bottom: 8px; transition: transform .15s ease; overflow: hidden; }
-.p2-app-icon:active { transform: scale(0.92); }
-.p2-app-icon img { width: 100%; height: 100%; object-fit: cover; }
-.p2-app-icon svg { width: 28px; height: 28px; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
-.p2-app-item > span { font-size: 12px; color: #333; font-weight: 500; text-align: center; white-space: nowrap; }
-
-/* 图标颜色主题 */
-.icon-beautify { background: #fce4ec; color: #f48fb1; }
-.icon-wechat { background: #4caf50; color: #ffffff; }
-.icon-persona { background: #e3f2fd; color: #42a5f5; }
-.icon-worldbook { background: #f3e5f5; color: #ab47bc; }
-.icon-wechat svg { stroke: #fff; }
-
-/* 右侧灯泡小组件 */
-.bulb-shape {
-    width: 100%;
-    max-width: 110px;
-    height: 140px;
-    border: 2px solid #e0c8a0;
-    border-radius: 50% 50% 40% 40% / 60% 60% 40% 40%;
-    background: #fdf5e6;
-    position: relative;
+/* ===== 主体桌面网格布局（完全仿照图二） ===== */
+.section-title{text-align:center;font-size:15px;color:#333;font-weight:600;margin:20px 0 15px}
+.widgets-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px 15px;
+    padding: 0 20px;
+    margin-top: 10px;
+}
+.empty-cell { visibility: hidden; }
+.app-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
     cursor: pointer;
-    overflow: hidden;
+}
+.app-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    margin-top: 5px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    margin-bottom: 8px;
+    transition: transform .15s ease;
 }
-.bulb-shape img { width: 100%; height: 100%; object-fit: cover; }
-.bulb-shape .placeholder-img { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #c0a070; font-size: 11px; text-align: center; padding: 10px; }
-.bulb-shape::before, .bulb-shape::after { content: ''; position: absolute; background: #b3e5fc; border-radius: 50%; width: 6px; height: 6px; }
-.bulb-shape::before { top: 20px; left: -3px; }
-.bulb-shape::after { bottom: 20px; right: -3px; }
+.app-icon:active { transform: scale(0.92); }
+.app-icon svg {
+    width: 26px;
+    height: 26px;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
+.app-item > span {
+    font-size: 12px;
+    color: #333;
+    font-weight: 500;
+    text-align: center;
+    white-space: nowrap;
+}
 
+/* 图标颜色主题（匹配图二） */
+.icon-beautify { background: #fce4ec; color: #f48fb1; }
+.icon-wechat { background: #4caf50; color: #ffffff; }
+.icon-qqmusic { background: #ffeb3b; color: #333333; }
+.icon-persona { background: #e3f2fd; color: #42a5f5; }
+.icon-worldbook { background: #f3e5f5; color: #ab47bc; }
+.icon-spotify { background: #e0f7fa; } /* 纯色方块 */
+.icon-clock { background: #fce4ec; }
+.icon-instagram { background: #fce4ec; } /* 纯色方块 */
+
+/* 灯泡形状小组件 */
+.bulb-widget { margin-top: 5px; }
+.bulb-shape {
+    width: 50px;
+    height: 70px;
+    border: 2px solid #c7b08b;
+    border-radius: 50% 50% 30% 30% / 60% 60% 40% 40%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: transparent;
+    cursor: pointer;
+    margin-bottom: 8px;
+}
+.bulb-shape .placeholder-img {
+    color: #c7b08b;
+    font-size: 10px;
+    text-align: center;
+    padding: 5px;
+    line-height: 1.2;
+}
+.bulb-shape img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.bulb-shape::before, .bulb-shape::after {
+    content: '';
+    position: absolute;
+    background: #b3e5fc;
+    border-radius: 50%;
+    width: 6px;
+    height: 6px;
+}
+.bulb-shape::before { top: 10px; left: -4px; }
+.bulb-shape::after { bottom: 20px; right: -4px; }
+
+/* 隐藏的弹层组件，保留原有核心功能样式 */
 .placeholder-img{display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#999;font-size:10px;text-align:center;padding:5px;cursor:pointer}
 .uploaded-img{width:100%;height:100%;object-fit:cover}
 [data-editable="true"]{user-select:none;cursor:pointer}
 [contenteditable="true"]{user-select:text;outline:none;background:rgba(0,0,0,.05);border-radius:4px}
-
-/* ===== 隐藏的弹层组件样式 (保留核心功能) ===== */
 .beautify-panel{position:absolute;inset:0;z-index:200;background:#fcfcfc;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);border-radius:30px;overflow:hidden}
 .beautify-panel.open{transform:translateX(0)}
 .bp-header{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:18px 16px 12px;border-bottom:1px solid #f0f0f0}
@@ -110,7 +161,6 @@ body.fs-mode .beautify-panel,body.fs-mode .wechat-panel,body.fs-mode .contact-pa
 .bp-fs-text{flex:1;min-width:0}
 .bp-fs-label{font-size:13.5px;color:#222;font-weight:600}
 .bp-fs-desc{font-size:11px;color:#aaa;margin-top:4px;line-height:1.45}
-
 .wechat-panel{position:absolute;inset:0;z-index:210;background:#ededed;border-radius:30px;overflow:hidden;transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1)}
 .wechat-panel.open{transform:translateX(0)}
 .wx-view{position:absolute;inset:0;display:flex;flex-direction:column;background:#ededed}
@@ -633,13 +683,15 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
 
 <div class="pages-wrapper">
-<!-- 唯一页面：包含顶部验证码、左侧4个App、右侧灯泡组件 -->
+<!-- 唯一页面：包含顶部验证码、以及按照图二排布的网格 -->
 <div class="page" id="page-1">
-    <!-- 1. 顶部验证码区域 -->
-    <div class="captcha-container">
+    <!-- 1. 顶部验证码区域（图一） -->
+    <div class="captcha-wrapper">
         <div class="captcha-header">
-            <span data-editable="true">Skip</span> <span class="captcha-divider">|</span> 
-            <span data-editable="true">Help</span> <span class="captcha-divider">|</span> 
+            <span data-editable="true">Skip</span>
+            <span class="captcha-divider">|</span>
+            <span data-editable="true">Help</span>
+            <span class="captcha-divider">|</span>
             <span data-editable="true">I ??? a robot</span>
         </div>
         <div class="captcha-box" data-upload="true">
@@ -656,48 +708,89 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
         </div>
     </div>
 
-    <!-- 2. 主体布局：左4个App，右灯泡形状小组件 -->
+    <!-- 2. 主体布局：完全仿照图二 -->
     <div class="section-title" data-editable="true">Top Widgets+</div>
-    <div class="main-widgets-layout">
-        <!-- 左侧：2x2 App 网格 -->
-        <div class="left-apps">
-            <div class="p2-app-item" id="wechatEntry">
-                <div class="p2-app-icon icon-wechat">
-                    <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-                </div>
-                <span>微信</span>
+    <div class="widgets-grid">
+        <!-- 第一行 -->
+        <div class="app-item" id="beautifyEntry">
+            <div class="app-icon icon-beautify">
+                <svg viewBox="0 0 24 24"><path d="M15 4l5 5L9 20H4v-5z"/><path d="M13 6l5 5"/></svg>
             </div>
-            <div class="p2-app-item" id="beautifyEntry">
-                <div class="p2-app-icon icon-beautify">
-                    <svg viewBox="0 0 24 24"><path d="M15 4l5 5L9 20H4v-5z"/><path d="M13 6l5 5"/></svg>
-                </div>
-                <span>美化</span>
+            <span>美化</span>
+        </div>
+        <div class="app-item" id="wechatEntry">
+            <div class="app-icon icon-wechat">
+                <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
             </div>
-            <div class="p2-app-item" id="worldbookEntry">
-                <div class="p2-app-icon icon-worldbook">
-                    <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                </div>
-                <span>世界书</span>
-            </div>
-            <div class="p2-app-item" id="contactEntry">
-                <div class="p2-app-icon icon-persona">
-                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                </div>
-                <span>人设</span>
+            <span>微信</span>
+        </div>
+        <!-- 灯泡 1 -->
+        <div class="app-item bulb-widget" data-upload="true">
+            <div class="bulb-shape">
+                <div class="placeholder-img">点击上传</div>
             </div>
         </div>
 
-        <!-- 右侧：灯泡形状组件 -->
-        <div class="right-widget">
-            <div class="bulb-shape" data-upload="true">
-                <div class="placeholder-img">点击上传<br>灯泡图片</div>
+        <!-- 第二行 -->
+        <div class="app-item" id="qqmusicEntry">
+            <div class="app-icon icon-qqmusic">
+                <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
             </div>
+            <span>QQ音乐</span>
+        </div>
+        <div class="app-item" id="contactEntry">
+            <div class="app-icon icon-persona">
+                <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <span>人设</span>
+        </div>
+        <div class="empty-cell"></div>
+
+        <!-- 第三行 -->
+        <!-- 灯泡 2 -->
+        <div class="app-item bulb-widget" data-upload="true">
+            <div class="bulb-shape">
+                <div class="placeholder-img">点击上传</div>
+            </div>
+        </div>
+        <div class="app-item" id="worldbookEntry">
+            <div class="app-icon icon-worldbook">
+                <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <span>世界书</span>
+        </div>
+        <div class="app-item">
+            <div class="app-icon icon-spotify"></div>
+            <span>Spotify</span>
+        </div>
+
+        <!-- 第四行 -->
+        <div class="empty-cell"></div>
+        <div class="app-item">
+            <div class="app-icon icon-clock">
+                <!-- 使用简单的 SVG 模拟图二中的小猪/时钟图标 -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="none">
+                    <circle cx="12" cy="12" r="9" fill="#f8bbd0"/>
+                    <circle cx="7" cy="6" r="2" fill="#f8bbd0"/>
+                    <circle cx="17" cy="6" r="2" fill="#f8bbd0"/>
+                    <circle cx="9" cy="10" r="1.5" fill="#fff"/>
+                    <circle cx="15" cy="10" r="1.5" fill="#fff"/>
+                    <ellipse cx="12" cy="14" rx="3" ry="2" fill="#fff"/>
+                    <circle cx="11" cy="14" r="0.5" fill="#333"/>
+                    <circle cx="13" cy="14" r="0.5" fill="#333"/>
+                </svg>
+            </div>
+            <span>Clock</span>
+        </div>
+        <div class="app-item">
+            <div class="app-icon icon-instagram"></div>
+            <span>Instagram</span>
         </div>
     </div>
 </div>
 </div>
 
-<!-- 隐藏的弹层组件，保留原有核心功能 -->
+<!-- 隐藏的弹层组件，保留全部原有功能逻辑 -->
 <div class="beautify-panel" id="beautifyPanel">
 <div class="bp-header"><button class="bp-back" id="bpBack"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>返回</button><span class="bp-header-title">美化App</span><span class="bp-header-space"></span></div>
 <div class="bp-body">
@@ -1042,7 +1135,7 @@ if(!panel||!entry)return;
 if(fsToggle){fsToggle.checked=document.body.classList.contains('fs-mode');fsToggle.addEventListener('change',function(){setFS(fsToggle.checked,true)})}
 var currentEntry=null;var entries=[];
 function directSpan(item){var k=item.children;for(var i=0;i<k.length;i++){if(k[i].tagName==='SPAN')return k[i]}return null}
-$all('.left-apps .p2-app-item').forEach(function(item,i){entries.push({id:'p2-top-'+i,root:item,iconEl:item.querySelector('.p2-app-icon'),nameEl:directSpan(item),pageLabel:'主页'})});
+$all('.widgets-grid .app-item').forEach(function(item,i){if(item.classList.contains('bulb-widget')||item.classList.contains('empty-cell'))return;entries.push({id:'p1-icon-'+i,root:item,iconEl:item.querySelector('.app-icon'),nameEl:directSpan(item),pageLabel:'主页'})});
 function applyIcon(e,url){var el=e.iconEl;el.innerHTML='';var img=document.createElement('img');img.src=url;img.style.width='100%';img.style.height='100%';img.style.objectFit='cover';img.style.borderRadius='inherit';el.appendChild(img)}
 function applyName(e,n){if(e.nameEl)e.nameEl.textContent=n;else e.root.title=n}
 entries.forEach(function(e){var si=localStorage.getItem('app-icon-'+e.id);if(si)applyIcon(e,si);var sn=localStorage.getItem('app-name-'+e.id);if(sn!==null)applyName(e,sn)});
@@ -1499,8 +1592,8 @@ $id('koiQmSlider').addEventListener('input',function(){if(audio.duration&&isFini
 $id('koiQmUp').addEventListener('click',function(){input.click()});
 input.addEventListener('change',function(e){var fs=Array.prototype.slice.call(e.target.files||[]);if(!fs.length)return;fs.forEach(function(f){var url=URL.createObjectURL(f);playlist.push({name:f.name.replace(/\.[^.]+$/,''),url:url})});input.value='';renderL();if(curIdx<0&&playlist.length)playIdx(0)});
 $id('koiQmBack').addEventListener('click',function(){qm.classList.remove('open')});
-/* 在桌面没有QQ音乐图标了，通过长按顶部或特定方式触发，这里为了保留逻辑，绑定到隐藏元素，如果后续需要可以通过代码打开 */
-window.koiOpenQQMusic = function() { qm.classList.add('open'); renderL(); update(); };
+var qmEntry=document.getElementById('qqmusicEntry');
+if(qmEntry){qmEntry.addEventListener('click',function(e){e.stopPropagation();qm.classList.add('open');renderL();update()})}
 renderL();update();
 })();
 
