@@ -63,10 +63,18 @@ body.fs-mode .beautify-panel,body.fs-mode .wechat-panel,body.fs-mode .contact-pa
     box-shadow: 0 2px 6px rgba(0,0,0,0.04);
     margin-bottom: 8px;
     transition: transform .15s ease;
-    background: #fff;
+    background: #fff; /* 默认白色底，上传图片后会被覆盖 */
+    position: relative; /* 为了内部占位符定位 */
 }
 .app-icon:active { transform: scale(0.92); }
-.app-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* 图片处理：完美适应，绝不撑开 */
+.app-icon img { 
+    position: absolute; 
+    top: 0; left: 0; 
+    width: 100%; height: 100%; 
+    object-fit: cover; 
+    display: block; 
+}
 .app-icon svg {
     width: 26px;
     height: 26px;
@@ -81,6 +89,7 @@ body.fs-mode .beautify-panel,body.fs-mode .wechat-panel,body.fs-mode .contact-pa
     font-weight: 500;
     text-align: center;
     white-space: nowrap;
+    display: block;
 }
 
 /* 图标颜色主题（匹配图二） */
@@ -93,8 +102,22 @@ body.fs-mode .beautify-panel,body.fs-mode .wechat-panel,body.fs-mode .contact-pa
 .icon-clock { background: #fce4ec; }
 .icon-instagram { background: #fce4ec; } /* 纯色方块 */
 
+/* 占位符样式（未上传时显示） */
+.placeholder-img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: #c7b08b;
+    font-size: 10px;
+    text-align: center;
+    padding: 5px;
+    line-height: 1.2;
+    z-index: 1; /* 在图片下方 */
+}
+
 /* 隐藏的弹层组件，保留原有核心功能样式 */
-.placeholder-img{display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#999;font-size:10px;text-align:center;padding:5px;cursor:pointer;line-height:1.2}
 .uploaded-img{width:100%;height:100%;object-fit:cover}
 [data-editable="true"]{user-select:none;cursor:pointer}
 [contenteditable="true"]{user-select:text;outline:none;background:rgba(0,0,0,.05);border-radius:4px}
@@ -679,20 +702,20 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
             <div class="app-icon icon-beautify">
                 <svg viewBox="0 0 24 24"><path d="M15 4l5 5L9 20H4v-5z"/><path d="M13 6l5 5"/></svg>
             </div>
-            <span>美化</span>
+            <span data-editable="true">美化</span>
         </div>
         <div class="app-item" id="wechatEntry">
             <div class="app-icon icon-wechat">
                 <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
             </div>
-            <span>微信</span>
+            <span data-editable="true">微信</span>
         </div>
-        <!-- 正方形组件 1 -->
+        <!-- 第一个自定义组件 (上传后无底色，文字可改) -->
         <div class="app-item" data-upload="true">
-            <div class="app-icon" style="background: #fdf5e6; color: #c7b08b;">
-                <div class="placeholder-img" style="color: #c7b08b;">点击<br>上传</div>
+            <div class="app-icon" style="background:#fdf5e6;">
+                <div class="placeholder-img" style="color:#c7b08b;">点击<br>上传</div>
             </div>
-            <span>组件</span>
+            <span data-editable="true">组件</span>
         </div>
 
         <!-- 第二行 -->
@@ -700,33 +723,33 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
             <div class="app-icon icon-qqmusic">
                 <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
             </div>
-            <span>QQ音乐</span>
+            <span data-editable="true">QQ音乐</span>
         </div>
         <div class="app-item" id="contactEntry">
             <div class="app-icon icon-persona">
                 <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </div>
-            <span>人设</span>
+            <span data-editable="true">人设</span>
         </div>
         <div class="empty-cell"></div>
 
         <!-- 第三行 -->
-        <!-- 正方形组件 2 -->
+        <!-- 第二个自定义组件 (上传后无底色，文字可改) -->
         <div class="app-item" data-upload="true">
-            <div class="app-icon" style="background: #fdf5e6; color: #c7b08b;">
-                <div class="placeholder-img" style="color: #c7b08b;">点击<br>上传</div>
+            <div class="app-icon" style="background:#fdf5e6;">
+                <div class="placeholder-img" style="color:#c7b08b;">点击<br>上传</div>
             </div>
-            <span>组件</span>
+            <span data-editable="true">组件</span>
         </div>
         <div class="app-item" id="worldbookEntry">
             <div class="app-icon icon-worldbook">
                 <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
             </div>
-            <span>世界书</span>
+            <span data-editable="true">世界书</span>
         </div>
         <div class="app-item">
             <div class="app-icon icon-spotify"></div>
-            <span>Spotify</span>
+            <span data-editable="true">Spotify</span>
         </div>
 
         <!-- 第四行 -->
@@ -745,11 +768,11 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
                     <circle cx="13" cy="14" r="0.5" fill="#333"/>
                 </svg>
             </div>
-            <span>Clock</span>
+            <span data-editable="true">Clock</span>
         </div>
         <div class="app-item">
             <div class="app-icon icon-instagram"></div>
-            <span>Instagram</span>
+            <span data-editable="true">Instagram</span>
         </div>
     </div>
 </div>
