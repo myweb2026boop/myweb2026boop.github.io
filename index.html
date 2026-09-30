@@ -63,8 +63,10 @@ body.fs-mode .beautify-panel,body.fs-mode .wechat-panel,body.fs-mode .contact-pa
     box-shadow: 0 2px 6px rgba(0,0,0,0.04);
     margin-bottom: 8px;
     transition: transform .15s ease;
+    background: #fff;
 }
 .app-icon:active { transform: scale(0.92); }
+.app-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .app-icon svg {
     width: 26px;
     height: 26px;
@@ -91,47 +93,8 @@ body.fs-mode .beautify-panel,body.fs-mode .wechat-panel,body.fs-mode .contact-pa
 .icon-clock { background: #fce4ec; }
 .icon-instagram { background: #fce4ec; } /* 纯色方块 */
 
-/* 灯泡形状小组件 */
-.bulb-widget { margin-top: 5px; }
-.bulb-shape {
-    width: 50px;
-    height: 70px;
-    border: 2px solid #c7b08b;
-    border-radius: 50% 50% 30% 30% / 60% 60% 40% 40%;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    background: transparent;
-    cursor: pointer;
-    margin-bottom: 8px;
-}
-.bulb-shape .placeholder-img {
-    color: #c7b08b;
-    font-size: 10px;
-    text-align: center;
-    padding: 5px;
-    line-height: 1.2;
-}
-.bulb-shape img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-.bulb-shape::before, .bulb-shape::after {
-    content: '';
-    position: absolute;
-    background: #b3e5fc;
-    border-radius: 50%;
-    width: 6px;
-    height: 6px;
-}
-.bulb-shape::before { top: 10px; left: -4px; }
-.bulb-shape::after { bottom: 20px; right: -4px; }
-
 /* 隐藏的弹层组件，保留原有核心功能样式 */
-.placeholder-img{display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#999;font-size:10px;text-align:center;padding:5px;cursor:pointer}
+.placeholder-img{display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#999;font-size:10px;text-align:center;padding:5px;cursor:pointer;line-height:1.2}
 .uploaded-img{width:100%;height:100%;object-fit:cover}
 [data-editable="true"]{user-select:none;cursor:pointer}
 [contenteditable="true"]{user-select:text;outline:none;background:rgba(0,0,0,.05);border-radius:4px}
@@ -724,11 +687,12 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
             </div>
             <span>微信</span>
         </div>
-        <!-- 灯泡 1 -->
-        <div class="app-item bulb-widget" data-upload="true">
-            <div class="bulb-shape">
-                <div class="placeholder-img">点击上传</div>
+        <!-- 正方形组件 1 -->
+        <div class="app-item" data-upload="true">
+            <div class="app-icon" style="background: #fdf5e6; color: #c7b08b;">
+                <div class="placeholder-img" style="color: #c7b08b;">点击<br>上传</div>
             </div>
+            <span>组件</span>
         </div>
 
         <!-- 第二行 -->
@@ -747,11 +711,12 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
         <div class="empty-cell"></div>
 
         <!-- 第三行 -->
-        <!-- 灯泡 2 -->
-        <div class="app-item bulb-widget" data-upload="true">
-            <div class="bulb-shape">
-                <div class="placeholder-img">点击上传</div>
+        <!-- 正方形组件 2 -->
+        <div class="app-item" data-upload="true">
+            <div class="app-icon" style="background: #fdf5e6; color: #c7b08b;">
+                <div class="placeholder-img" style="color: #c7b08b;">点击<br>上传</div>
             </div>
+            <span>组件</span>
         </div>
         <div class="app-item" id="worldbookEntry">
             <div class="app-icon icon-worldbook">
