@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#fcfcfc">
 <title>Koi Buono Profile</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-tap-highlight-color:transparent}
@@ -526,6 +524,7 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 .st-preset-load{background:#07c160;color:#fff}
 .st-preset-del{background:#f0f0f0;color:#fa5151}
 .st-preset-empty{text-align:center;color:#bbb;font-size:12px;padding:12px}
+/* ========== 扩展浮层 CSS ========== */
 .koiM{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:1200;display:none;align-items:flex-end}
 .koiM.show{display:flex}
 .koiM-s{width:100%;background:#f7f7f7;border-radius:18px 18px 0 0;padding:8px 12px 18px}
@@ -633,6 +632,7 @@ textarea.ct-field-input{min-height:90px;line-height:1.5}
 .wbs-char-ck svg{width:12px;height:12px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;display:none}
 .wbs-char-ck.on{background:#07c160;border-color:#07c160}
 .wbs-char-ck.on svg{display:block}
+/* 顶部浮层通知 */
 .koiNotif{position:absolute;top:14px;left:50%;transform:translateX(-50%) translateY(-20px);background:rgba(30,30,30,.94);color:#fff;padding:12px 18px;border-radius:14px;font-size:13px;z-index:9999;max-width:86%;box-shadow:0 8px 24px rgba(0,0,0,.35);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none}
 .koiNotif.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .koiNotif .nt{font-weight:600;margin-bottom:4px}
@@ -1207,6 +1207,7 @@ function buildTC(m,idx){var card=document.createElement('div');card.className='w
 function buildFC(m,idx){var card=document.createElement('div');card.className='wx-family-card';if(m.status==='accepted')card.classList.add('accepted');if(m.status==='rejected')card.classList.add('rejected');var c=document.createElement('div');c.className='wx-family-card-content';var ic=document.createElement('div');ic.className='wx-family-card-icon';ic.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M12 16.5s-1.5-1.2-1.5-2.2c0-.7.6-1.3 1.3-1.3.5 0 .9.3 1.1.7.2-.4.6-.7 1.1-.7.7 0 1.3.6 1.3 1.3 0 1-1.4 2.2-1.4 2.2z" fill="#fff" stroke="none"/></svg>';var tw=document.createElement('div');tw.className='wx-family-card-text';var ti=document.createElement('div');ti.className='wx-family-card-title';ti.textContent='送你一张亲属卡';var st=document.createElement('div');st.className='wx-family-card-subtitle';if(m.status==='pending')st.textContent='额度'+parseFloat(m.limit).toFixed(2)+'元，待领取';else if(m.status==='accepted')st.textContent='额度'+parseFloat(m.limit).toFixed(2)+'元，已领取';else st.textContent='额度'+parseFloat(m.limit).toFixed(2)+'元，已退还';tw.appendChild(ti);tw.appendChild(st);c.appendChild(ic);c.appendChild(tw);card.appendChild(c);var ft=document.createElement('div');ft.className='wx-family-card-footer';ft.textContent='亲属卡';card.appendChild(ft);card.addEventListener('click',function(){if(m.role==='assistant'&&m.status==='pending'){pendingAcceptTarget={charId:activeChar.id,msgIndex:idx,type:'familyCard'};wxAcceptText.textContent='接受来自 '+getDN(activeChar)+' 的亲属卡（每月额度 ¥'+parseFloat(m.limit).toFixed(2)+'）吗？';wxAcceptMask.classList.add('show')}});return card}
 function sendMsg(){var t=inputEl.value.trim();if(!t||!activeChar)return false;inputEl.value='';var h=getHist(activeChar.id);h.push({role:'user',type:'text',content:t,time:Date.now()});saveHist(activeChar.id,h);renderMsgs();renderChats();return true}
 
+/* ★ 把 AI 回复拆成多条 */
 function splitReplyToSegments(text,maxSeg){
   var t=String(text||'').trim();
   if(!t)return['（没有返回内容）'];
@@ -1354,7 +1355,7 @@ if(moreDelete)moreDelete.addEventListener('click',function(){if(!activeChar)retu
 if(deleteCancel)deleteCancel.addEventListener('click',function(){deleteMask.classList.remove('show')});
 if(deleteConfirm)deleteConfirm.addEventListener('click',function(){if(!activeChar)return;var tid=activeChar.id;saveAdded(getAdded().filter(function(x){return x!==tid}));localStorage.removeItem('ai-chat-wx-'+tid);localStorage.removeItem('wx-chat-remark-'+tid);localStorage.removeItem('wx-chat-avatar-'+tid);localStorage.removeItem('wx-chat-my-avatar-'+tid);localStorage.removeItem('wx-chat-bg-'+tid);localStorage.removeItem('wx-chat-proactive-'+tid);localStorage.removeItem('wx-chat-pin-'+tid);localStorage.removeItem('wx-reply-count-'+tid);deleteMask.classList.remove('show');chatSettingsView.classList.remove('active');chatViewEl.classList.remove('active');activeChar=null;renderChats();renderContacts();showToast('已删除')});
 
-/* 微信设置面板 */
+/* ★ 微信设置面板 */
 var wxMeSettingsEntry=$id('wxMeSettingsEntry');
 if(wxMeSettingsEntry){
   wxMeSettingsEntry.addEventListener('click',function(e){
@@ -1488,7 +1489,7 @@ renderPresets();
 entry.addEventListener('click',function(){panel.classList.add('open')});
 backBtn.addEventListener('click',function(){panel.classList.remove('open')});
 })();
-}catch(err){console.error('初始化错误:',err)}
+}catch(err){console.error('初始化错误:',err);alert('页面初始化出错：'+err.message)}
 });
 </script>
 
@@ -1497,6 +1498,7 @@ backBtn.addEventListener('click',function(){panel.classList.remove('open')});
 (function(){
 if(window.__koiX)return;window.__koiX=true;
 function $id(i){return document.getElementById(i)}
+function uid(p){return p+'_'+Date.now()+'_'+Math.floor(Math.random()*9999)}
 function lj(k,d){try{var v=localStorage.getItem(k);if(v){var r=JSON.parse(v);if(r!=null)return r}}catch(e){}return d}
 function ls(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function chars(){return lj('contact-chars',[])}
@@ -1506,6 +1508,7 @@ function meAv(){return localStorage.getItem('uploaded-img-0')||localStorage.getI
 function getArr(){return lj('wx-moments',[])}
 function saveArr(a){ls('wx-moments',a)}
 
+/* 消息弹窗 */
 function showNotification(title,body){
   try{
     var c=document.querySelector('.phone-container')||document.body;
@@ -1513,16 +1516,18 @@ function showNotification(title,body){
     if(existing)existing.remove();
     var el=document.createElement('div');
     el.className='koiNotif';
-    el.innerHTML='<div class="nt"></div><div class="nb"></div>';
-    el.querySelector('.nt').textContent=String(title||'');
-    el.querySelector('.nb').textContent=String(body||'');
+    el.innerHTML='<div class="nt">'+String(title||'').replace(/</g,'&lt;')+'</div><div class="nb">'+String(body||'').replace(/</g,'&lt;')+'</div>';
     c.appendChild(el);
     requestAnimationFrame(function(){el.classList.add('show')});
     setTimeout(function(){el.classList.remove('show');setTimeout(function(){el.remove()},300)},3500);
   }catch(e){}
-  if(typeof window.koiSendSystemNotification==='function'){
-    window.koiSendSystemNotification(title,body);
-  }
+  try{
+    if('Notification' in window && Notification.permission==='granted'){
+      var n=new Notification(title,{body:body,silent:false});
+      n.onclick=function(){try{window.focus()}catch(e){};n.close()};
+      setTimeout(function(){try{n.close()}catch(e){}},8000);
+    }
+  }catch(e){}
 }
 window.koiShowNotification=showNotification;
 
@@ -1731,7 +1736,7 @@ async function charCommentUserMoment(char,post){
     var reply=await callAI([{role:'system',content:sys},{role:'user',content:'请评论。'}],80);
     var txt=(reply||'').trim().replace(/^["'「『]|["'」』]$/g,'');
     if(txt)return txt.slice(0,150);
-  }catch(e){}
+  }catch(e){console.warn('[koi] charCommentUserMoment AI失败',e)}
   var fallbacks=['嗯。','看到了','不错','还行','挺好','……','有点意思'];
   return fallbacks[Math.floor(Math.random()*fallbacks.length)];
 }
@@ -1830,7 +1835,7 @@ cs.forEach(function(c){
         updateMoment(post.id,function(mm){if(!mm.comments)mm.comments=[];mm.comments.push({id:'c_'+Date.now()+'_'+c.id,authorId:c.id,authorName:c.name,text:txt,time:Date.now()})});
         pushNotification({type:'comment',fromId:c.id,fromName:c.name,postId:post.id,text:txt,time:Date.now(),read:false});
         renderMomentsList();updateMomentsDot();
-      }catch(e){}
+      }catch(e){console.warn('[koi] 评论失败',e)}
     },2500+Math.random()*3000);
   }
 });
@@ -1914,9 +1919,10 @@ async function checkImageToMoment(charId){
     if(atUser)pushNotification({type:'at',fromId:c.id,fromName:c.name,postId:postId,text:caption,time:now.getTime(),read:false});
     updateMomentsDot();
     if(document.getElementById('wxMomentsView')&&document.getElementById('wxMomentsView').classList.contains('active'))renderMomentsList();
-  }catch(e){}
+  }catch(e){console.warn('[koi] 图片发朋友圈判断失败',e)}
 }
 
+/* ★ 自动发消息 - 独立条数逻辑（1-3 条，由 AI 判断） */
 async function autoSendCheck(){
   var cfg=getApiCfg();
   if(!cfg.apiUrl||!cfg.apiKey||!cfg.model)return;
@@ -2000,7 +2006,7 @@ async function autoSendCheck(){
         }
         if(window.__koiRenderChats)window.__koiRenderChats();
       }catch(e){}
-    }catch(e){}
+    }catch(e){console.warn('[koi] 自动发消息失败',c.id,e)}
   }
 }
 setInterval(autoSendCheck,3*60*1000);
@@ -2188,40 +2194,6 @@ backupInit();
 setTimeout(backupInit,300);
 setTimeout(backupInit,1000);
 setTimeout(function(){updateMomentsDot()},2000);
-
-/* Service Worker 注册 */
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js', { scope: './' })
-    .then(function(reg){
-      window.__koiSWReg = reg;
-    })
-    .catch(function(err){});
-}
-window.koiSendSystemNotification = async function(title, body){
-  if(!('Notification' in window)) return;
-  if(Notification.permission !== 'granted') return;
-  var payload = { title: String(title || '新消息'), body: String(body || '').slice(0, 120), time: Date.now() };
-  try{
-    if(navigator.serviceWorker && navigator.serviceWorker.controller){
-      navigator.serviceWorker.controller.postMessage({ type: 'SHOW_NOTIFICATION', payload: payload });
-      return;
-    }
-    if(window.__koiSWReg && window.__koiSWReg.showNotification){
-      await window.__koiSWReg.showNotification(payload.title, {
-        body: payload.body,
-        icon: './icon-192.png',
-        badge: './icon-192.png',
-        tag: 'koi-msg-' + payload.time,
-        renotify: true,
-        vibrate: [200, 100, 200],
-        data: { url: './' }
-      });
-      return;
-    }
-    var n = new Notification(payload.title, { body: payload.body, tag: 'koi-msg-' + payload.time, renotify: true });
-    n.onclick = function(){ try{ window.focus(); }catch(e){} n.close(); };
-  }catch(e){}
-};
 })();
 </script>
 
